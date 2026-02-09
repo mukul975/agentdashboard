@@ -215,6 +215,8 @@ function App() {
             <div className="flex items-center gap-2">
               <Activity className="h-4 w-4 text-claude-orange" />
               <span>Claude Code Agent Dashboard</span>
+              <span className="text-gray-600">•</span>
+              <span className="text-gray-500">Built by <a href="https://mahipal.engineer" target="_blank" rel="noopener noreferrer" className="text-claude-orange hover:text-orange-400 transition-colors">mahipal.engineer</a></span>
             </div>
             <div className="flex items-center gap-4">
               <a
