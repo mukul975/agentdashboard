@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, ArrowRight, Users, Radio } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 export function RealTimeMessages({ teams }) {
   const [messages, setMessages] = useState([]);
@@ -141,7 +143,7 @@ export function RealTimeMessages({ teams }) {
                     <ArrowRight className="h-3 w-3 text-gray-400" />
                     <span className="text-sm text-gray-400">{msg.to}</span>
                     <span className="ml-auto text-xs text-gray-500">
-                      {formatDistanceToNow(msg.timestamp, { addSuffix: true })}
+                      {dayjs(msg.timestamp).fromNow()}
                     </span>
                   </div>
                   <p className="text-sm text-gray-200">{msg.message}</p>

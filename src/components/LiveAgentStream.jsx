@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, Cpu, Zap, Clock, CheckCircle } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 export function LiveAgentStream({ teams }) {
   const [activities, setActivities] = useState([]);
@@ -119,7 +121,7 @@ export function LiveAgentStream({ teams }) {
                       {activity.action}
                     </span>
                     <span className="ml-auto text-xs text-gray-500 flex-shrink-0">
-                      {formatDistanceToNow(activity.timestamp, { addSuffix: true })}
+                      {dayjs(activity.timestamp).fromNow()}
                     </span>
                   </div>
                   <div className="text-xs text-gray-500 truncate">

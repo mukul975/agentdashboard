@@ -1,6 +1,8 @@
 import React from 'react';
 import { Server, Database, Wifi, Clock } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 export function SystemStatus({ isConnected, lastUpdate }) {
 
@@ -45,7 +47,7 @@ export function SystemStatus({ isConnected, lastUpdate }) {
               <span className="text-sm text-gray-300">Last Update</span>
             </div>
             <span className="text-xs font-semibold text-cyan-400">
-              {formatDistanceToNow(new Date(lastUpdate.timestamp || Date.now()), { addSuffix: true })}
+              {dayjs(new Date(lastUpdate.timestamp || Date.now())).fromNow()}
             </span>
           </div>
         )}

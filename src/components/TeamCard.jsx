@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Users, ChevronDown, ChevronUp, Activity, Clock } from 'lucide-react';
 import { AgentCard } from './AgentCard';
 import { TaskList } from './TaskList';
-import { formatDistanceToNow } from 'date-fns';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 export function TeamCard({ team }) {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -55,7 +57,7 @@ export function TeamCard({ team }) {
         <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-1 rounded-full">
           <Clock className="h-4 w-4 text-gray-400" />
           <span className="text-sm text-gray-300">
-            {formatDistanceToNow(new Date(lastUpdated), { addSuffix: true })}
+            {dayjs(new Date(lastUpdated)).fromNow()}
           </span>
         </div>
       </div>

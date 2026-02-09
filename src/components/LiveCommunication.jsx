@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { MessageSquare, Send, Users, Clock } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 export function LiveCommunication({ teams }) {
   const [messages, setMessages] = useState([]);
@@ -86,7 +88,7 @@ export function LiveCommunication({ teams }) {
               <div className="flex items-start justify-between mb-1">
                 <span className="text-sm font-semibold text-white">{msg.from}</span>
                 <span className="text-xs text-gray-400">
-                  {formatDistanceToNow(msg.timestamp, { addSuffix: true })}
+                  {dayjs(msg.timestamp).fromNow()}
                 </span>
               </div>
               <p className="text-sm text-gray-300">{msg.message}</p>

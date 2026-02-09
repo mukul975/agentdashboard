@@ -6,10 +6,37 @@ const fs = require('fs').promises;
 const path = require('path');
 const cors = require('cors');
 const os = require('os');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({
+  server,
+  verifyClient: (info) => {
+    // Validate WebSocket origin
+    const origin = info.origin || info.req.headers.origin;
+    const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+    return !origin || allowedOrigins.includes(origin);
+  }
+});
+
+// Security middleware
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable for development
+  crossOriginEmbedderPolicy: false
+}));
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+app.use('/api/', limiter);
 
 // Restrict CORS to localhost only for security
 app.use(cors({

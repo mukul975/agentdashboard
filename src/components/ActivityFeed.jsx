@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, Circle } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 export function ActivityFeed({ updates }) {
   const [activities, setActivities] = useState([]);
