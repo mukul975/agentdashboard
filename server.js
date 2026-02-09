@@ -107,12 +107,26 @@ function sanitizeFileName(fileName) {
   return baseName;
 }
 
+// Validate path is within allowed directory
+function validatePath(filePath, allowedDir) {
+  const normalizedPath = path.normalize(filePath);
+  const normalizedDir = path.normalize(allowedDir);
+
+  // Check if path is within allowed directory
+  if (!normalizedPath.startsWith(normalizedDir)) {
+    throw new Error('Path traversal attempt detected');
+  }
+
+  return normalizedPath;
+}
+
 // Read team configuration
 async function readTeamConfig(teamName) {
   try {
     const sanitizedName = sanitizeTeamName(teamName);
     const configPath = path.join(TEAMS_DIR, sanitizedName, 'config.json');
-    const data = await fs.readFile(configPath, 'utf8');
+    const validatedPath = validatePath(configPath, TEAMS_DIR);
+    const data = await fs.readFile(validatedPath, 'utf8');
     return JSON.parse(data);
   } catch (error) {
     console.error('Error reading team config:', {
@@ -128,7 +142,8 @@ async function readTasks(teamName) {
   try {
     const sanitizedName = sanitizeTeamName(teamName);
     const tasksPath = path.join(TASKS_DIR, sanitizedName);
-    const files = await fs.readdir(tasksPath);
+    const validatedTasksPath = validatePath(tasksPath, TASKS_DIR);
+    const files = await fs.readdir(validatedTasksPath);
 
     // Use Promise.all for parallel file reads (performance improvement)
     const taskPromises = files
@@ -137,8 +152,9 @@ async function readTasks(teamName) {
         try {
           // Sanitize file name to prevent path traversal
           const sanitizedFile = sanitizeFileName(file);
-          const taskPath = path.join(tasksPath, sanitizedFile);
-          const data = await fs.readFile(taskPath, 'utf8');
+          const taskPath = path.join(validatedTasksPath, sanitizedFile);
+          const validatedPath = validatePath(taskPath, TASKS_DIR);
+          const data = await fs.readFile(validatedPath, 'utf8');
           const task = JSON.parse(data);
           return { ...task, id: path.basename(sanitizedFile, '.json') };
         } catch (fileError) {

@@ -1,5 +1,10 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 
+/**
+ * WebSocket hook for managing WebSocket connections
+ * @param {string} url - WebSocket URL to connect to
+ * @returns {{data: any, isConnected: boolean, error: string|null}} WebSocket state
+ */
 export function useWebSocket(url) {
   const [data, setData] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
