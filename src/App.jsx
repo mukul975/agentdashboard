@@ -44,8 +44,16 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      {/* Skip Navigation Link */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-claude-orange focus:text-white focus:rounded-lg"
+      >
+        Skip to main content
+      </a>
+
       {/* Header */}
-      <header className="bg-gray-800/50 border-b border-gray-700 backdrop-blur-sm sticky top-0 z-50">
+      <header className="bg-gray-800/50 border-b border-gray-700 backdrop-blur-sm sticky top-0 z-50" role="banner">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -74,24 +82,27 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-6">
+      <main id="main-content" className="container mx-auto px-6 py-6" role="main">
         {/* Statistics Overview - Always Visible */}
         <div className="mb-6">
           <StatsOverview stats={stats} />
         </div>
 
         {/* Navigation Tabs */}
-        <div className="mb-6">
+        <nav className="mb-6" role="tablist" aria-label="Dashboard sections">
           <div className="flex gap-2 overflow-x-auto pb-2">
             <button
               onClick={() => setActiveTab('overview')}
+              role="tab"
+              aria-selected={activeTab === 'overview'}
+              aria-controls="tab-panel-overview"
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                 activeTab === 'overview'
                   ? 'bg-claude-orange text-white shadow-lg'
                   : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700'
               }`}
             >
-              <BarChart3 className="h-4 w-4" />
+              <BarChart3 className="h-4 w-4" aria-hidden="true" />
               Live Metrics
             </button>
             <button
