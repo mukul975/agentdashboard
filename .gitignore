@@ -26,6 +26,9 @@ build/
 *.sw?
 .DS_Store
 
+# Claude Code local settings
+.claude/
+
 # Logs
 logs/
 *.log
