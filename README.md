@@ -361,8 +361,6 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 ---
 
-**Built with ☕ and [Claude Code](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview) in Berlin, Germany 🇩🇪**
-
 _Maintained by [@mukul975](https://github.com/mukul975) — cybersecurity researcher, AI agent enthusiast_
 
 </div>
