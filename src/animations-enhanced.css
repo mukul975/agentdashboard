@@ -1,0 +1,929 @@
+/* ========================================
+   ENHANCED ANIMATION SYSTEM
+   Motion Design System v1.0
+   Created: 2026-02-10
+   ======================================== */
+
+/* ==========================================
+   SKELETON LOADING ANIMATIONS
+   ========================================== */
+
+/* Enhanced shimmer with dual-layer effect */
+@keyframes shimmerFlow {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.skeleton-animated {
+  background: linear-gradient(
+    90deg,
+    rgba(55, 65, 81, 0.4) 0%,
+    rgba(75, 85, 99, 0.6) 50%,
+    rgba(55, 65, 81, 0.4) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmerFlow 1.8s ease-in-out infinite;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-animated::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%
+  );
+  animation: shimmerFlow 1.8s ease-in-out infinite;
+  animation-delay: 0.2s;
+}
+
+/* Skeleton variants */
+.skeleton-text { height: 16px; width: 100%; }
+.skeleton-title { height: 24px; width: 75%; }
+.skeleton-avatar { width: 48px; height: 48px; border-radius: 50%; }
+.skeleton-icon { width: 40px; height: 40px; border-radius: 12px; }
+.skeleton-card { padding: 24px; border-radius: 16px; }
+.skeleton-line { height: 14px; margin-bottom: 12px; }
+.skeleton-line:last-child { width: 60%; }
+
+/* ==========================================
+   COUNTER ANIMATIONS
+   ========================================== */
+
+/* Value change pulse effect */
+@keyframes counterPulse {
+  0% {
+    transform: scale(1);
+    color: inherit;
+  }
+  50% {
+    transform: scale(1.15);
+    color: #f97316; /* Claude orange */
+    text-shadow: 0 0 20px rgba(249, 115, 22, 0.6);
+  }
+  100% {
+    transform: scale(1);
+    color: inherit;
+  }
+}
+
+.counter-updated {
+  animation: counterPulse 600ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Number increment indicator */
+@keyframes counterIncrement {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.counter-increment-indicator {
+  position: absolute;
+  top: -10px;
+  right: 0;
+  color: #4ade80;
+  font-size: 12px;
+  font-weight: 600;
+  animation: counterIncrement 800ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  pointer-events: none;
+}
+
+/* ==========================================
+   TAB TRANSITION ANIMATIONS
+   ========================================== */
+
+/* Crossfade with scale */
+@keyframes tabPanelEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes tabPanelExit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+.tab-panel-enter {
+  animation: tabPanelEnter 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.tab-panel-exit {
+  animation: tabPanelExit 200ms cubic-bezier(0.4, 0.0, 1, 1);
+  pointer-events: none;
+}
+
+/* Tab button active state */
+.tab-button-active {
+  position: relative;
+}
+
+.tab-button-active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f97316, #fb923c);
+  border-radius: 3px 3px 0 0;
+  animation: tabUnderlineGrow 300ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+@keyframes tabUnderlineGrow {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+/* ==========================================
+   ENHANCED CARD HOVER EFFECTS
+   ========================================== */
+
+/* Card with glow border on hover */
+.card-glow {
+  position: relative;
+  transition: all 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.card-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.3), transparent 50%, rgba(249, 115, 22, 0.1));
+  border-radius: 17px;
+  opacity: 0;
+  transition: opacity 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  z-index: -1;
+  filter: blur(8px);
+}
+
+.card-glow:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 12px 48px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(249, 115, 22, 0.3);
+}
+
+.card-glow:hover::before {
+  opacity: 1;
+}
+
+/* Stat card with top accent line */
+.stat-card-enhanced {
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card-enhanced::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.6), transparent);
+  opacity: 0;
+  transition: opacity 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.stat-card-enhanced:hover::after {
+  opacity: 1;
+}
+
+/* ==========================================
+   TOAST NOTIFICATION ANIMATIONS
+   ========================================== */
+
+/* Enhanced toast entry with bounce */
+@keyframes toastSlideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%) scale(0.95);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-8px) scale(1);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes toastSlideOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%) scale(0.95);
+  }
+}
+
+.toast-enter {
+  animation: toastSlideInRight 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.toast-exit {
+  animation: toastSlideOutRight 300ms cubic-bezier(0.4, 0.0, 1, 1);
+}
+
+/* Toast stack reordering */
+.toast-item {
+  transition: all 300ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Success toast pulse */
+@keyframes toastSuccessPulse {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4);
+  }
+}
+
+.toast-success {
+  animation: toastSuccessPulse 1.5s ease-in-out 2;
+}
+
+/* ==========================================
+   AGENT STATUS TRANSITION ANIMATIONS
+   ========================================== */
+
+/* Status indicator base */
+.agent-status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  position: relative;
+  transition: all 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Idle → Active transition */
+@keyframes statusActivate {
+  0% {
+    background: rgba(156, 163, 175, 0.5);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+  }
+  50% {
+    transform: scale(1.4);
+    box-shadow: 0 0 20px 4px rgba(34, 197, 94, 0.6);
+  }
+  100% {
+    background: rgba(34, 197, 94, 1);
+    transform: scale(1);
+    box-shadow: 0 0 12px 2px rgba(34, 197, 94, 0.4);
+  }
+}
+
+.agent-status-indicator.active {
+  animation: statusActivate 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  background: rgba(34, 197, 94, 1);
+  box-shadow: 0 0 12px 2px rgba(34, 197, 94, 0.4);
+}
+
+/* Active → Completed transition */
+@keyframes statusComplete {
+  0% {
+    background: rgba(34, 197, 94, 1);
+  }
+  20% {
+    transform: scale(1.2);
+  }
+  40% {
+    transform: scale(0.8);
+  }
+  60% {
+    transform: scale(1.1);
+  }
+  100% {
+    background: rgba(74, 222, 128, 1);
+    transform: scale(1);
+    box-shadow: 0 0 16px 3px rgba(74, 222, 128, 0.6);
+  }
+}
+
+.agent-status-indicator.completed {
+  animation: statusComplete 800ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  background: rgba(74, 222, 128, 1);
+  box-shadow: 0 0 16px 3px rgba(74, 222, 128, 0.6);
+}
+
+/* Idle state (gray) */
+.agent-status-indicator.idle {
+  background: rgba(156, 163, 175, 0.5);
+  box-shadow: 0 0 6px 1px rgba(156, 163, 175, 0.3);
+}
+
+/* Error state */
+@keyframes statusError {
+  0%, 100% {
+    background: rgba(239, 68, 68, 1);
+  }
+  50% {
+    transform: scale(1.2);
+    background: rgba(248, 113, 113, 1);
+  }
+}
+
+.agent-status-indicator.error {
+  animation: statusError 600ms cubic-bezier(0.4, 0.0, 0.2, 1) 3;
+  background: rgba(239, 68, 68, 1);
+  box-shadow: 0 0 12px 2px rgba(239, 68, 68, 0.5);
+}
+
+/* ==========================================
+   TASK COMPLETION CELEBRATION
+   ========================================== */
+
+/* Main celebration animation */
+@keyframes taskCelebrate {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  25% {
+    transform: scale(1.15) rotate(5deg);
+    filter: brightness(1.3);
+  }
+  50% {
+    transform: scale(1.08) rotate(-3deg);
+    filter: brightness(1.2);
+  }
+  75% {
+    transform: scale(1.12) rotate(2deg);
+    filter: brightness(1.15);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+/* Particle burst effect */
+@keyframes particleBurst {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(0);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) scale(1);
+  }
+}
+
+.task-completed-celebration {
+  animation: taskCelebrate 800ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+}
+
+/* Celebration particles */
+.task-completed-celebration::before,
+.task-completed-celebration::after {
+  content: '✨';
+  position: absolute;
+  font-size: 20px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.task-completed-celebration::before {
+  animation: particleBurst 1s ease-out;
+  --tx: -40px;
+  --ty: -40px;
+  left: 50%;
+  top: 50%;
+}
+
+.task-completed-celebration::after {
+  animation: particleBurst 1s ease-out;
+  animation-delay: 0.1s;
+  --tx: 40px;
+  --ty: -40px;
+  left: 50%;
+  top: 50%;
+}
+
+/* Success checkmark pop */
+@keyframes checkmarkPop {
+  0% {
+    transform: scale(0) rotate(-180deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.2) rotate(10deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.checkmark-celebration {
+  animation: checkmarkPop 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* ==========================================
+   PROGRESS BAR ANIMATIONS
+   ========================================== */
+
+/* Progress bar fill with easing */
+@keyframes progressBarFill {
+  from {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  to {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+.progress-bar-fill {
+  animation: progressBarFill 1000ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  transition: width 600ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  transform-origin: left;
+}
+
+/* Stagger multiple progress bars */
+.progress-bar-item:nth-child(1) .progress-bar-fill { animation-delay: 0ms; }
+.progress-bar-item:nth-child(2) .progress-bar-fill { animation-delay: 100ms; }
+.progress-bar-item:nth-child(3) .progress-bar-fill { animation-delay: 200ms; }
+.progress-bar-item:nth-child(4) .progress-bar-fill { animation-delay: 300ms; }
+.progress-bar-item:nth-child(5) .progress-bar-fill { animation-delay: 400ms; }
+.progress-bar-item:nth-child(6) .progress-bar-fill { animation-delay: 500ms; }
+
+/* Indeterminate progress bar */
+@keyframes progressIndeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+.progress-indeterminate::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 25%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.6), transparent);
+  animation: progressIndeterminate 1.5s ease-in-out infinite;
+}
+
+/* Circular progress (donut chart) */
+@keyframes circleProgress {
+  from {
+    stroke-dashoffset: var(--circumference);
+  }
+  to {
+    stroke-dashoffset: calc(var(--circumference) - (var(--circumference) * var(--progress) / 100));
+  }
+}
+
+.circle-progress {
+  stroke-dasharray: var(--circumference);
+  stroke-dashoffset: var(--circumference);
+  animation: circleProgress 1200ms cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+  transform-origin: center;
+  transform: rotate(-90deg);
+  transition: stroke-dashoffset 600ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* ==========================================
+   LIST ITEM STAGGERED ANIMATIONS
+   ========================================== */
+
+/* Enhanced slide-in with stagger */
+@keyframes listItemSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.activity-item,
+.task-item {
+  animation: listItemSlideIn 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  animation-fill-mode: both;
+}
+
+/* Extended stagger for longer lists */
+.activity-item:nth-child(1),
+.task-item:nth-child(1) { animation-delay: 0ms; }
+.activity-item:nth-child(2),
+.task-item:nth-child(2) { animation-delay: 60ms; }
+.activity-item:nth-child(3),
+.task-item:nth-child(3) { animation-delay: 120ms; }
+.activity-item:nth-child(4),
+.task-item:nth-child(4) { animation-delay: 180ms; }
+.activity-item:nth-child(5),
+.task-item:nth-child(5) { animation-delay: 240ms; }
+.activity-item:nth-child(6),
+.task-item:nth-child(6) { animation-delay: 300ms; }
+.activity-item:nth-child(7),
+.task-item:nth-child(7) { animation-delay: 360ms; }
+.activity-item:nth-child(8),
+.task-item:nth-child(8) { animation-delay: 420ms; }
+.activity-item:nth-child(9),
+.task-item:nth-child(9) { animation-delay: 480ms; }
+.activity-item:nth-child(10),
+.task-item:nth-child(10) { animation-delay: 540ms; }
+
+/* New item highlight at top of list */
+@keyframes newItemHighlight {
+  0% {
+    background: rgba(249, 115, 22, 0.3);
+    transform: scale(1.02);
+  }
+  100% {
+    background: transparent;
+    transform: scale(1);
+  }
+}
+
+.new-item-highlight {
+  animation: newItemHighlight 1000ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* ==========================================
+   MODAL/DIALOG ANIMATIONS
+   ========================================== */
+
+/* Backdrop fade with blur */
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+  }
+}
+
+@keyframes backdropFadeOut {
+  from {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+  }
+  to {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+}
+
+.modal-backdrop-enter {
+  animation: backdropFadeIn 300ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.modal-backdrop-exit {
+  animation: backdropFadeOut 200ms cubic-bezier(0.4, 0.0, 1, 1);
+}
+
+/* Modal content entrance with bounce */
+@keyframes modalContentEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(-30px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.02) translateY(0);
+  }
+  to {
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes modalContentExit {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.92) translateY(-30px);
+  }
+}
+
+.modal-content-enter {
+  animation: modalContentEnter 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.modal-content-exit {
+  animation: modalContentExit 200ms cubic-bezier(0.4, 0.0, 1, 1);
+}
+
+/* ==========================================
+   BUTTON PRESS ANIMATIONS
+   ========================================== */
+
+/* Enhanced button with ripple effect */
+.button-press {
+  position: relative;
+  overflow: hidden;
+  transition: all 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.button-press:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.button-press:active {
+  transform: translateY(0) scale(0.98);
+  transition: all 100ms cubic-bezier(0.4, 0.0, 1, 1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Ripple effect on click */
+@keyframes rippleEffect {
+  from {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(4);
+    opacity: 0;
+  }
+}
+
+.button-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.button-ripple::after {
+  content: '';
+  position: absolute;
+  top: var(--ripple-y, 50%);
+  left: var(--ripple-x, 50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%) scale(0);
+  pointer-events: none;
+}
+
+.button-ripple:active::after {
+  animation: rippleEffect 600ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* ==========================================
+   ENHANCED BADGE ANIMATIONS
+   ========================================== */
+
+/* Badge entrance with pop */
+@keyframes badgePopEnhanced {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-10deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.1) rotate(5deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.badge-pop {
+  animation: badgePopEnhanced 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Badge state change highlight */
+@keyframes badgeStateChange {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+    filter: brightness(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.badge-state-change {
+  animation: badgeStateChange 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* ==========================================
+   ICON HOVER ANIMATIONS
+   ========================================== */
+
+/* Icon bounce on hover */
+@keyframes iconBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.icon-hover-bounce:hover {
+  animation: iconBounce 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Icon rotate on hover */
+.icon-hover-rotate {
+  transition: transform 300ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.icon-hover-rotate:hover {
+  transform: rotate(15deg) scale(1.1);
+}
+
+/* Icon pulse on hover */
+@keyframes iconPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.icon-hover-pulse:hover {
+  animation: iconPulse 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* ==========================================
+   ACCESSIBILITY - REDUCED MOTION
+   ========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Disable all animations for users who prefer reduced motion */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Keep functional state changes but instant */
+  .skeleton-animated,
+  .loading-spinner,
+  .agent-status-indicator,
+  .progress-bar-fill,
+  .circle-progress {
+    animation: none !important;
+  }
+
+  /* Maintain layout transitions but instant */
+  .button-press:hover,
+  .card-glow:hover,
+  .tab-panel-enter,
+  .modal-content-enter {
+    animation: none !important;
+    transition-duration: 0ms !important;
+  }
+}
+
+/* ==========================================
+   PERFORMANCE OPTIMIZATION HELPERS
+   ========================================== */
+
+/* will-change for elements actively animating */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+.will-change-transform-opacity {
+  will-change: transform, opacity;
+}
+
+/* Remove will-change after animation */
+.animation-complete {
+  will-change: auto;
+}
+
+/* GPU acceleration hint */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* ==========================================
+   UTILITY CLASSES
+   ========================================== */
+
+/* Fade-in utility */
+.fade-in {
+  animation: fadeIn 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Slide-up utility */
+.slide-up {
+  animation: slideUp 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scale-in utility */
+.scale-in {
+  animation: scaleIn 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Rotate-in utility */
+.rotate-in {
+  animation: rotateIn 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes rotateIn {
+  from {
+    opacity: 0;
+    transform: rotate(-180deg) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+}

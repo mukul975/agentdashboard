@@ -1,0 +1,395 @@
+/**
+ * Claude Team Dashboard - Design Tokens
+ * Tailwind CSS v4 @theme Configuration
+ *
+ * This file defines all design tokens using Tailwind v4's CSS-first approach.
+ * All tokens are automatically available as:
+ * - Utility classes (e.g., bg-primary-500, text-neutral-300)
+ * - CSS variables (e.g., var(--color-primary-500))
+ */
+
+@import "tailwindcss";
+
+@theme {
+  /* ==========================================
+     COLOR SYSTEM - OKLCH Color Space
+     ========================================== */
+
+  /* Primary - Claude Orange (Enhanced Brand Colors) */
+  --color-primary-50: oklch(0.97 0.02 35);
+  --color-primary-100: oklch(0.94 0.05 40);
+  --color-primary-200: oklch(0.88 0.10 45);
+  --color-primary-300: oklch(0.80 0.15 45);
+  --color-primary-400: oklch(0.72 0.18 45);
+  --color-primary-500: oklch(0.68 0.20 40);   /* Main brand color */
+  --color-primary-600: oklch(0.60 0.21 35);
+  --color-primary-700: oklch(0.49 0.18 30);
+  --color-primary-800: oklch(0.40 0.14 28);
+  --color-primary-900: oklch(0.32 0.10 25);
+  --color-primary-950: oklch(0.20 0.06 22);
+
+  /* Neutral - Dark Mode Optimized (Charcoal Scale) */
+  --color-neutral-950: oklch(0.12 0.01 240);  /* Deep charcoal, not pure black */
+  --color-neutral-900: oklch(0.18 0.01 245);  /* Background dark */
+  --color-neutral-850: oklch(0.20 0.01 245);  /* Card background */
+  --color-neutral-800: oklch(0.24 0.01 248);  /* Elevated surface */
+  --color-neutral-700: oklch(0.32 0.01 250);  /* Borders */
+  --color-neutral-600: oklch(0.42 0.01 252);  /* Dividers */
+  --color-neutral-500: oklch(0.52 0.01 255);  /* Muted text */
+  --color-neutral-400: oklch(0.62 0.01 258);  /* Secondary text */
+  --color-neutral-300: oklch(0.72 0.01 260);  /* Primary text (dark mode) */
+  --color-neutral-200: oklch(0.82 0.01 262);  /* Off-white text */
+  --color-neutral-100: oklch(0.92 0.01 265);  /* Almost white */
+  --color-neutral-50: oklch(0.98 0.01 268);   /* Pure white alternative */
+
+  /* Success - Green */
+  --color-success-50: oklch(0.95 0.05 145);
+  --color-success-100: oklch(0.90 0.08 145);
+  --color-success-200: oklch(0.85 0.10 145);
+  --color-success-300: oklch(0.78 0.13 145);
+  --color-success-400: oklch(0.70 0.15 145);
+  --color-success-500: oklch(0.62 0.18 142);
+  --color-success-600: oklch(0.52 0.16 140);
+  --color-success-700: oklch(0.42 0.14 138);
+  --color-success-800: oklch(0.35 0.11 136);
+  --color-success-900: oklch(0.28 0.08 134);
+
+  /* Warning - Amber/Yellow */
+  --color-warning-50: oklch(0.96 0.04 90);
+  --color-warning-100: oklch(0.92 0.08 88);
+  --color-warning-200: oklch(0.88 0.10 86);
+  --color-warning-300: oklch(0.84 0.11 84);
+  --color-warning-400: oklch(0.80 0.12 85);
+  --color-warning-500: oklch(0.74 0.14 82);
+  --color-warning-600: oklch(0.64 0.15 78);
+  --color-warning-700: oklch(0.52 0.13 75);
+  --color-warning-800: oklch(0.42 0.10 72);
+  --color-warning-900: oklch(0.35 0.08 70);
+
+  /* Error - Red */
+  --color-error-50: oklch(0.95 0.05 25);
+  --color-error-100: oklch(0.90 0.08 25);
+  --color-error-200: oklch(0.85 0.12 25);
+  --color-error-300: oklch(0.75 0.16 25);
+  --color-error-400: oklch(0.65 0.20 25);
+  --color-error-500: oklch(0.58 0.22 23);
+  --color-error-600: oklch(0.50 0.20 20);
+  --color-error-700: oklch(0.42 0.18 18);
+  --color-error-800: oklch(0.35 0.15 16);
+  --color-error-900: oklch(0.28 0.12 14);
+
+  /* Info - Blue */
+  --color-info-50: oklch(0.95 0.04 245);
+  --color-info-100: oklch(0.90 0.06 245);
+  --color-info-200: oklch(0.85 0.08 245);
+  --color-info-300: oklch(0.78 0.11 245);
+  --color-info-400: oklch(0.70 0.13 245);
+  --color-info-500: oklch(0.62 0.15 242);
+  --color-info-600: oklch(0.52 0.16 240);
+  --color-info-700: oklch(0.42 0.14 238);
+  --color-info-800: oklch(0.35 0.12 236);
+  --color-info-900: oklch(0.28 0.10 234);
+
+  /* Purple - Accent */
+  --color-purple-50: oklch(0.95 0.04 295);
+  --color-purple-100: oklch(0.90 0.06 295);
+  --color-purple-200: oklch(0.85 0.08 295);
+  --color-purple-300: oklch(0.78 0.11 295);
+  --color-purple-400: oklch(0.72 0.14 295);
+  --color-purple-500: oklch(0.64 0.16 292);
+  --color-purple-600: oklch(0.54 0.17 290);
+  --color-purple-700: oklch(0.44 0.15 288);
+  --color-purple-800: oklch(0.36 0.13 286);
+  --color-purple-900: oklch(0.28 0.10 284);
+
+  /* Cyan - Accent */
+  --color-cyan-50: oklch(0.95 0.03 200);
+  --color-cyan-100: oklch(0.90 0.05 200);
+  --color-cyan-200: oklch(0.85 0.07 200);
+  --color-cyan-300: oklch(0.80 0.09 200);
+  --color-cyan-400: oklch(0.75 0.10 200);
+  --color-cyan-500: oklch(0.67 0.12 198);
+  --color-cyan-600: oklch(0.57 0.13 195);
+  --color-cyan-700: oklch(0.47 0.11 192);
+  --color-cyan-800: oklch(0.38 0.09 190);
+  --color-cyan-900: oklch(0.30 0.07 188);
+
+  /* ==========================================
+     SPACING SYSTEM - 8px Base Grid
+     ========================================== */
+
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;    /* 4px */
+  --spacing-2: 0.5rem;     /* 8px */
+  --spacing-3: 0.75rem;    /* 12px */
+  --spacing-4: 1rem;       /* 16px */
+  --spacing-5: 1.25rem;    /* 20px */
+  --spacing-6: 1.5rem;     /* 24px */
+  --spacing-7: 1.75rem;    /* 28px */
+  --spacing-8: 2rem;       /* 32px */
+  --spacing-9: 2.25rem;    /* 36px */
+  --spacing-10: 2.5rem;    /* 40px */
+  --spacing-11: 2.75rem;   /* 44px */
+  --spacing-12: 3rem;      /* 48px */
+  --spacing-14: 3.5rem;    /* 56px */
+  --spacing-16: 4rem;      /* 64px */
+  --spacing-20: 5rem;      /* 80px */
+  --spacing-24: 6rem;      /* 96px */
+  --spacing-32: 8rem;      /* 128px */
+  --spacing-40: 10rem;     /* 160px */
+
+  /* ==========================================
+     TYPOGRAPHY SYSTEM
+     ========================================== */
+
+  /* Font Families */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+               'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
+               'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-mono: 'Menlo', 'Monaco', 'Courier New', monospace;
+
+  /* Font Sizes - Perfect Fourth Scale (1.333) */
+  --font-size-xs: 0.75rem;      /* 12px */
+  --font-size-sm: 0.875rem;     /* 14px */
+  --font-size-base: 1rem;       /* 16px */
+  --font-size-lg: 1.125rem;     /* 18px */
+  --font-size-xl: 1.25rem;      /* 20px */
+  --font-size-2xl: 1.5rem;      /* 24px */
+  --font-size-3xl: 1.875rem;    /* 30px */
+  --font-size-4xl: 2.25rem;     /* 36px */
+  --font-size-5xl: 3rem;        /* 48px */
+  --font-size-6xl: 3.75rem;     /* 60px */
+
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Line Heights */
+  --line-height-none: 1;
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.6;
+  --line-height-relaxed: 1.75;
+  --line-height-loose: 2;
+
+  /* Letter Spacing */
+  --letter-spacing-tighter: -0.05em;
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: -0.011em;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+
+  /* ==========================================
+     BORDER RADIUS
+     ========================================== */
+
+  --radius-none: 0;
+  --radius-sm: 0.25rem;      /* 4px */
+  --radius-base: 0.5rem;     /* 8px */
+  --radius-md: 0.75rem;      /* 12px */
+  --radius-lg: 1rem;         /* 16px */
+  --radius-xl: 1.25rem;      /* 20px */
+  --radius-2xl: 1.5rem;      /* 24px */
+  --radius-3xl: 2rem;        /* 32px */
+  --radius-full: 9999px;
+
+  /* ==========================================
+     SHADOWS - Elevation System
+     ========================================== */
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-base: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.15), 0 8px 12px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2), 0 12px 16px rgba(0, 0, 0, 0.15);
+  --shadow-2xl: 0 32px 64px rgba(0, 0, 0, 0.3), 0 16px 24px rgba(0, 0, 0, 0.2);
+
+  /* ==========================================
+     BREAKPOINTS
+     ========================================== */
+
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  --breakpoint-3xl: 1920px;
+
+  /* ==========================================
+     ANIMATION DURATIONS
+     ========================================== */
+
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-medium: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 700ms;
+
+  /* ==========================================
+     Z-INDEX LAYERS
+     ========================================== */
+
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+}
+
+/* ==========================================
+   CUSTOM CSS VARIABLES (Runtime Access)
+   ========================================== */
+
+:root {
+  /* Surface Colors */
+  --surface-base: var(--color-neutral-900);
+  --surface-elevated-1: var(--color-neutral-850);
+  --surface-elevated-2: var(--color-neutral-800);
+  --surface-elevated-3: var(--color-neutral-700);
+
+  /* Glass Effect */
+  --surface-glass: rgba(30, 41, 59, 0.6);
+  --surface-glass-border: rgba(255, 255, 255, 0.1);
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+  --gradient-dark-base: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 25%, #0f1729 50%, #1e2538 75%, #0a0e1a 100%);
+  --gradient-card: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%);
+  --gradient-card-hover: linear-gradient(135deg, rgba(30, 41, 59, 1) 0%, rgba(15, 23, 42, 0.95) 100%);
+
+  /* Accent Gradients */
+  --gradient-orange-glow: linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.5), transparent);
+  --gradient-blue: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+  --gradient-green: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+  --gradient-purple: linear-gradient(90deg, #a855f7 0%, #c084fc 100%);
+
+  /* Glow Shadows */
+  --shadow-glow-orange: 0 0 30px rgba(249, 115, 22, 0.4), 0 8px 24px rgba(249, 115, 22, 0.2);
+  --shadow-glow-blue: 0 0 30px rgba(59, 130, 246, 0.4), 0 8px 24px rgba(59, 130, 246, 0.2);
+  --shadow-glow-green: 0 0 30px rgba(34, 197, 94, 0.4), 0 8px 24px rgba(34, 197, 94, 0.2);
+  --shadow-glow-purple: 0 0 30px rgba(168, 85, 247, 0.4), 0 8px 24px rgba(168, 85, 247, 0.2);
+
+  /* Easing Functions */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Opacity Scale */
+  --opacity-0: 0;
+  --opacity-5: 0.05;
+  --opacity-10: 0.1;
+  --opacity-20: 0.2;
+  --opacity-30: 0.3;
+  --opacity-40: 0.4;
+  --opacity-50: 0.5;
+  --opacity-60: 0.6;
+  --opacity-70: 0.7;
+  --opacity-80: 0.8;
+  --opacity-90: 0.9;
+  --opacity-95: 0.95;
+  --opacity-100: 1;
+
+  /* Color Scheme */
+  color-scheme: dark;
+}
+
+/* ==========================================
+   GLOBAL BASE STYLES
+   ========================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--gradient-dark-base);
+  background-size: 400% 400%;
+  animation: gradientShift 20s ease infinite;
+  color: var(--color-neutral-300);
+  min-height: 100vh;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ==========================================
+   ACCESSIBILITY - Focus Indicators
+   ========================================== */
+
+*:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ==========================================
+   REDUCED MOTION
+   ========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==========================================
+   TEXT SELECTION
+   ========================================== */
+
+::selection {
+  background: rgba(249, 115, 22, 0.3);
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background: rgba(249, 115, 22, 0.3);
+  color: #ffffff;
+}
+
+/* ==========================================
+   SCROLLBAR STYLING (Dark Mode)
+   ========================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-neutral-900);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-700);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neutral-600);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-neutral-700) var(--color-neutral-900);
+}

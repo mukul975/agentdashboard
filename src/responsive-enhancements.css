@@ -1,0 +1,642 @@
+/* ========================================
+   RESPONSIVE DESIGN ENHANCEMENTS
+   Mobile-First Premium Experience
+   ======================================== */
+
+/* ==========================================
+   MOBILE OPTIMIZATIONS (< 640px)
+   ========================================== */
+
+@media (max-width: 640px) {
+  /* Reduced card border radius for mobile */
+  .card, .stat-card {
+    border-radius: 16px !important;
+    padding: 1.25rem !important;
+  }
+
+  /* Smaller shadows for mobile */
+  .card:hover, .stat-card:hover {
+    transform: translateY(-4px) scale(1.005);
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.5),
+      0 8px 16px rgba(0, 0, 0, 0.3),
+      0 0 40px rgba(249, 115, 22, 0.1);
+  }
+
+  /* Optimized buttons for touch */
+  button, .btn {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 20px;
+    border-radius: 10px;
+  }
+
+  /* Badge adjustments */
+  .badge {
+    padding: 6px 14px !important;
+    font-size: 11px;
+  }
+
+  /* Icon containers smaller on mobile */
+  .icon-container {
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  /* Progress bars slightly thicker for visibility */
+  .progress-bar {
+    height: 8px;
+  }
+
+  /* Reduce heading sizes */
+  h1 {
+    font-size: 1.75rem; /* 28px */
+    line-height: 1.2;
+  }
+
+  h2 {
+    font-size: 1.5rem; /* 24px */
+    line-height: 1.25;
+  }
+
+  h3 {
+    font-size: 1.25rem; /* 20px */
+    line-height: 1.3;
+  }
+
+  /* Stat numbers smaller on mobile */
+  .stat-number {
+    font-size: 1.875rem; /* 30px */
+  }
+
+  /* Reduce spacing */
+  .gap-6 {
+    gap: 1rem; /* 16px */
+  }
+
+  .gap-4 {
+    gap: 0.75rem; /* 12px */
+  }
+
+  /* Scrollbar thinner on mobile */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  /* Simplified animations for performance */
+  .card::before,
+  .stat-card::before,
+  .icon-container::before {
+    animation: none;
+  }
+
+  /* Touch-friendly spacing */
+  nav[role="tablist"] button {
+    padding: 12px 16px;
+    min-width: auto;
+  }
+
+  /* Mobile-specific utility classes */
+  .mobile-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Reduce glow effects for battery */
+  .badge::before,
+  .live-indicator,
+  .section-divider::before {
+    animation-duration: 3s;
+  }
+}
+
+/* ==========================================
+   TABLET OPTIMIZATIONS (641px - 1024px)
+   ========================================== */
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  /* Medium card styling */
+  .card, .stat-card {
+    border-radius: 18px !important;
+    padding: 1.5rem !important;
+  }
+
+  /* Tablet-optimized grid */
+  .tablet-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  /* Button sizing for tablets */
+  button, .btn {
+    padding: 10px 18px;
+    border-radius: 11px;
+  }
+
+  /* Icon containers medium size */
+  .icon-container {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  /* Balanced hover effects */
+  .card:hover, .stat-card:hover {
+    transform: translateY(-5px) scale(1.008);
+  }
+
+  /* Optimized badge size */
+  .badge {
+    padding: 7px 16px !important;
+    font-size: 11.5px;
+  }
+}
+
+/* ==========================================
+   DESKTOP OPTIMIZATIONS (1025px - 1440px)
+   ========================================== */
+
+@media (min-width: 1025px) and (max-width: 1440px) {
+  /* Standard desktop cards */
+  .card, .stat-card {
+    border-radius: 20px !important;
+  }
+
+  /* Desktop grid layouts */
+  .desktop-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .desktop-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Full hover effects */
+  .card:hover, .stat-card:hover {
+    transform: translateY(-6px) scale(1.01);
+  }
+}
+
+/* ==========================================
+   LARGE DESKTOP (> 1440px)
+   ========================================== */
+
+@media (min-width: 1441px) {
+  /* Larger cards for big screens */
+  .card, .stat-card {
+    border-radius: 22px !important;
+    padding: 2rem !important;
+  }
+
+  /* Enhanced spacing */
+  .container {
+    max-width: 1600px;
+  }
+
+  /* Larger icon containers */
+  .icon-container {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  /* Larger badges */
+  .badge {
+    padding: 9px 20px !important;
+    font-size: 13px;
+  }
+
+  /* Enhanced stat numbers */
+  .stat-number {
+    font-size: 2.5rem; /* 40px */
+  }
+
+  /* More dramatic hover effects */
+  .card:hover, .stat-card:hover {
+    transform: translateY(-8px) scale(1.015);
+  }
+}
+
+/* ==========================================
+   ULTRA-WIDE DISPLAYS (> 1920px)
+   ========================================== */
+
+@media (min-width: 1921px) {
+  .container {
+    max-width: 1800px;
+  }
+
+  /* Maximum card size */
+  .card, .stat-card {
+    border-radius: 24px !important;
+  }
+
+  /* Grid for ultra-wide */
+  .ultrawide-grid-6 {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 2rem;
+  }
+}
+
+/* ==========================================
+   LANDSCAPE MOBILE (Small Height)
+   ========================================== */
+
+@media (max-height: 600px) and (orientation: landscape) {
+  /* Compact header */
+  header {
+    padding: 0.75rem 1.5rem;
+  }
+
+  /* Reduce vertical spacing */
+  .card, .stat-card {
+    padding: 1rem !important;
+  }
+
+  /* Compact stat cards */
+  .stat-number {
+    font-size: 1.5rem; /* 24px */
+    margin-bottom: 0.25rem;
+  }
+
+  /* Smaller gaps */
+  .gap-6 {
+    gap: 0.75rem;
+  }
+
+  .space-y-6 > * + * {
+    margin-top: 1rem;
+  }
+
+  /* Compact badges */
+  .badge {
+    padding: 4px 12px !important;
+    font-size: 10px;
+  }
+}
+
+/* ==========================================
+   PRINT STYLES
+   ========================================== */
+
+@media print {
+  /* Remove animations */
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Simplify shadows */
+  .card, .stat-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* Hide interactive elements */
+  button,
+  nav[role="tablist"],
+  .connection-status {
+    display: none !important;
+  }
+
+  /* Black and white mode */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .card, .stat-card {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    page-break-inside: avoid;
+  }
+
+  /* Ensure text is readable */
+  .text-white,
+  .text-gray-300,
+  .text-gray-400 {
+    color: black !important;
+  }
+}
+
+/* ==========================================
+   TOUCH DEVICE ENHANCEMENTS
+   ========================================== */
+
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets */
+  button, a, input, select, textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Remove hover-only effects */
+  .card:hover::before,
+  .stat-card:hover::before,
+  .icon-container:hover::before {
+    opacity: 0 !important;
+  }
+
+  /* Simplify hover states to active states */
+  .card:active,
+  .stat-card:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+
+  /* No hover effects on badges */
+  .badge:hover {
+    transform: none;
+  }
+
+  /* Touch feedback for buttons */
+  button:active,
+  .btn:active {
+    transform: scale(0.96);
+    transition: transform 0.1s ease;
+  }
+
+  /* Disable complex animations for performance */
+  .shimmer-text,
+  .progress-fill::after,
+  .icon-container::before {
+    animation: none !important;
+  }
+}
+
+/* ==========================================
+   HIGH DPI DISPLAYS (Retina)
+   ========================================== */
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Sharper borders */
+  .card, .stat-card {
+    border-width: 0.5px;
+  }
+
+  /* Enhanced text rendering */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Crisp shadows */
+  .card, .stat-card {
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.55),
+      0 8px 24px rgba(0, 0, 0, 0.35),
+      0 2px 8px rgba(0, 0, 0, 0.25),
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* ==========================================
+   DARK MODE ENHANCEMENTS
+   ========================================== */
+
+@media (prefers-color-scheme: dark) {
+  /* Already optimized for dark mode */
+  /* These are optional enhancements */
+
+  /* Slightly brighter in pure dark mode preference */
+  .card, .stat-card {
+    background: linear-gradient(
+      135deg,
+      rgba(30, 41, 59, 0.99) 0%,
+      rgba(15, 23, 42, 0.97) 100%
+    );
+  }
+
+  /* Enhanced contrast */
+  .text-white {
+    color: #ffffff;
+  }
+
+  .text-gray-400 {
+    color: #a1a1aa;
+  }
+}
+
+/* ==========================================
+   LIGHT MODE (Optional Support)
+   ========================================== */
+
+@media (prefers-color-scheme: light) {
+  /* Light mode overrides if needed in future */
+  /* Currently dashboard is dark-only by design */
+
+  body {
+    /* Keep dark theme for consistency */
+    color-scheme: dark;
+  }
+}
+
+/* ==========================================
+   CONTRAST PREFERENCES
+   ========================================== */
+
+@media (prefers-contrast: high) {
+  /* Enhanced borders */
+  .card, .stat-card {
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* Stronger text contrast */
+  .text-gray-400 {
+    color: #d1d5db !important;
+  }
+
+  /* More visible focus states */
+  *:focus-visible {
+    outline-width: 4px;
+    outline-offset: 4px;
+  }
+
+  /* Stronger badge borders */
+  .badge {
+    border-width: 2px !important;
+  }
+}
+
+@media (prefers-contrast: low) {
+  /* Softer shadows */
+  .card, .stat-card {
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.3),
+      0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Subtler borders */
+  .card, .stat-card {
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* ==========================================
+   SAFE AREA INSETS (iOS Notch Support)
+   ========================================== */
+
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+
+  header {
+    padding-left: max(1.5rem, env(safe-area-inset-left));
+    padding-right: max(1.5rem, env(safe-area-inset-right));
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+
+  footer {
+    padding-left: max(1.5rem, env(safe-area-inset-left));
+    padding-right: max(1.5rem, env(safe-area-inset-right));
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* ==========================================
+   UTILITY CLASSES FOR RESPONSIVE
+   ========================================== */
+
+/* Hide on mobile */
+@media (max-width: 640px) {
+  .mobile-hide {
+    display: none !important;
+  }
+}
+
+/* Hide on tablet */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tablet-hide {
+    display: none !important;
+  }
+}
+
+/* Hide on desktop */
+@media (min-width: 1025px) {
+  .desktop-hide {
+    display: none !important;
+  }
+}
+
+/* Show only on mobile */
+.mobile-only {
+  display: block;
+}
+
+@media (min-width: 641px) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+/* Show only on tablet */
+.tablet-only {
+  display: none;
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tablet-only {
+    display: block !important;
+  }
+}
+
+/* Show only on desktop */
+.desktop-only {
+  display: none;
+}
+
+@media (min-width: 1025px) {
+  .desktop-only {
+    display: block !important;
+  }
+}
+
+/* ==========================================
+   RESPONSIVE TYPOGRAPHY SCALE
+   ========================================== */
+
+/* Fluid typography that scales with viewport */
+@media (min-width: 640px) {
+  .fluid-text-xl {
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+  }
+
+  .fluid-text-2xl {
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+  }
+
+  .fluid-text-3xl {
+    font-size: clamp(1.875rem, 3vw, 2.5rem);
+  }
+
+  .fluid-text-4xl {
+    font-size: clamp(2.25rem, 4vw, 3rem);
+  }
+}
+
+/* ==========================================
+   PERFORMANCE OPTIMIZATIONS
+   ========================================== */
+
+/* Reduce motion on low-end devices */
+@media (prefers-reduced-motion: reduce) {
+  /* Instant transitions */
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Disable infinite animations */
+  .badge::before,
+  .icon-container::before,
+  .card::before,
+  .stat-card::before,
+  .progress-fill,
+  .progress-fill::after,
+  .live-indicator,
+  .live-indicator::before,
+  .live-indicator::after,
+  .shimmer-text,
+  .section-divider::before {
+    animation: none !important;
+  }
+}
+
+/* ==========================================
+   CONTAINER QUERIES (Modern Browsers)
+   ========================================== */
+
+@supports (container-type: inline-size) {
+  .stat-card-container {
+    container-type: inline-size;
+  }
+
+  @container (min-width: 300px) {
+    .stat-card {
+      padding: 1.5rem !important;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+    }
+  }
+
+  @container (min-width: 400px) {
+    .stat-card {
+      padding: 2rem !important;
+    }
+
+    .stat-number {
+      font-size: 2.25rem;
+    }
+  }
+}

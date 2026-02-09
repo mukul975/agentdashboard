@@ -1,69 +1,203 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Users, ListTodo, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Users, ListTodo, Clock, CheckCircle, AlertCircle, TrendingUp } from 'lucide-react';
 
 export function StatsOverview({ stats }) {
+  const [animatedValues, setAnimatedValues] = useState({});
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
+  // Animate counter when stats change
+  useEffect(() => {
+    if (!stats) return;
+
+    const duration = 1000; // 1 second
+    const steps = 30;
+    const stepDuration = duration / steps;
+
+    Object.keys(stats).forEach((key) => {
+      const target = stats[key];
+      const start = animatedValues[key] || 0;
+      const increment = (target - start) / steps;
+
+      let currentStep = 0;
+      const timer = setInterval(() => {
+        currentStep++;
+        if (currentStep >= steps) {
+          setAnimatedValues(prev => ({ ...prev, [key]: target }));
+          clearInterval(timer);
+        } else {
+          setAnimatedValues(prev => ({
+            ...prev,
+            [key]: Math.round(start + increment * currentStep)
+          }));
+        }
+      }, stepDuration);
+
+      return () => clearInterval(timer);
+    });
+  }, [stats]);
+
   if (!stats) return null;
 
   const statCards = [
     {
       label: 'Active Teams',
-      value: stats.totalTeams,
+      key: 'totalTeams',
       icon: Users,
-      color: 'text-blue-400',
-      bgColor: 'bg-blue-500/10'
+      gradient: 'linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(37, 99, 235, 0.15) 100%)',
+      iconColor: '#60a5fa',
+      glowColor: 'rgba(59, 130, 246, 0.4)',
+      borderColor: 'rgba(59, 130, 246, 0.3)'
     },
     {
       label: 'Total Agents',
-      value: stats.totalAgents,
+      key: 'totalAgents',
       icon: Users,
-      color: 'text-purple-400',
-      bgColor: 'bg-purple-500/10'
+      gradient: 'linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(147, 51, 234, 0.15) 100%)',
+      iconColor: '#c084fc',
+      glowColor: 'rgba(168, 85, 247, 0.4)',
+      borderColor: 'rgba(168, 85, 247, 0.3)'
     },
     {
       label: 'Total Tasks',
-      value: stats.totalTasks,
+      key: 'totalTasks',
       icon: ListTodo,
-      color: 'text-cyan-400',
-      bgColor: 'bg-cyan-500/10'
+      gradient: 'linear-gradient(135deg, rgba(6, 182, 212, 0.25) 0%, rgba(14, 165, 233, 0.15) 100%)',
+      iconColor: '#22d3ee',
+      glowColor: 'rgba(6, 182, 212, 0.4)',
+      borderColor: 'rgba(6, 182, 212, 0.3)'
     },
     {
       label: 'In Progress',
-      value: stats.inProgressTasks,
+      key: 'inProgressTasks',
       icon: Clock,
-      color: 'text-blue-400',
-      bgColor: 'bg-blue-500/10'
+      gradient: 'linear-gradient(135deg, rgba(249, 115, 22, 0.25) 0%, rgba(251, 146, 60, 0.15) 100%)',
+      iconColor: '#fb923c',
+      glowColor: 'rgba(249, 115, 22, 0.4)',
+      borderColor: 'rgba(249, 115, 22, 0.3)'
     },
     {
       label: 'Completed',
-      value: stats.completedTasks,
+      key: 'completedTasks',
       icon: CheckCircle,
-      color: 'text-green-400',
-      bgColor: 'bg-green-500/10'
+      gradient: 'linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(21, 128, 61, 0.15) 100%)',
+      iconColor: '#4ade80',
+      glowColor: 'rgba(34, 197, 94, 0.4)',
+      borderColor: 'rgba(34, 197, 94, 0.3)'
     },
     {
       label: 'Blocked',
-      value: stats.blockedTasks,
+      key: 'blockedTasks',
       icon: AlertCircle,
-      color: 'text-red-400',
-      bgColor: 'bg-red-500/10'
+      gradient: 'linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.15) 100%)',
+      iconColor: '#f87171',
+      glowColor: 'rgba(239, 68, 68, 0.4)',
+      borderColor: 'rgba(239, 68, 68, 0.3)'
     }
   ];
 
   return (
-    <div className="card p-4 mb-4">
+    <div
+      className="rounded-2xl p-6 mb-6"
+      style={{
+        background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)',
+        border: '1px solid rgba(249, 115, 22, 0.15)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+        backdropFilter: 'blur(16px)'
+      }}
+    >
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {statCards.map((stat, index) => {
           const Icon = stat.icon;
+          const value = animatedValues[stat.key] ?? stats[stat.key] ?? 0;
+
           return (
-            <div key={index} className="flex items-center gap-3">
-              <div className={`${stat.bgColor} p-2 rounded-lg flex-shrink-0`}>
-                <Icon className={`${stat.color} h-4 w-4`} />
+            <div
+              key={stat.key}
+              className="relative group rounded-xl p-4 transition-all duration-300"
+              style={{
+                background: stat.gradient,
+                border: `1px solid ${stat.borderColor}`,
+                boxShadow: `0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08)`,
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? 'translateY(0)' : 'translateY(10px)',
+                transitionDelay: `${index * 80}ms`
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
+                e.currentTarget.style.boxShadow = `0 8px 24px ${stat.glowColor}, inset 0 1px 0 rgba(255, 255, 255, 0.12)`;
+                e.currentTarget.style.borderColor = stat.borderColor;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08)';
+                e.currentTarget.style.borderColor = stat.borderColor;
+              }}
+            >
+              {/* Icon */}
+              <div
+                className="inline-flex p-2.5 rounded-lg mb-3 transition-transform duration-300 group-hover:scale-110"
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  boxShadow: `0 2px 8px ${stat.glowColor}, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
+                  border: `1px solid ${stat.borderColor}`
+                }}
+              >
+                <Icon
+                  className="h-5 w-5"
+                  style={{
+                    color: stat.iconColor,
+                    filter: `drop-shadow(0 0 8px ${stat.glowColor})`
+                  }}
+                />
               </div>
-              <div>
-                <p className="text-gray-400 text-xs">{stat.label}</p>
-                <p className="text-xl font-bold text-white">{stat.value}</p>
+
+              {/* Value */}
+              <div className="mb-1">
+                <p
+                  className="text-3xl font-extrabold tabular-nums"
+                  style={{
+                    color: '#ffffff',
+                    letterSpacing: '-0.03em',
+                    textShadow: `0 2px 4px rgba(0, 0, 0, 0.3), 0 0 12px ${stat.glowColor}`,
+                    lineHeight: 1
+                  }}
+                >
+                  {value}
+                </p>
               </div>
+
+              {/* Label */}
+              <p
+                className="text-xs font-semibold uppercase tracking-wider"
+                style={{
+                  color: 'rgba(209, 213, 219, 0.7)',
+                  letterSpacing: '0.05em'
+                }}
+              >
+                {stat.label}
+              </p>
+
+              {/* Hover Glow Effect */}
+              <div
+                className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                style={{
+                  background: `radial-gradient(circle at center, ${stat.glowColor}, transparent 70%)`
+                }}
+              />
+
+              {/* Top Border Accent */}
+              <div
+                className="absolute top-0 left-0 right-0 h-1 rounded-t-xl"
+                style={{
+                  background: `linear-gradient(90deg, transparent, ${stat.iconColor}, transparent)`,
+                  opacity: 0.6
+                }}
+              />
             </div>
           );
         })}

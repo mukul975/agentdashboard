@@ -1,43 +1,152 @@
-import React from 'react';
-import { Bot, Crown, Cpu } from 'lucide-react';
+import React, { useState } from 'react';
+import { Bot, Crown, Cpu, Zap } from 'lucide-react';
 
 export function AgentCard({ agent, isLead }) {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
-    <div className={`bg-gray-700/50 rounded-lg p-4 border ${
-      isLead ? 'border-yellow-500/50' : 'border-gray-600'
-    }`}>
-      <div className="flex items-start justify-between">
-        <div className="flex items-start gap-3 flex-1">
-          <div className={`p-2 rounded-lg ${
-            isLead ? 'bg-yellow-500/20' : 'bg-blue-500/20'
-          }`}>
+    <div
+      className="relative group rounded-2xl p-5 transition-all duration-300"
+      style={{
+        background: isLead
+          ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.12) 0%, rgba(202, 138, 4, 0.08) 100%)'
+          : 'linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(37, 99, 235, 0.08) 100%)',
+        border: `2px solid ${isLead ? 'rgba(234, 179, 8, 0.3)' : 'rgba(59, 130, 246, 0.25)'}`,
+        boxShadow: isHovered
+          ? `0 8px 24px ${isLead ? 'rgba(234, 179, 8, 0.25)' : 'rgba(59, 130, 246, 0.2)'}, inset 0 1px 0 rgba(255, 255, 255, 0.1)`
+          : '0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+        transform: isHovered ? 'translateY(-4px) scale(1.02)' : 'translateY(0) scale(1)',
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Gradient Border Animation */}
+      <div
+        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        style={{
+          background: isLead
+            ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.2), transparent 50%, rgba(234, 179, 8, 0.1))'
+            : 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), transparent 50%, rgba(59, 130, 246, 0.1))',
+          pointerEvents: 'none'
+        }}
+      />
+
+      <div className="flex items-start justify-between relative z-10">
+        <div className="flex items-start gap-4 flex-1">
+          {/* Icon Container with Glow */}
+          <div
+            className="relative p-3 rounded-xl transition-all duration-300"
+            style={{
+              background: isLead
+                ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.25) 0%, rgba(202, 138, 4, 0.15) 100%)'
+                : 'linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(37, 99, 235, 0.15) 100%)',
+              boxShadow: isHovered
+                ? `0 4px 16px ${isLead ? 'rgba(234, 179, 8, 0.4)' : 'rgba(59, 130, 246, 0.35)'}, inset 0 1px 0 rgba(255, 255, 255, 0.15)`
+                : `0 2px 8px ${isLead ? 'rgba(234, 179, 8, 0.3)' : 'rgba(59, 130, 246, 0.25)'}, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
+              border: `1px solid ${isLead ? 'rgba(234, 179, 8, 0.4)' : 'rgba(59, 130, 246, 0.35)'}`,
+              transform: isHovered ? 'scale(1.1) rotate(-5deg)' : 'scale(1) rotate(0deg)'
+            }}
+          >
             {isLead ? (
-              <Crown className="h-5 w-5 text-yellow-400" />
+              <Crown
+                className="h-6 w-6"
+                style={{
+                  color: '#facc15',
+                  filter: 'drop-shadow(0 0 8px rgba(234, 179, 8, 0.6))'
+                }}
+              />
             ) : (
-              <Bot className="h-5 w-5 text-blue-400" />
+              <Bot
+                className="h-6 w-6"
+                style={{
+                  color: '#60a5fa',
+                  filter: 'drop-shadow(0 0 8px rgba(59, 130, 246, 0.5))'
+                }}
+              />
+            )}
+
+            {/* Pulsing Glow Effect */}
+            {isHovered && (
+              <div
+                className="absolute inset-0 rounded-xl animate-pulse"
+                style={{
+                  background: isLead
+                    ? 'radial-gradient(circle, rgba(234, 179, 8, 0.3), transparent 70%)'
+                    : 'radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent 70%)',
+                  zIndex: -1
+                }}
+              />
             )}
           </div>
+
+          {/* Agent Details */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <h5 className="text-white font-semibold truncate">{agent.name}</h5>
+            <div className="flex items-center gap-2 mb-2">
+              <h5
+                className="text-white font-bold text-lg truncate"
+                style={{
+                  letterSpacing: '-0.01em',
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+                }}
+              >
+                {agent.name}
+              </h5>
+
               {isLead && (
-                <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs rounded-full border border-yellow-500/30">
+                <span
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.3) 0%, rgba(202, 138, 4, 0.2) 100%)',
+                    color: '#facc15',
+                    border: '1px solid rgba(234, 179, 8, 0.5)',
+                    boxShadow: '0 2px 8px rgba(234, 179, 8, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+                    textShadow: '0 0 10px rgba(234, 179, 8, 0.4)'
+                  }}
+                >
+                  <Zap className="h-3 w-3" />
                   Lead
                 </span>
               )}
             </div>
+
             {agent.agentType && (
-              <div className="flex items-center gap-1.5 text-gray-400 text-sm">
-                <Cpu className="h-3.5 w-3.5" />
-                <span className="truncate">{agent.agentType}</span>
+              <div
+                className="flex items-center gap-2 mb-2 px-2.5 py-1 rounded-lg inline-flex"
+                style={{
+                  background: 'rgba(55, 65, 81, 0.4)',
+                  border: '1px solid rgba(75, 85, 99, 0.3)'
+                }}
+              >
+                <Cpu className="h-4 w-4 text-gray-400" />
+                <span className="text-sm text-gray-300 truncate font-medium">
+                  {agent.agentType}
+                </span>
               </div>
             )}
-            <p className="text-xs text-gray-500 mt-1 truncate" title={agent.agentId}>
-              ID: {agent.agentId?.substring(0, 8)}...
+
+            <p
+              className="text-xs font-mono truncate"
+              style={{
+                color: 'rgba(156, 163, 175, 0.8)'
+              }}
+              title={agent.agentId}
+            >
+              ID: {agent.agentId?.substring(0, 12)}...
             </p>
           </div>
         </div>
       </div>
+
+      {/* Shine Effect on Hover */}
+      {isHovered && (
+        <div
+          className="absolute inset-0 rounded-2xl pointer-events-none"
+          style={{
+            background: 'linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%)',
+            animation: 'shimmer 2s ease-in-out infinite'
+          }}
+        />
+      )}
     </div>
   );
 }

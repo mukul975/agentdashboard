@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Activity, Github, ExternalLink, BarChart3, MessageSquare, Users, Settings } from 'lucide-react';
 import { useWebSocket } from './hooks/useWebSocket';
+import { Header } from './components/Header';
 import { StatsOverview } from './components/StatsOverview';
 import { TeamCard } from './components/TeamCard';
 import { ActivityFeed } from './components/ActivityFeed';
@@ -51,34 +52,8 @@ function App() {
         Skip to main content
       </a>
 
-      {/* Header */}
-      <header className="bg-gray-800/50 border-b border-gray-700 backdrop-blur-sm sticky top-0 z-50" role="banner">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-br from-claude-orange to-orange-600 p-2 rounded-lg">
-                <Activity className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-white">Claude Agent Dashboard</h1>
-                <p className="text-gray-400 text-sm">Real-time agent team monitoring</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <ConnectionStatus isConnected={isConnected} error={error} />
-              <a
-                href="https://code.claude.com/docs/en/agent-teams"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
-              >
-                <ExternalLink className="h-4 w-4" />
-                <span className="text-sm font-medium">Documentation</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Header - New Glassmorphism Design */}
+      <Header isConnected={isConnected} error={error} />
 
       {/* Main Content */}
       <main id="main-content" className="container mx-auto px-6 py-6" role="main">
