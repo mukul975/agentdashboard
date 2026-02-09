@@ -25,7 +25,7 @@ jobs:
         cache: 'npm'
 
     - name: Install dependencies
-      run: npm ci
+      run: npm ci --force
 
     - name: Run tests
       run: npm test -- --run
@@ -55,7 +55,7 @@ jobs:
         cache: 'npm'
 
     - name: Install dependencies
-      run: npm ci
+      run: npm ci --force
 
     - name: Check for security vulnerabilities
       run: npm audit --audit-level=moderate
