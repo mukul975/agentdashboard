@@ -23,10 +23,10 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@34e1148876b0b11c390a56381ad16ebd13914f8d # v4.3.1
 
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
       with:
         node-version: '22.x'
 
@@ -47,7 +47,7 @@ jobs:
 
     - name: Upload audit report
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
         name: npm-audit-report
         path: npm-audit-report.json
@@ -59,7 +59,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@34e1148876b0b11c390a56381ad16ebd13914f8d # v4.3.1
       with:
         fetch-depth: 0
 
@@ -75,10 +75,10 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@34e1148876b0b11c390a56381ad16ebd13914f8d # v4.3.1
 
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
       with:
         node-version: '22.x'
 
@@ -96,7 +96,7 @@ jobs:
         license-checker --json > license-report.json
 
     - name: Upload license report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
         name: license-report
         path: license-report.json
@@ -113,7 +113,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@34e1148876b0b11c390a56381ad16ebd13914f8d # v4.3.1
       with:
         persist-credentials: false
 
@@ -139,7 +139,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@34e1148876b0b11c390a56381ad16ebd13914f8d # v4.3.1
 
     - name: Check for Dockerfile
       id: check-dockerfile
