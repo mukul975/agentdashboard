@@ -5,7 +5,6 @@ import { Header } from './components/Header';
 import { StatsOverview } from './components/StatsOverview';
 import { TeamCard } from './components/TeamCard';
 import { ActivityFeed } from './components/ActivityFeed';
-import { ConnectionStatus } from './components/ConnectionStatus';
 import { LiveMetrics } from './components/LiveMetrics';
 import { SystemStatus } from './components/SystemStatus';
 import { DetailedTaskProgress } from './components/DetailedTaskProgress';
