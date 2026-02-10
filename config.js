@@ -29,7 +29,19 @@ module.exports = {
 
   // Security
   HELMET_CONFIG: {
-    CONTENT_SECURITY_POLICY: false,
-    CROSS_ORIGIN_EMBEDDER_POLICY: false
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        connectSrc: ["'self'", "ws://localhost:3001", "wss://localhost:3001"],
+        imgSrc: ["'self'", "data:", "https:"],
+        fontSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        mediaSrc: ["'self'"],
+        frameSrc: ["'none'"]
+      }
+    },
+    crossOriginEmbedderPolicy: false
   }
 };

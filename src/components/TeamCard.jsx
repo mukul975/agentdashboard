@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Users, ChevronDown, ChevronUp, Activity, Clock } from 'lucide-react';
+import { Users, ChevronDown, ChevronUp, Activity, Clock, CheckCircle, Loader } from 'lucide-react';
 import { AgentCard } from './AgentCard';
 import { TaskList } from './TaskList';
 import dayjs from 'dayjs';
@@ -37,6 +37,8 @@ export function TeamCard({ team }) {
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+          aria-label={isExpanded ? "Collapse team details" : "Expand team details"}
+          aria-expanded={isExpanded}
         >
           {isExpanded ? (
             <ChevronUp className="h-5 w-5 text-gray-400" />
@@ -65,12 +67,15 @@ export function TeamCard({ team }) {
 
       <div className="flex gap-2 mb-4">
         <span className="badge badge-pending">
+          <Clock className="h-3 w-3 inline-block mr-1" aria-hidden="true" />
           {taskStats.pending} pending
         </span>
         <span className="badge badge-in-progress">
+          <Loader className="h-3 w-3 inline-block mr-1 animate-spin" aria-hidden="true" />
           {taskStats.inProgress} in progress
         </span>
         <span className="badge badge-completed">
+          <CheckCircle className="h-3 w-3 inline-block mr-1" aria-hidden="true" />
           {taskStats.completed} completed
         </span>
       </div>

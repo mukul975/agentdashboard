@@ -1,47 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Users, ListTodo, Clock, CheckCircle, AlertCircle, TrendingUp } from 'lucide-react';
+import { useCounterAnimation } from '../hooks/useCounterAnimation';
 
 export function StatsOverview({ stats }) {
-  const [animatedValues, setAnimatedValues] = useState({});
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
 
-  // Animate counter when stats change
-  useEffect(() => {
-    if (!stats) return;
-
-    const duration = 1000; // 1 second
-    const steps = 30;
-    const stepDuration = duration / steps;
-
-    Object.keys(stats).forEach((key) => {
-      const target = stats[key];
-      const start = animatedValues[key] || 0;
-      const increment = (target - start) / steps;
-
-      let currentStep = 0;
-      const timer = setInterval(() => {
-        currentStep++;
-        if (currentStep >= steps) {
-          setAnimatedValues(prev => ({ ...prev, [key]: target }));
-          clearInterval(timer);
-        } else {
-          setAnimatedValues(prev => ({
-            ...prev,
-            [key]: Math.round(start + increment * currentStep)
-          }));
-        }
-      }, stepDuration);
-
-      return () => clearInterval(timer);
-    });
-  }, [stats]);
+  // Use optimized counter animation hook for each stat
+  const animatedTotalTeams = useCounterAnimation(stats?.totalTeams ?? 0, 1000);
+  const animatedTotalAgents = useCounterAnimation(stats?.totalAgents ?? 0, 1000);
+  const animatedTotalTasks = useCounterAnimation(stats?.totalTasks ?? 0, 1000);
+  const animatedPendingTasks = useCounterAnimation(stats?.pendingTasks ?? 0, 1000);
+  const animatedInProgress = useCounterAnimation(stats?.inProgressTasks ?? 0, 1000);
+  const animatedCompleted = useCounterAnimation(stats?.completedTasks ?? 0, 1000);
+  const animatedBlocked = useCounterAnimation(stats?.blockedTasks ?? 0, 1000);
 
   if (!stats) return null;
+
+  // Map stat keys to their animated values
+  const animatedValuesMap = {
+    totalTeams: animatedTotalTeams,
+    totalAgents: animatedTotalAgents,
+    totalTasks: animatedTotalTasks,
+    pendingTasks: animatedPendingTasks,
+    inProgressTasks: animatedInProgress,
+    completedTasks: animatedCompleted,
+    blockedTasks: animatedBlocked
+  };
 
   const statCards = [
     {
@@ -113,7 +102,7 @@ export function StatsOverview({ stats }) {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {statCards.map((stat, index) => {
           const Icon = stat.icon;
-          const value = animatedValues[stat.key] ?? stats[stat.key] ?? 0;
+          const value = animatedValuesMap[stat.key];
 
           return (
             <div

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Activity, Github, ExternalLink, BarChart3, MessageSquare, Users, Settings } from 'lucide-react';
+import { Activity, Github, ExternalLink, BarChart3, MessageSquare, Users, Settings, History as HistoryIcon } from 'lucide-react';
 import { useWebSocket } from './hooks/useWebSocket';
 import { Header } from './components/Header';
 import { StatsOverview } from './components/StatsOverview';
@@ -12,12 +12,16 @@ import { DetailedTaskProgress } from './components/DetailedTaskProgress';
 import { AgentActivity } from './components/AgentActivity';
 import { RealTimeMessages } from './components/RealTimeMessages';
 import { LiveAgentStream } from './components/LiveAgentStream';
+import { TeamHistory } from './components/TeamHistory';
+import { AgentOutputViewer } from './components/AgentOutputViewer';
 
 function App() {
   const [teams, setTeams] = useState([]);
   const [stats, setStats] = useState(null);
   const [lastUpdate, setLastUpdate] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
+  const [teamHistory, setTeamHistory] = useState([]);
+  const [agentOutputs, setAgentOutputs] = useState([]);
 
   const wsUrl = `ws://${window.location.hostname}:3001`;
   const { data, isConnected, error } = useWebSocket(wsUrl);
@@ -39,8 +43,47 @@ function App() {
       if (data.stats) {
         setStats(data.stats);
       }
+
+      if (data.teamHistory) {
+        setTeamHistory(data.teamHistory);
+      }
+
+      if (data.agentOutputs) {
+        setAgentOutputs(data.agentOutputs);
+      }
+
+      if (data.outputs) {
+        setAgentOutputs(data.outputs);
+      }
     }
   }, [data]);
+
+  // Keyboard navigation handler for tabs
+  const handleTabKeyDown = (e) => {
+    const tabs = ['overview', 'teams', 'communication', 'monitoring', 'history'];
+    const currentIndex = tabs.indexOf(activeTab);
+
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      const nextIndex = (currentIndex + 1) % tabs.length;
+      setActiveTab(tabs[nextIndex]);
+      // Focus the new tab button
+      document.getElementById(`tab-${tabs[nextIndex]}`)?.focus();
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+      setActiveTab(tabs[prevIndex]);
+      document.getElementById(`tab-${tabs[prevIndex]}`)?.focus();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      setActiveTab(tabs[0]);
+      document.getElementById(`tab-${tabs[0]}`)?.focus();
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      setActiveTab(tabs[tabs.length - 1]);
+      document.getElementById(`tab-${tabs[tabs.length - 1]}`)?.focus();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
@@ -68,6 +111,7 @@ function App() {
             <button
               id="tab-overview"
               onClick={() => setActiveTab('overview')}
+              onKeyDown={handleTabKeyDown}
               role="tab"
               aria-selected={activeTab === 'overview'}
               aria-controls="tab-panel-overview"
@@ -83,6 +127,7 @@ function App() {
             <button
               id="tab-teams"
               onClick={() => setActiveTab('teams')}
+              onKeyDown={handleTabKeyDown}
               role="tab"
               aria-selected={activeTab === 'teams'}
               aria-controls="tab-panel-teams"
@@ -98,6 +143,7 @@ function App() {
             <button
               id="tab-communication"
               onClick={() => setActiveTab('communication')}
+              onKeyDown={handleTabKeyDown}
               role="tab"
               aria-selected={activeTab === 'communication'}
               aria-controls="tab-panel-communication"
@@ -113,6 +159,7 @@ function App() {
             <button
               id="tab-monitoring"
               onClick={() => setActiveTab('monitoring')}
+              onKeyDown={handleTabKeyDown}
               role="tab"
               aria-selected={activeTab === 'monitoring'}
               aria-controls="tab-panel-monitoring"
@@ -124,6 +171,22 @@ function App() {
             >
               <Settings className="h-4 w-4" aria-hidden="true" />
               Monitoring
+            </button>
+            <button
+              id="tab-history"
+              onClick={() => setActiveTab('history')}
+              onKeyDown={handleTabKeyDown}
+              role="tab"
+              aria-selected={activeTab === 'history'}
+              aria-controls="tab-panel-history"
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
+                activeTab === 'history'
+                  ? 'bg-claude-orange text-white shadow-lg'
+                  : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700'
+              }`}
+            >
+              <HistoryIcon className="h-4 w-4" aria-hidden="true" />
+              History & Outputs
             </button>
           </div>
         </nav>
@@ -221,6 +284,21 @@ function App() {
             >
               <SystemStatus isConnected={isConnected} lastUpdate={lastUpdate} />
               <ActivityFeed updates={lastUpdate} />
+            </div>
+          )}
+
+          {activeTab === 'history' && (
+            <div
+              role="tabpanel"
+              id="tab-panel-history"
+              aria-labelledby="tab-history"
+              className="space-y-6 animate-fadeIn"
+            >
+              {/* Agent Output Viewer - Full Width */}
+              <AgentOutputViewer agentOutputs={agentOutputs} />
+
+              {/* Team History */}
+              <TeamHistory teamHistory={teamHistory} />
             </div>
           )}
         </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Circle, Clock, CheckCircle, AlertCircle, User, ChevronDown, ChevronUp } from 'lucide-react';
 
 export function TaskList({ tasks }) {
@@ -207,6 +208,8 @@ export function TaskList({ tasks }) {
                         style={{
                           color: statusConfig.textColor
                         }}
+                        aria-label={isExpanded ? "Show less description" : "Show full description"}
+                        aria-expanded={isExpanded}
                       >
                         {isExpanded ? (
                           <>
@@ -285,3 +288,19 @@ export function TaskList({ tasks }) {
     </div>
   );
 }
+
+TaskList.propTypes = {
+  tasks: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      subject: PropTypes.string.isRequired,
+      description: PropTypes.string,
+      status: PropTypes.oneOf(['pending', 'in_progress', 'completed']).isRequired,
+      owner: PropTypes.string,
+      blockedBy: PropTypes.array,
+      blocks: PropTypes.array,
+      createdAt: PropTypes.number,
+      updatedAt: PropTypes.number
+    })
+  )
+};

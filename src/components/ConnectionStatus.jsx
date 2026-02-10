@@ -7,6 +7,9 @@ export function ConnectionStatus({ isConnected, error }) {
     return (
       <div
         className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300 group"
+        role="status"
+        aria-live="polite"
+        aria-label="Connection status: Connected"
         style={{
           background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(21, 128, 61, 0.15) 100%)',
           color: '#4ade80',
@@ -49,6 +52,9 @@ export function ConnectionStatus({ isConnected, error }) {
     return (
       <div
         className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300"
+        role="alert"
+        aria-live="assertive"
+        aria-label={`Connection error: ${error}`}
         style={{
           background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.15) 100%)',
           color: '#f87171',
@@ -72,6 +78,10 @@ export function ConnectionStatus({ isConnected, error }) {
   return (
     <div
       className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300"
+      role="status"
+      aria-live="polite"
+      aria-label="Connection status: Connecting"
+      aria-busy="true"
       style={{
         background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.25) 0%, rgba(202, 138, 4, 0.15) 100%)',
         color: '#facc15',

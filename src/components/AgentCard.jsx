@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Bot, Crown, Cpu, Zap } from 'lucide-react';
 
 export function AgentCard({ agent, isLead }) {
@@ -150,3 +151,13 @@ export function AgentCard({ agent, isLead }) {
     </div>
   );
 }
+
+AgentCard.propTypes = {
+  agent: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    agentId: PropTypes.string.isRequired,
+    agentType: PropTypes.string,
+    model: PropTypes.string
+  }).isRequired,
+  isLead: PropTypes.bool
+};

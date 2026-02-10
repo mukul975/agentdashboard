@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { MessageCircle, ArrowRight, Radio } from 'lucide-react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -179,3 +180,13 @@ export function RealTimeMessages({ teams }) {
     </div>
   );
 }
+
+RealTimeMessages.propTypes = {
+  teams: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+      config: PropTypes.object,
+      tasks: PropTypes.array
+    })
+  )
+};

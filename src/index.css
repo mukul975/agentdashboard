@@ -385,12 +385,12 @@ strong, b {
 }
 
 .text-gray-400 {
-  color: #9ca3af;
+  color: #c4c9d4;
   letter-spacing: -0.01em;
 }
 
 .text-gray-500 {
-  color: #6b7280;
+  color: #a3aab7;
   letter-spacing: -0.008em;
 }
 
@@ -595,7 +595,7 @@ strong, b {
 .border-l-claude-orange { border-left-color: #f97316; }
 .border-yellow-500\/30 { border-color: rgba(234, 179, 8, 0.3); }
 .border-yellow-500\/50 { border-color: rgba(234, 179, 8, 0.5); }
-.border-gray-500 { border-color: #6b7280; }
+.border-gray-500 { border-color: #a3aab7; }
 .rounded { border-radius: 4px; }
 .rounded-lg { border-radius: 12px; }
 .rounded-full { border-radius: 9999px; }
@@ -640,7 +640,7 @@ strong, b {
 .hover\\:bg-gray-600:hover { background-color: #4b5563; }
 .hover\\:bg-gray-700:hover { background-color: #374151; }
 .hover\\:bg-orange-600:hover { background-color: #ea580c; }
-.hover\\:border-gray-500:hover { border-color: #6b7280; }
+.hover\\:border-gray-500:hover { border-color: #a3aab7; }
 .hover\\:text-white:hover { color: #ffffff; }
 
 /* Space between - Enhanced vertical rhythm */
@@ -895,12 +895,12 @@ strong, b {
 }
 
 .text-muted {
-  color: #9ca3af;
+  color: #c4c9d4;
   letter-spacing: -0.009em;
 }
 
 .text-subtle {
-  color: #6b7280;
+  color: #a3aab7;
   font-size: 0.875rem;
   letter-spacing: -0.008em;
 }
@@ -919,7 +919,7 @@ strong, b {
 /* Caption styles for small descriptive text */
 .caption {
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: #c4c9d4;
   line-height: 1.5;
   letter-spacing: -0.006em;
 }
@@ -1001,7 +1001,7 @@ strong, b {
 .stat-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #9ca3af;
+  color: #c4c9d4;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   line-height: 1.5;
