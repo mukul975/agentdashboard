@@ -48,9 +48,64 @@ const TEAMS_DIR = path.join(homeDir, '.claude', 'teams');
 const TASKS_DIR = path.join(homeDir, '.claude', 'tasks');
 const PROJECTS_DIR = path.join(homeDir, '.claude', 'projects');
 const TEMP_TASKS_DIR = path.join(os.tmpdir(), 'claude', 'D--agentdashboard', 'tasks');
+const ARCHIVE_DIR = path.join(homeDir, '.claude', 'archive');
 
 // Store connected clients
 const clients = new Set();
+
+// Team lifecycle tracking
+const teamLifecycle = new Map(); // teamName -> { created, lastSeen, archived }
+
+// Archive team data before deletion
+async function archiveTeam(teamName, teamData) {
+  try {
+    const timestamp = new Date().toISOString().replace(/:/g, '-');
+    const archiveFile = path.join(ARCHIVE_DIR, `${teamName}_${timestamp}.json`);
+
+    // Ensure archive directory exists
+    await fs.mkdir(ARCHIVE_DIR, { recursive: true });
+
+    // Create natural language summary
+    const summary = {
+      teamName,
+      archivedAt: new Date().toISOString(),
+      summary: generateTeamSummary(teamData),
+      rawData: teamData
+    };
+
+    await fs.writeFile(archiveFile, JSON.stringify(summary, null, 2));
+    console.log(`📦 Team archived: ${teamName} → ${archiveFile}`);
+
+    return archiveFile;
+  } catch (error) {
+    console.error(`Error archiving team ${teamName}:`, error);
+  }
+}
+
+// Generate natural language summary of team activity
+function generateTeamSummary(teamData) {
+  const members = teamData.config?.members || [];
+  const tasks = teamData.tasks || [];
+  const completedTasks = tasks.filter(t => t.status === 'completed').length;
+  const totalTasks = tasks.length;
+
+  const createdDate = teamData.config?.createdAt
+    ? new Date(teamData.config.createdAt).toLocaleDateString()
+    : 'Unknown';
+
+  return {
+    overview: `Team "${teamData.name}" with ${members.length} members worked on ${totalTasks} tasks and completed ${completedTasks}.`,
+    created: `Started on ${createdDate}`,
+    members: members.map(m => `${m.name} (${m.agentType})`),
+    accomplishments: tasks
+      .filter(t => t.status === 'completed')
+      .map(t => `✅ ${t.subject}`)
+      .slice(0, 10), // Top 10
+    duration: teamData.config?.createdAt
+      ? `Active for ${Math.round((Date.now() - teamData.config.createdAt) / 1000 / 60)} minutes`
+      : 'Unknown duration'
+  };
+}
 
 // Broadcast to all connected clients (with dead client cleanup)
 function broadcast(data) {
@@ -482,17 +537,46 @@ function setupWatchers() {
       console.log('   ✓ Team watcher is ready - I\'ll notify you when teams change');
     })
     .on('add', async (filePath) => {
-      console.log(`📁 New team discovered: ${path.basename(filePath)}`);
+      const teamName = path.basename(path.dirname(filePath));
+      if (path.basename(filePath) === 'config.json') {
+        console.log(`🎉 New team created: ${teamName}`);
+        teamLifecycle.set(teamName, {
+          created: Date.now(),
+          lastSeen: Date.now()
+        });
+      }
       const teams = await getActiveTeams();
       broadcast({ type: 'teams_update', data: teams, stats: calculateTeamStats(teams) });
     })
     .on('change', async (filePath) => {
-      console.log(`🔄 Team updated: ${path.basename(filePath)}`);
+      const teamName = path.basename(path.dirname(filePath));
+      console.log(`🔄 Team active: ${teamName}`);
+      if (teamLifecycle.has(teamName)) {
+        teamLifecycle.get(teamName).lastSeen = Date.now();
+      }
       const teams = await getActiveTeams();
       broadcast({ type: 'teams_update', data: teams, stats: calculateTeamStats(teams) });
     })
     .on('unlink', async (filePath) => {
-      console.log(`🗑️  Team removed: ${path.basename(filePath)}`);
+      const teamName = path.basename(path.dirname(filePath));
+      if (path.basename(filePath) === 'config.json') {
+        console.log(`👋 Team completed: ${teamName} - archiving for reference...`);
+
+        // Try to get team data before it's gone
+        const teams = await getActiveTeams();
+        const teamData = teams.find(t => t.name === teamName);
+
+        if (teamData) {
+          await archiveTeam(teamName, teamData);
+          const lifecycle = teamLifecycle.get(teamName);
+          if (lifecycle) {
+            const duration = Math.round((Date.now() - lifecycle.created) / 1000 / 60);
+            console.log(`   📊 Team "${teamName}" was active for ${duration} minutes`);
+          }
+        }
+
+        teamLifecycle.delete(teamName);
+      }
       const teams = await getActiveTeams();
       broadcast({ type: 'teams_update', data: teams, stats: calculateTeamStats(teams) });
     })
@@ -676,6 +760,58 @@ app.get('/api/teams/:teamName/inboxes/:agentName', async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Get archived teams
+app.get('/api/archive', async (req, res) => {
+  try {
+    const archives = [];
+
+    try {
+      const files = await fs.readdir(ARCHIVE_DIR);
+
+      for (const file of files) {
+        if (file.endsWith('.json')) {
+          const filePath = path.join(ARCHIVE_DIR, file);
+          const content = await fs.readFile(filePath, 'utf8');
+          const data = JSON.parse(content);
+          archives.push({
+            filename: file,
+            ...data.summary,
+            archivedAt: data.archivedAt,
+            fullPath: filePath
+          });
+        }
+      }
+    } catch (err) {
+      // Archive directory doesn't exist yet
+      if (err.code !== 'ENOENT') throw err;
+    }
+
+    // Sort by archived date (newest first)
+    archives.sort((a, b) => new Date(b.archivedAt) - new Date(a.archivedAt));
+
+    res.json({ archives, count: archives.length });
+  } catch (error) {
+    console.error('Error fetching archives:', error);
+    res.status(500).json({ error: 'Failed to fetch archived teams' });
+  }
+});
+
+// Get specific archived team details
+app.get('/api/archive/:filename', async (req, res) => {
+  try {
+    const filename = req.params.filename;
+    const filePath = path.join(ARCHIVE_DIR, filename);
+
+    const content = await fs.readFile(filePath, 'utf8');
+    const data = JSON.parse(content);
+
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching archive:', error);
+    res.status(404).json({ error: 'Archive not found' });
   }
 });
 
