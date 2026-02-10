@@ -614,6 +614,74 @@ app.get('/api/teams/:teamName', async (req, res) => {
   }
 });
 
+// Get team inbox messages
+app.get('/api/teams/:teamName/inboxes', async (req, res) => {
+  try {
+    const teamName = sanitizeProjectPath(req.params.teamName);
+    const inboxesDir = path.join(TEAMS_DIR, teamName, 'inboxes');
+
+    // Check if inboxes directory exists
+    try {
+      await fs.access(inboxesDir);
+    } catch {
+      return res.json({ inboxes: [] });
+    }
+
+    // Read all inbox files
+    const files = await fs.readdir(inboxesDir);
+    const inboxFiles = files.filter(f => f.endsWith('.json'));
+
+    const inboxes = {};
+
+    for (const file of inboxFiles) {
+      const agentName = file.replace('.json', '');
+      const filePath = path.join(inboxesDir, file);
+
+      try {
+        const content = await fs.readFile(filePath, 'utf8');
+        const data = JSON.parse(content);
+        inboxes[agentName] = {
+          messages: data.messages || [],
+          messageCount: data.messages?.length || 0
+        };
+      } catch (error) {
+        console.error(`Error reading inbox ${file}:`, error.message);
+        inboxes[agentName] = { messages: [], messageCount: 0, error: error.message };
+      }
+    }
+
+    res.json({ inboxes });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get specific agent's inbox
+app.get('/api/teams/:teamName/inboxes/:agentName', async (req, res) => {
+  try {
+    const teamName = sanitizeProjectPath(req.params.teamName);
+    const agentName = sanitizeFileName(req.params.agentName);
+    const inboxPath = path.join(TEAMS_DIR, teamName, 'inboxes', `${agentName}.json`);
+
+    try {
+      const content = await fs.readFile(inboxPath, 'utf8');
+      const data = JSON.parse(content);
+      res.json({
+        agent: agentName,
+        messages: data.messages || [],
+        messageCount: data.messages?.length || 0
+      });
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        return res.json({ agent: agentName, messages: [], messageCount: 0 });
+      }
+      throw error;
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'healthy',
