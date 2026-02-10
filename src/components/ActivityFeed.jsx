@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Activity, Circle, Zap, Users, ListTodo, CheckCircle2 } from 'lucide-react';
+import { Activity, Circle, Users, ListTodo, CheckCircle2 } from 'lucide-react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
