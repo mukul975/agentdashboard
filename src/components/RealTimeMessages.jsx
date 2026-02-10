@@ -5,6 +5,83 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
+// Convert technical messages to natural language
+const parseMessageToNatural = (text, summary) => {
+  // If there's a clear summary, use it
+  if (summary && !summary.includes('{') && !summary.includes('idle_notification')) {
+    // Determine type from summary content
+    let type = 'status';
+    if (summary.toLowerCase().includes('completed') || summary.includes('✓') || summary.includes('✅')) {
+      type = 'completion';
+    } else if (summary.toLowerCase().includes('question') || summary.includes('?')) {
+      type = 'question';
+    } else if (summary.toLowerCase().includes('coordin') || summary.toLowerCase().includes('discuss') || summary.toLowerCase().includes('help')) {
+      type = 'coordination';
+    }
+    return { text: summary, type };
+  }
+
+  // Try to parse as JSON
+  try {
+    const parsed = JSON.parse(text);
+
+    switch (parsed.type) {
+      case 'idle_notification':
+        return {
+          text: parsed.lastTaskSubject
+            ? `💤 Finished "${parsed.lastTaskSubject}" - ready for next task`
+            : '💤 Available and waiting for assignment',
+          type: 'status'
+        };
+
+      case 'task_completed':
+        return {
+          text: `✅ Completed: ${parsed.taskSubject || 'Task'}`,
+          type: 'completion'
+        };
+
+      case 'task_assigned':
+        return {
+          text: `📋 Started working on: ${parsed.taskSubject || 'New task'}`,
+          type: 'status'
+        };
+
+      case 'question':
+        return {
+          text: `❓ ${parsed.message || parsed.content || 'Question raised'}`,
+          type: 'question'
+        };
+
+      case 'coordination':
+        return {
+          text: `🤝 ${parsed.message || parsed.content || 'Coordinating with team'}`,
+          type: 'coordination'
+        };
+
+      default:
+        return {
+          text: parsed.message || parsed.content || 'Message received',
+          type: 'status'
+        };
+    }
+  } catch (e) {
+    // Not JSON, use as-is
+    if (!text || text.trim() === '') {
+      return { text: '👋 Said hello', type: 'status' };
+    }
+
+    // Truncate if too long
+    if (text.length > 200) {
+      return {
+        text: text.substring(0, 150) + '...',
+        type: 'status'
+      };
+    }
+
+    return { text, type: 'status' };
+  }
+};
+
 export function RealTimeMessages({ teams }) {
   const [messages, setMessages] = useState([]);
   const [filter, setFilter] = useState('all');
@@ -39,39 +116,16 @@ export function RealTimeMessages({ teams }) {
               Object.entries(data.inboxes).forEach(([agentName, inbox]) => {
                 if (inbox.messages && Array.isArray(inbox.messages)) {
                   inbox.messages.forEach(msg => {
-                    // Parse message to determine type
-                    let messageText = msg.text;
-                    let messageType = 'status';
-
-                    if (msg.text && msg.text.includes('idle_notification')) {
-                      try {
-                        const parsed = JSON.parse(msg.text);
-                        if (parsed.type === 'idle_notification') {
-                          messageText = `Idle - Last task: ${parsed.lastTaskSubject || 'None'}`;
-                          messageType = 'status';
-                        }
-                      } catch (e) {
-                        // Not JSON, use as-is
-                      }
-                    } else if (msg.summary) {
-                      messageText = msg.summary;
-                      // Infer type from summary
-                      if (msg.summary.toLowerCase().includes('completed') || msg.summary.includes('✓')) {
-                        messageType = 'completion';
-                      } else if (msg.summary.toLowerCase().includes('question') || msg.summary.includes('?')) {
-                        messageType = 'question';
-                      } else if (msg.summary.toLowerCase().includes('coordin') || msg.summary.toLowerCase().includes('discuss')) {
-                        messageType = 'coordination';
-                      }
-                    }
+                    // Convert to natural language
+                    const naturalMsg = parseMessageToNatural(msg.text, msg.summary);
 
                     allMessages.push({
                       id: `${team.name}-${agentName}-${msg.timestamp}-${Math.random()}`,
                       from: msg.from || agentName,
                       to: agentName,
                       team: team.name,
-                      type: messageType,
-                      message: messageText,
+                      type: naturalMsg.type,
+                      message: naturalMsg.text,
                       timestamp: new Date(msg.timestamp),
                       color: msg.color || 'blue',
                       read: msg.read || false
