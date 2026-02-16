@@ -6,7 +6,6 @@ message: >-
 type: software
 authors:
   - given-names: Mahipal
-    family-names: Jangra
     email: mukuljangra5@gmail.com
     affiliation: Independent Developer
     orcid: 'https://orcid.org/0009-0003-4474-946X'
