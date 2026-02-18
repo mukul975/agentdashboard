@@ -22,10 +22,13 @@ export function useWebSocket(url) {
   const reconnectAttempts = useRef(0);
   const isPausedRef = useRef(false);
   const urlRef = useRef(url);
+  const prevUrlRef = useRef(url);
   urlRef.current = url;
 
   const connect = useCallback(() => {
     if (isPausedRef.current) return;
+    // Don't connect without a token — server will reject with 4001 anyway
+    if (!urlRef.current.includes('token=')) return;
 
     try {
       if (wsRef.current) {
@@ -112,6 +115,19 @@ export function useWebSocket(url) {
       setConnectionStatus('error');
     }
   }, []);
+
+  // When the URL gains a token (after login/setup), cancel any pending backoff
+  // and reconnect immediately instead of waiting up to 30 seconds
+  useEffect(() => {
+    if (prevUrlRef.current === url) return;
+    prevUrlRef.current = url;
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
+    }
+    reconnectAttempts.current = 0;
+    connect();
+  }, [url, connect]);
 
   useEffect(() => {
     connect();
