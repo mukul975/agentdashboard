@@ -3,6 +3,17 @@
   "version": "1.2.4",
   "description": "Real-time monitoring dashboard for Claude Code agent teams",
   "main": "server.js",
+  "bin": {
+    "claude-dashboard": "./start.js"
+  },
+  "files": [
+    "dist",
+    "public",
+    "server.js",
+    "start.js",
+    "cleanup.js",
+    "config.js"
+  ],
   "engines": {
     "node": ">=18.0.0"
   },
@@ -15,6 +26,7 @@
     "dev": "vite",
     "server": "node server.js",
     "build": "vite build",
+    "prepare": "vite build",
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
@@ -38,14 +50,9 @@
     "chokidar": "^5.0.0",
     "compression": "^1.8.1",
     "cors": "^2.8.6",
-    "d3": "^7.9.0",
-    "dayjs": "^1.11.19",
     "express": "^5.2.1",
     "express-rate-limit": "^8.2.1",
     "helmet": "^8.1.0",
-    "prop-types": "^15.8.1",
-    "react-hot-toast": "^2.6.0",
-    "recharts": "^3.7.0",
     "ws": "^8.19.0"
   },
   "devDependencies": {
@@ -56,10 +63,15 @@
     "@vitejs/plugin-react": "^5.1.3",
     "@vitest/coverage-v8": "^4.0.18",
     "babel-plugin-react-compiler": "^1.0.0",
+    "d3": "^7.9.0",
+    "dayjs": "^1.11.19",
     "jsdom": "^28.0.0",
     "lucide-react": "^0.563.0",
+    "prop-types": "^15.8.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "react-hot-toast": "^2.6.0",
+    "recharts": "^3.7.0",
     "vite": "^7.3.1",
     "vitest": "^4.0.18"
   }
