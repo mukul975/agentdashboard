@@ -246,8 +246,8 @@ export function AgentNetworkGraph({ allInboxes = {}, teams = [] }) {
       </div>
 
       {!hasData ? (
-        <div className="flex flex-col items-center justify-center py-16 text-gray-400">
-          <Network className="h-16 w-16 mb-3 opacity-40" />
+        <div className="flex items-center text-gray-400" style={{ flexDirection: 'column', justifyContent: 'center', paddingTop: '64px', paddingBottom: '64px' }}>
+          <Network className="mb-3" style={{ height: '64px', width: '64px', opacity: 0.4 }} />
           <p className="text-sm">No agent communication data yet</p>
           <p className="text-xs mt-1 text-gray-500">Connections will appear as agents exchange messages</p>
         </div>
@@ -270,10 +270,10 @@ export function AgentNetworkGraph({ allInboxes = {}, teams = [] }) {
 
           {/* Legend */}
           {teamLegend.length > 0 && (
-            <div className="flex flex-wrap gap-4 mt-4 pt-3 border-t border-gray-700">
-              <span className="text-xs text-gray-500 font-medium mr-1">Teams:</span>
+            <div className="flex flex-wrap gap-4 mt-4" style={{ paddingTop: '12px', borderTop: '1px solid rgba(55, 65, 81, 0.6)' }}>
+              <span className="text-xs text-gray-500 font-medium" style={{ marginRight: '4px' }}>Teams:</span>
               {teamLegend.map(([teamName, color]) => (
-                <div key={teamName} className="flex items-center gap-1.5">
+                <div key={teamName} className="flex items-center" style={{ gap: '6px' }}>
                   <span
                     style={{
                       width: 10,

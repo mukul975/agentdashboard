@@ -100,15 +100,15 @@ export function AgentActivity({ teams, allInboxes = {} }) {
       <div className="space-y-2 max-h-96 overflow-y-auto">
         {activeAgents.length === 0 ? (
           <div className="text-center py-8" style={{ color: 'var(--text-muted)' }}>
-            <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
+            <Users className="mx-auto mb-2" style={{ height: '48px', width: '48px', opacity: 0.5 }} />
             <p className="text-sm">No active agents</p>
           </div>
         ) : (
           activeAgents.map((agent, index) => (
             <div
               key={`${agent.team}-${agent.name}-${index}`}
-              className="p-3 rounded-lg hover:border-claude-orange transition-all"
-              style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}
+              className="p-3 rounded-lg"
+              style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', transition: 'all 0.15s' }}
             >
               <div className="flex items-start gap-3">
                 <div
@@ -151,7 +151,7 @@ export function AgentActivity({ teams, allInboxes = {} }) {
       </div>
 
       {/* Activity Heatmap */}
-      <div className="mt-6 pt-4" style={{ borderTop: '1px solid var(--border-color)' }}>
+      <div className="mt-6" style={{ paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
         <div className="flex items-center gap-2 mb-3">
           <Grid3X3 className="h-4 w-4 text-claude-orange" />
           <h4 className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>Activity Heatmap</h4>
@@ -163,7 +163,7 @@ export function AgentActivity({ teams, allInboxes = {} }) {
             No message activity to display
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div style={{ overflowX: 'auto' }}>
             {/* Day labels row */}
             <div style={{ display: 'grid', gridTemplateColumns: '90px repeat(30, 1fr)', gap: '2px', marginBottom: '2px' }}>
               <div />
@@ -181,8 +181,8 @@ export function AgentActivity({ teams, allInboxes = {} }) {
                 style={{ display: 'grid', gridTemplateColumns: '90px repeat(30, 1fr)', gap: '2px', marginBottom: '2px' }}
               >
                 <div
-                  className="text-xs truncate pr-1"
-                  style={{ color: 'var(--text-secondary)', lineHeight: '14px' }}
+                  className="text-xs truncate"
+                  style={{ color: 'var(--text-secondary)', lineHeight: '14px', paddingRight: '4px' }}
                   title={agent.name}
                 >
                   {agent.name}
@@ -193,7 +193,6 @@ export function AgentActivity({ teams, allInboxes = {} }) {
                   return (
                     <div
                       key={day}
-                      className="relative"
                       style={{
                         width: '100%',
                         paddingBottom: '100%',
@@ -241,7 +240,7 @@ export function AgentActivity({ teams, allInboxes = {} }) {
             ))}
 
             {/* Legend */}
-            <div className="flex items-center gap-2 mt-3 justify-end">
+            <div className="flex items-center gap-2 mt-3" style={{ justifyContent: 'flex-end' }}>
               <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Less</span>
               {[0, 2, 5, 10, 20].map((val) => (
                 <div

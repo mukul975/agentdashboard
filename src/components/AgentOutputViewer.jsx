@@ -246,7 +246,7 @@ export function AgentOutputViewer({ agentOutputs }) {
 
       {/* Output Selector */}
       <div className="mb-4">
-        <label className="block text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Select Agent Output:</label>
+        <label className="text-sm mb-2" style={{ color: 'var(--text-secondary)', display: 'block' }}>Select Agent Output:</label>
         <div className="flex gap-2" style={{ overflowX: 'auto', paddingBottom: '8px' }}>
           {localOutputs.map((output, index) => (
             <button
@@ -288,7 +288,7 @@ export function AgentOutputViewer({ agentOutputs }) {
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-4">
                 <span style={{ color: 'var(--text-muted)' }}>
-                  Task ID: <span className="font-mono" style={{ color: 'var(--text-primary)' }}>{selectedOutput.taskId}</span>
+                  Task ID: <span style={{ color: 'var(--text-primary)', fontFamily: 'monospace' }}>{selectedOutput.taskId}</span>
                 </span>
                 <span style={{ color: 'var(--text-muted)' }}>
                   Size: <span style={{ color: 'var(--text-primary)' }}>{formatSize(selectedOutput.size)}</span>
@@ -332,7 +332,7 @@ export function AgentOutputViewer({ agentOutputs }) {
           </div>
 
           {/* Footer Info */}
-          <div className="mt-3 text-xs text-center flex items-center justify-center gap-2" style={{ color: 'var(--text-muted)' }}>
+          <div className="mt-3 text-xs text-center flex items-center gap-2" style={{ color: 'var(--text-muted)', justifyContent: 'center' }}>
             <span className="rounded-full animate-pulse" style={{ height: '8px', width: '8px', backgroundColor: '#4ade80' }}></span>
             <span>
               Real-time output from Claude Code agent • Updates via WebSocket

@@ -188,8 +188,8 @@ export function AgentCard({ agent, isLead, agentStatus }) {
 
             <p
               className="text-xs truncate"
-              style={{ fontFamily: 'monospace' }}
               style={{
+                fontFamily: 'monospace',
                 color: 'rgba(156, 163, 175, 0.8)'
               }}
               title={agent.agentId}
@@ -203,8 +203,11 @@ export function AgentCard({ agent, isLead, agentStatus }) {
       {/* Shine Effect on Hover */}
       {isHovered && (
         <div
-          className="absolute inset-0 rounded-2xl pointer-events-none"
           style={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: '16px',
+            pointerEvents: 'none',
             background: 'linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%)',
             animation: 'shimmer 2s ease-in-out infinite'
           }}
