@@ -99,9 +99,9 @@ Export any team's tasks and inbox messages as **JSON or CSV** directly from the 
 
 Works as a **Progressive Web App** — add to your home screen, get an app icon, and keep viewing cached data when the server is temporarily unreachable.
 
-### 🔒 **Optional Password Auth**
+### 🔒 **Password Auth — Always On**
 
-Set one env var and the dashboard shows a login screen. Uses `crypto.timingSafeEqual` to prevent timing attacks. Token stored in `sessionStorage`. Skip it entirely for local dev — zero friction by default.
+The dashboard always requires a password. Set `DASHBOARD_PASSWORD` to use your own, or let the server auto-generate one and print it to the console on startup. Uses `crypto.timingSafeEqual` to prevent timing attacks. Token stored in `sessionStorage`.
 
 </td>
 </tr>
@@ -136,24 +136,29 @@ npm start
 
 Open **http://localhost:3001** and you're monitoring agents in real time.
 
-### 🔒 Optional Password Protection
+### 🔒 Password Authentication
 
-By default the dashboard is open — no login needed. To restrict access (e.g. when exposing over a tunnel or to teammates), set `DASHBOARD_PASSWORD` before starting:
+The dashboard **always requires a password**. The first time you open it, you'll see a setup screen — create your password there. After that, you'll be asked for it on every visit.
 
-```bash
-# Linux / Mac
-DASHBOARD_PASSWORD=mysecret npm start
-
-# Windows CMD
-set DASHBOARD_PASSWORD=mysecret && npm start
-
-# Windows PowerShell
-$env:DASHBOARD_PASSWORD="mysecret"; npm start
+**First run:**
+```
+npm start
+→ open http://localhost:3001
+→ "Set Up Dashboard" screen appears
+→ enter and confirm your password
+→ dashboard unlocks
 ```
 
-The server generates a random token at startup. Opening the dashboard will show a login screen — enter your password to unlock. The token lives in `sessionStorage` and clears when the browser tab closes.
+**Every run after that:**
+```
+npm start
+→ open http://localhost:3001
+→ login screen appears
+→ enter your password
+→ dashboard unlocks
+```
 
-> **Local dev?** Don't set the variable — the dashboard loads instantly with no login screen.
+Your password is stored as a secure `scrypt` hash in `~/.claude/dashboard.key`. The session token lives in `sessionStorage` and clears when the browser tab closes.
 
 ### 🎁 Dev Container (Instant Environment)
 
@@ -719,7 +724,7 @@ The lifecycle tracking is powered by three independent watchers:
 
 ### Security Features
 
-**Optional Password Auth**: Set `DASHBOARD_PASSWORD` to enable a login screen. The server uses `crypto.timingSafeEqual` for constant-time comparison and issues a 256-bit random token stored in `sessionStorage`.
+**Password Auth (always on)**: The server requires `DASHBOARD_PASSWORD` to start — exits with a clear error if not set. Uses `crypto.timingSafeEqual` for constant-time comparison and issues a 256-bit random token stored in `sessionStorage`.
 
 **Path Sanitization**: All team names and file paths are sanitized to prevent path traversal attacks:
 ```javascript
@@ -770,7 +775,7 @@ validatePath(inboxPath, TEAMS_DIR)
 
 ### ✅ Recently Shipped
 
-- [x] **Optional password auth** — `DASHBOARD_PASSWORD` env var enables a login screen with `crypto.timingSafeEqual` timing-safe comparison, Bearer token middleware on all API routes, WebSocket token validation, and `sessionStorage` persistence
+- [x] **Mandatory password auth** — server exits if `DASHBOARD_PASSWORD` is not set; login screen with `crypto.timingSafeEqual` timing-safe comparison, Bearer token middleware on all API routes, WebSocket token validation, and `sessionStorage` persistence
 - [x] **Tailwind v4 + code splitting** — `@tailwindcss/vite` installed; 4 heavy components (`AgentNetworkGraph`, `TaskDependencyGraph`, `AnalyticsPanel`, `ArchiveViewer`) now lazy-loaded, cutting initial JS bundle by ~50 kB
 - [x] **Expanded test suite** — 223 tests across 15 files covering all 4 custom hooks, key components, and utility functions
 - [x] **Full accessibility audit** — 50+ buttons with `aria-label`, interactive divs with `role`/`tabIndex`/`onKeyDown`, `aria-live` on status components, `role="alert"` on error states, focus management in modals

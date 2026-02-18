@@ -33,6 +33,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 const TaskDependencyGraph = lazy(() => import('./components/TaskDependencyGraph').then(m => ({ default: m.TaskDependencyGraph })));
 import { TeamComparison } from './components/TeamComparison';
 import { LoginScreen } from './components/LoginScreen';
+import { SetupScreen } from './components/SetupScreen';
 
 
 function App() {
@@ -44,16 +45,16 @@ function App() {
   const [inboxTeamFilter, setInboxTeamFilter] = useState(null);
   const { theme, toggleTheme } = useTheme();
 
-  // Auth state
-  const [authRequired, setAuthRequired] = useState(null); // null = loading, true/false = known
+  // Auth state — always required
   const [authToken, setAuthToken] = useState(() => sessionStorage.getItem('dashboard-token'));
+  const [authStatus, setAuthStatus] = useState(null); // null=loading, {setup:bool}=known
 
-  // Check if auth is required on mount
+  // On mount, check if password has been set up yet
   useEffect(() => {
     fetch('/api/auth/required')
       .then(res => res.json())
-      .then(data => setAuthRequired(data.required))
-      .catch(() => setAuthRequired(false));
+      .then(data => setAuthStatus({ setup: data.setup }))
+      .catch(() => setAuthStatus({ setup: false }));
   }, []);
 
   const handleLogin = useCallback((token) => {
@@ -61,7 +62,7 @@ function App() {
     setAuthToken(token);
   }, []);
 
-  // Build WebSocket URL with token if auth is enabled
+  // Build WebSocket URL with token
   const wsUrl = useMemo(() => {
     const base = `ws://${window.location.hostname}:3001`;
     if (authToken) return `${base}?token=${authToken}`;
@@ -69,8 +70,9 @@ function App() {
   }, [authToken]);
   const { teams, stats, teamHistory, agentOutputs, allInboxes, isConnected, error, lastRawMessage, connectionStatus, reconnectAttempts } = useWebSocket(wsUrl);
 
-  // Auth gate: show loading or login screen before dashboard (after all hooks)
-  const showAuthGate = authRequired === null || (authRequired && !authToken);
+  // Auth gate states
+  const showSetup = authStatus?.setup === true;
+  const showLogin = !showSetup && !authToken;
 
   const { permission, requestPermission } = useInboxNotifications(allInboxes);
 
@@ -144,20 +146,19 @@ function App() {
     }
   }, [activeTab]);
 
-  // Auth gate rendering
-  if (showAuthGate) {
-    if (authRequired === null) {
-      return (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg-primary)' }}>
-          <div style={{ textAlign: 'center' }}>
-            <Activity style={{ width: '32px', height: '32px', color: '#f97316', margin: '0 auto 12px', display: 'block' }} />
-            <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Loading dashboard...</p>
-          </div>
+  // Auth gate — show loading, setup, or login before dashboard
+  if (authStatus === null) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg-primary)' }}>
+        <div style={{ textAlign: 'center' }}>
+          <Activity style={{ width: '32px', height: '32px', color: '#f97316', margin: '0 auto 12px', display: 'block' }} />
+          <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Loading...</p>
         </div>
-      );
-    }
-    return <LoginScreen onLogin={handleLogin} />;
+      </div>
+    );
   }
+  if (showSetup) return <SetupScreen onSetup={(token) => { handleLogin(token); setAuthStatus({ setup: false }); }} />;
+  if (showLogin) return <LoginScreen onLogin={handleLogin} />;
 
   return (
     <div style={{ background: 'var(--bg-primary)', minHeight: '100vh' }}>

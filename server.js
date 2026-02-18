@@ -15,14 +15,50 @@ const config = require('./config');
 const app = express();
 const server = http.createServer(app);
 
-// --- Optional Password Authentication ---
-const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD || null;
-let authToken = null;
+// --- Password Authentication (always required) ---
+// Password stored as scrypt hash in ~/.claude/dashboard.key
+// Format: <hex-salt>:<hex-hash>
+const KEY_FILE = path.join(os.homedir(), '.claude', 'dashboard.key');
+let authToken = crypto.randomBytes(32).toString('hex');
 
-if (DASHBOARD_PASSWORD) {
-  authToken = crypto.randomBytes(32).toString('hex');
-  console.log('🔒 Password authentication is ENABLED (DASHBOARD_PASSWORD is set)');
+async function hashPassword(password) {
+  const salt = crypto.randomBytes(16);
+  const hash = await new Promise((resolve, reject) => {
+    crypto.scrypt(password, salt, 32, (err, derived) => {
+      if (err) reject(err); else resolve(derived);
+    });
+  });
+  return `${salt.toString('hex')}:${hash.toString('hex')}`;
 }
+
+async function verifyPassword(password, stored) {
+  const [saltHex, hashHex] = stored.split(':');
+  if (!saltHex || !hashHex) return false;
+  const salt = Buffer.from(saltHex, 'hex');
+  const expected = Buffer.from(hashHex, 'hex');
+  const derived = await new Promise((resolve, reject) => {
+    crypto.scrypt(password, salt, 32, (err, d) => {
+      if (err) reject(err); else resolve(d);
+    });
+  });
+  if (derived.length !== expected.length) return false;
+  return crypto.timingSafeEqual(derived, expected);
+}
+
+async function loadStoredHash() {
+  try {
+    const data = await fs.readFile(KEY_FILE, 'utf8');
+    return data.trim() || null;
+  } catch {
+    return null;
+  }
+}
+
+// storedHash is null when no password has been set yet (first run)
+let storedHash = null;
+(async () => { storedHash = await loadStoredHash(); })();
+
+console.log('🔒 Password authentication is ENABLED');
 
 const wss = new WebSocket.Server({
   server,
@@ -75,42 +111,55 @@ app.use('/api/', (req, res, next) => {
 
 app.use(express.json({ limit: '10kb' }));
 
-// --- Auth endpoints (always available, even when auth is disabled) ---
+// --- Auth endpoints ---
+// Returns { required: true, setup: true } when no password has been set yet
 app.get('/api/auth/required', (req, res) => {
-  res.json({ required: !!DASHBOARD_PASSWORD });
+  res.json({ required: true, setup: !storedHash });
 });
 
-app.post('/api/auth/login', (req, res) => {
-  if (!DASHBOARD_PASSWORD) {
-    return res.json({ token: null, message: 'No authentication required' });
+// First-time setup — only works when no password is stored yet
+app.post('/api/auth/setup', async (req, res) => {
+  if (storedHash) {
+    return res.status(403).json({ error: 'Password already set' });
   }
-
   const { password } = req.body || {};
+  if (!password || typeof password !== 'string' || password.length < 6) {
+    return res.status(400).json({ error: 'Password must be at least 6 characters' });
+  }
+  try {
+    storedHash = await hashPassword(password);
+    await fs.mkdir(path.dirname(KEY_FILE), { recursive: true });
+    await fs.writeFile(KEY_FILE, storedHash, { mode: 0o600 });
+    authToken = crypto.randomBytes(32).toString('hex');
+    res.json({ token: authToken });
+  } catch {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
+app.post('/api/auth/login', async (req, res) => {
+  if (!storedHash) {
+    return res.status(403).json({ error: 'No password set — complete setup first' });
+  }
+  const { password } = req.body || {};
   if (!password || typeof password !== 'string') {
     return res.status(400).json({ error: 'Password is required' });
   }
-
-  // Constant-time comparison to prevent timing attacks
-  const passwordBuffer = Buffer.from(password);
-  const expectedBuffer = Buffer.from(DASHBOARD_PASSWORD);
-
-  if (passwordBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(passwordBuffer, expectedBuffer)) {
-    return res.status(401).json({ error: 'Invalid password' });
+  try {
+    const valid = await verifyPassword(password, storedHash);
+    if (!valid) {
+      return res.status(401).json({ error: 'Invalid password' });
+    }
+    res.json({ token: authToken });
+  } catch {
+    res.status(500).json({ error: 'Internal server error' });
   }
-
-  res.json({ token: authToken });
 });
 
 // --- Auth middleware for protected /api/* routes (skip /api/auth/*) ---
 app.use('/api/', (req, res, next) => {
   // Skip auth routes
   if (req.path.startsWith('/auth/')) {
-    return next();
-  }
-
-  // If no password is configured, allow all requests
-  if (!DASHBOARD_PASSWORD) {
     return next();
   }
 
