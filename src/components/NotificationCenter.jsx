@@ -188,27 +188,17 @@ export function NotificationCenter({
   const hasNotifications = notifications.length > 0;
 
   return (
-    <>
-      {/* Backdrop overlay */}
-      <div
-        className={`fixed inset-0 z-[60] bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
-          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
-        aria-hidden="true"
-      />
-
-      {/* Panel */}
       <div
         ref={panelRef}
         role="dialog"
         aria-label="Notification Center"
         aria-modal="true"
-        className={`fixed top-0 right-0 bottom-0 z-[70] w-full max-w-sm flex flex-col shadow-2xl transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed top-[68px] right-4 z-[70] w-[380px] max-h-[calc(100vh-88px)] flex flex-col shadow-2xl rounded-xl overflow-hidden transition-all duration-200 ease-out origin-top-right ${
+          isOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
         }`}
         style={{
           background: 'var(--bg-secondary)',
-          borderLeft: '1px solid var(--border-color)',
+          border: '1px solid var(--border-color)',
         }}
       >
         {/* Header */}
@@ -274,7 +264,6 @@ export function NotificationCenter({
           )}
         </div>
       </div>
-    </>
   );
 }
 
