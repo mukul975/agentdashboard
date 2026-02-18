@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import {
-  X, Bell, BellOff, CheckCheck, Trash2,
+  X, Bell, BellOff,
   Users, CheckSquare, MessageSquare, Terminal, AlertTriangle, Info,
 } from 'lucide-react';
 
@@ -10,13 +10,13 @@ const ICON_MAP = {
   output: Terminal, system: AlertTriangle, info: Info,
 };
 
-const TYPE_STYLES = {
-  team:    { border: 'border-l-blue-500',   bg: 'rgba(59,130,246,0.08)',   icon: 'text-blue-400'   },
-  task:    { border: 'border-l-green-500',  bg: 'rgba(34,197,94,0.08)',    icon: 'text-green-400'  },
-  message: { border: 'border-l-orange-500', bg: 'rgba(249,115,22,0.08)',   icon: 'text-orange-400' },
-  output:  { border: 'border-l-purple-500', bg: 'rgba(168,85,247,0.08)',   icon: 'text-purple-400' },
-  system:  { border: 'border-l-red-500',    bg: 'rgba(239,68,68,0.08)',    icon: 'text-red-400'    },
-  info:    { border: 'border-l-gray-500',   bg: 'rgba(107,114,128,0.08)',  icon: 'text-gray-400'   },
+const TYPE_COLORS = {
+  team:    { border: '#3b82f6', bg: 'rgba(59,130,246,0.09)',  icon: '#60a5fa' },
+  task:    { border: '#22c55e', bg: 'rgba(34,197,94,0.09)',   icon: '#4ade80' },
+  message: { border: '#f97316', bg: 'rgba(249,115,22,0.09)',  icon: '#fb923c' },
+  output:  { border: '#a855f7', bg: 'rgba(168,85,247,0.09)',  icon: '#c084fc' },
+  system:  { border: '#ef4444', bg: 'rgba(239,68,68,0.09)',   icon: '#f87171' },
+  info:    { border: '#6b7280', bg: 'rgba(107,114,128,0.09)', icon: '#9ca3af' },
 };
 
 function formatRelativeTime(timestamp) {
@@ -46,7 +46,7 @@ function groupNotifications(notifications) {
 
 function NotificationItem({ notification, onMarkRead, onNavigate }) {
   const IconComponent = ICON_MAP[notification.type] || Info;
-  const style = TYPE_STYLES[notification.type] || TYPE_STYLES.info;
+  const colors = TYPE_COLORS[notification.type] || TYPE_COLORS.info;
 
   const handleClick = () => {
     if (!notification.read) onMarkRead(notification.id);
@@ -59,31 +59,49 @@ function NotificationItem({ notification, onMarkRead, onNavigate }) {
     <button
       onClick={handleClick}
       aria-label={ariaLabel}
-      className={`notif-item w-full text-left flex items-start gap-3 px-4 py-3 border-l-[3px] ${style.border} transition-colors duration-150`}
-      style={{ background: !notification.read ? style.bg : 'transparent' }}
+      className="notif-item w-full text-left flex items-start"
+      style={{
+        gap: 12,
+        padding: '12px 16px',
+        borderLeft: `3px solid ${colors.border}`,
+        background: !notification.read ? colors.bg : 'transparent',
+        transition: 'background 0.15s',
+      }}
     >
       <div
-        className={`mt-0.5 flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center ${style.icon}`}
-        style={{ background: style.bg }}
+        className="flex items-center justify-center flex-shrink-0"
+        style={{
+          width: 28,
+          height: 28,
+          borderRadius: 8,
+          background: colors.bg,
+          color: colors.icon,
+          marginTop: 2,
+        }}
       >
-        <IconComponent className="h-3.5 w-3.5" />
+        <IconComponent style={{ width: 14, height: 14 }} />
       </div>
       <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-2">
-          <span
-            className="text-sm font-semibold leading-snug"
-            style={{ color: 'var(--text-heading)' }}
-          >
+        <div className="flex items-start justify-between" style={{ gap: 8 }}>
+          <span className="text-sm font-semibold" style={{ color: 'var(--text-heading)', lineHeight: 1.3 }}>
             {notification.title}
           </span>
           {!notification.read && (
-            <span className="flex-shrink-0 mt-1 w-2 h-2 rounded-full bg-claude-orange" />
+            <span style={{
+              flexShrink: 0,
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              background: '#e8750a',
+              marginTop: 4,
+              display: 'inline-block',
+            }} />
           )}
         </div>
-        <p className="text-xs mt-0.5 line-clamp-2 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+        <p className="text-xs" style={{ color: 'var(--text-secondary)', marginTop: 2, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
           {notification.message}
         </p>
-        <span className="text-[11px] mt-1 block" style={{ color: 'var(--text-muted)' }}>
+        <span className="text-xs block" style={{ color: 'var(--text-muted)', marginTop: 4, fontSize: 11 }}>
           {formatRelativeTime(notification.timestamp)}
         </span>
       </div>
@@ -104,11 +122,19 @@ function NotificationGroup({ label, notifications, onMarkRead, onNavigate }) {
     <div role="group" aria-labelledby={groupId}>
       <div
         id={groupId}
-        className="sticky top-0 z-10 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest border-l-2 border-l-claude-orange"
         style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+          padding: '6px 16px',
+          fontSize: 10,
+          fontWeight: 700,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
           background: 'var(--bg-primary)',
           color: 'var(--text-muted)',
           borderBottom: '1px solid var(--border-color)',
+          borderLeft: '2px solid #e8750a',
         }}
       >
         {label}
@@ -134,17 +160,17 @@ NotificationGroup.propTypes = {
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center py-14 px-8 text-center">
+    <div className="flex flex-col items-center justify-center text-center" style={{ padding: '56px 32px' }}>
       <div
-        className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
-        style={{ background: 'var(--bg-primary)' }}
+        className="flex items-center justify-center"
+        style={{ width: 64, height: 64, borderRadius: 16, background: 'var(--bg-primary)', marginBottom: 16 }}
       >
-        <BellOff className="h-8 w-8" style={{ color: 'var(--text-muted)' }} />
+        <BellOff style={{ width: 32, height: 32, color: 'var(--text-muted)' }} />
       </div>
-      <h3 className="text-sm font-semibold mb-1.5" style={{ color: 'var(--text-primary)' }}>
+      <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)', marginBottom: 6 }}>
         All caught up!
       </h3>
-      <p className="text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+      <p className="text-xs" style={{ color: 'var(--text-muted)', lineHeight: 1.6 }}>
         No new notifications. We&apos;ll let you know when something happens.
       </p>
     </div>
@@ -161,7 +187,8 @@ export function NotificationCenter({
   // Focus close button when opened
   useEffect(() => {
     if (isOpen && closeRef.current) {
-      setTimeout(() => closeRef.current?.focus(), 50);
+      const t = setTimeout(() => closeRef.current?.focus(), 50);
+      return () => clearTimeout(t);
     }
   }, [isOpen]);
 
@@ -192,74 +219,130 @@ export function NotificationCenter({
       role="dialog"
       aria-label="Notification Center"
       aria-modal="true"
-      className={`fixed top-[68px] right-4 z-[70] w-[400px] max-h-[560px] flex flex-col rounded-2xl overflow-hidden shadow-2xl transition-all duration-200 ${
-        isOpen
-          ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
-          : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
-      }`}
       style={{
+        position: 'fixed',
+        top: 68,
+        right: 16,
+        zIndex: 70,
+        width: 400,
+        maxHeight: 560,
+        display: 'flex',
+        flexDirection: 'column',
+        borderRadius: 16,
+        overflow: 'hidden',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.2)',
         background: 'var(--bg-secondary)',
         border: '1px solid var(--border-color)',
-        transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        // Dropdown animation via opacity + transform
+        opacity: isOpen ? 1 : 0,
+        transform: isOpen ? 'translateY(0) scale(1)' : 'translateY(-8px) scale(0.97)',
+        pointerEvents: isOpen ? 'auto' : 'none',
+        transition: 'opacity 0.18s cubic-bezier(0.16,1,0.3,1), transform 0.18s cubic-bezier(0.16,1,0.3,1)',
+        transformOrigin: 'top right',
       }}
     >
-      {/* Caret arrow pointing to bell */}
-      <div className="notif-panel-arrow" />
+      {/* Caret arrow pointing up toward bell */}
+      <div style={{
+        position: 'absolute',
+        top: -7,
+        right: 32,
+        width: 14,
+        height: 14,
+        transform: 'rotate(45deg)',
+        background: 'var(--bg-secondary)',
+        borderTop: '1px solid var(--border-color)',
+        borderLeft: '1px solid var(--border-color)',
+        zIndex: 1,
+      }} />
 
       {/* Header */}
       <div
-        className="flex items-center justify-between px-5 py-4 flex-shrink-0"
+        className="flex items-center justify-between flex-shrink-0"
         style={{
+          padding: '14px 20px',
           borderBottom: '1px solid var(--border-color)',
           background: 'linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%)',
+          flexShrink: 0,
         }}
       >
-        <div className="flex items-center gap-2.5">
-          <Bell className="h-4.5 w-4.5 text-claude-orange" style={{ width: 18, height: 18 }} />
-          <h2 className="text-sm font-bold tracking-tight" style={{ color: 'var(--text-heading)' }}>
+        <div className="flex items-center" style={{ gap: 10 }}>
+          <Bell style={{ width: 18, height: 18, color: '#e8750a' }} />
+          <h2 className="text-sm font-bold" style={{ color: 'var(--text-heading)', letterSpacing: '-0.01em' }}>
             Notifications
           </h2>
           {unreadCount > 0 && (
-            <span className="notif-badge-appear bg-claude-orange text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 leading-none">
-              {unreadCount}
+            <span
+              className="notif-badge-appear"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: '#e8750a',
+                color: '#fff',
+                fontSize: 10,
+                fontWeight: 700,
+                borderRadius: 9999,
+                minWidth: 18,
+                height: 18,
+                padding: '0 5px',
+                lineHeight: 1,
+              }}
+            >
+              {unreadCount > 99 ? '99+' : unreadCount}
             </span>
           )}
         </div>
         <button
           ref={closeRef}
           onClick={onClose}
-          className="p-1.5 rounded-lg transition-colors hover:bg-white/5 active:scale-95"
+          className="notif-item"
           aria-label="Close notifications"
-          style={{ color: 'var(--text-muted)' }}
+          style={{
+            padding: '6px',
+            borderRadius: 8,
+            color: 'var(--text-muted)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
-          <X className="h-4 w-4" />
+          <X style={{ width: 16, height: 16 }} />
         </button>
       </div>
 
       {/* Actions bar */}
       {hasNotifications && (
         <div
-          className="flex items-center justify-between px-5 py-2 flex-shrink-0 text-xs"
-          style={{ borderBottom: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}
+          className="flex items-center justify-between flex-shrink-0 text-xs"
+          style={{
+            padding: '8px 20px',
+            borderBottom: '1px solid var(--border-color)',
+            background: 'var(--bg-primary)',
+            flexShrink: 0,
+          }}
         >
           <span style={{ color: 'var(--text-muted)' }}>
             {unreadCount > 0 ? `${unreadCount} unread` : 'All read'}
           </span>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center" style={{ gap: 12 }}>
             <button
               onClick={markAllRead}
-              className="font-medium transition-colors hover:text-orange-400"
-              style={{ color: 'var(--claude-orange, #e8750a)' }}
+              className="font-medium"
+              style={{ color: '#e8750a', transition: 'opacity 0.15s' }}
               title="Mark all as read"
+              onMouseEnter={e => e.target.style.opacity = '0.7'}
+              onMouseLeave={e => e.target.style.opacity = '1'}
             >
               Mark all read
             </button>
             <span style={{ color: 'var(--text-muted)' }}>·</span>
             <button
               onClick={clearAll}
-              className="font-medium transition-colors hover:text-red-400"
-              style={{ color: 'var(--text-muted)' }}
+              className="font-medium"
+              style={{ color: 'var(--text-muted)', transition: 'color 0.15s' }}
               title="Clear all notifications"
+              onMouseEnter={e => e.target.style.color = '#ef4444'}
+              onMouseLeave={e => e.target.style.color = 'var(--text-muted)'}
             >
               Clear all
             </button>
@@ -268,12 +351,12 @@ export function NotificationCenter({
       )}
 
       {/* Notification list */}
-      <div className="flex-1 overflow-y-auto min-h-0">
+      <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
         {hasNotifications ? (
-          <div className="divide-y" style={{ borderColor: 'var(--border-color)' }}>
-            <NotificationGroup label="Just Now"  notifications={groups.justNow}  onMarkRead={markAsRead} onNavigate={onNavigate} />
-            <NotificationGroup label="Today"     notifications={groups.today}    onMarkRead={markAsRead} onNavigate={onNavigate} />
-            <NotificationGroup label="Earlier"   notifications={groups.earlier}  onMarkRead={markAsRead} onNavigate={onNavigate} />
+          <div>
+            <NotificationGroup label="Just Now" notifications={groups.justNow} onMarkRead={markAsRead} onNavigate={onNavigate} />
+            <NotificationGroup label="Today"    notifications={groups.today}   onMarkRead={markAsRead} onNavigate={onNavigate} />
+            <NotificationGroup label="Earlier"  notifications={groups.earlier} onMarkRead={markAsRead} onNavigate={onNavigate} />
           </div>
         ) : (
           <EmptyState />
