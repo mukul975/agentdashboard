@@ -109,7 +109,7 @@ function TaskCompletionRing({ completed, total, size = 36 }) {
           style={{ transition: 'stroke-dashoffset 0.5s ease' }}
         />
       </svg>
-      <span className="absolute text-[9px] font-bold text-white">
+      <span className="absolute font-bold text-white" style={{ fontSize: 9 }}>
         {total > 0 ? Math.round(progress * 100) : 0}%
       </span>
     </div>
@@ -178,7 +178,7 @@ export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInbo
           <span className="text-sm font-semibold text-white">Team Health:</span>
           <span className="text-sm font-bold" style={{ color: healthBarColor }}>{teamHealth}%</span>
         </div>
-        <div className="flex-1 h-2.5 rounded-full bg-gray-700/70 overflow-hidden">
+        <div className="flex-1 h-2.5 rounded-full overflow-hidden" style={{ background: 'rgba(55,65,81,0.7)' }}>
           <div
             className="h-full rounded-full transition-all duration-700 ease-out"
             style={{
@@ -193,14 +193,14 @@ export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInbo
 
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="bg-claude-orange/20 p-2 rounded-lg">
+          <div className="p-2 rounded-lg" style={{ background: 'rgba(232,117,10,0.2)' }}>
             <Users className="h-6 w-6 text-claude-orange" aria-hidden="true" />
           </div>
           <div>
             <h3 className="text-xl font-bold text-white flex items-center">
               {name}
               {unreadCount > 0 && (
-                <span className="ml-2 bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
+                <span className="ml-2 bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 text-center" style={{ minWidth: 20 }}>
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
               )}
@@ -225,22 +225,22 @@ export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInbo
       </div>
 
       <div className="flex flex-wrap gap-2 mb-4">
-        <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-1 rounded-full">
+        <div className="flex items-center gap-2 px-3 py-1 rounded-full" style={{ background: 'rgba(55,65,81,0.5)' }}>
           <Users className="h-4 w-4 text-gray-400" aria-hidden="true" />
           <span className="text-sm text-gray-300">{members.length} agents</span>
         </div>
-        <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-1 rounded-full">
+        <div className="flex items-center gap-2 px-3 py-1 rounded-full" style={{ background: 'rgba(55,65,81,0.5)' }}>
           <Activity className="h-4 w-4 text-gray-400" aria-hidden="true" />
           <span className="text-sm text-gray-300">{tasks.length} tasks</span>
         </div>
-        <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-1 rounded-full">
+        <div className="flex items-center gap-2 px-3 py-1 rounded-full" style={{ background: 'rgba(55,65,81,0.5)' }}>
           <Clock className="h-4 w-4 text-gray-400" aria-hidden="true" />
           <span className="text-sm text-gray-300">
             {dayjs(new Date(lastUpdated)).fromNow()}
           </span>
         </div>
         {totalMessages > 0 && (
-          <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-1 rounded-full">
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full" style={{ background: 'rgba(55,65,81,0.5)' }}>
             <Mail className="h-4 w-4 text-gray-400" aria-hidden="true" />
             <span className="text-sm text-gray-300">
               {totalMessages} messages{unreadCount > 0 ? `, ${unreadCount} unread` : ''}
@@ -250,7 +250,10 @@ export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInbo
         {onNavigateToInboxes && (
           <button
             onClick={() => onNavigateToInboxes(name)}
-            className="flex items-center gap-2 bg-claude-orange/20 hover:bg-claude-orange/30 text-claude-orange px-3 py-1 rounded-full transition-colors text-sm font-medium"
+            className="flex items-center gap-2 text-claude-orange px-3 py-1 rounded-full transition-colors text-sm font-medium"
+            style={{ background: 'rgba(232,117,10,0.2)' }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,117,10,0.3)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(232,117,10,0.2)'}
           >
             <Inbox className="h-4 w-4" aria-hidden="true" />
             View Inboxes

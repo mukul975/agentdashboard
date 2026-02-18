@@ -79,7 +79,7 @@ function PercentageRing({ value, size = 56, strokeWidth = 5, color, label }) {
         />
       </svg>
       <span className="text-xs font-bold" style={{ color }}>{value.toFixed(0)}%</span>
-      <span className="text-[10px] leading-tight text-center" style={{ color: 'var(--text-muted)' }}>{label}</span>
+      <span className="leading-tight text-center" style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{label}</span>
     </div>
   );
 }
@@ -87,20 +87,20 @@ function PercentageRing({ value, size = 56, strokeWidth = 5, color, label }) {
 function StatusBadge({ rate }) {
   if (rate > 50) {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium text-green-400" style={{ background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.3)' }}>
         Active
       </span>
     );
   }
   if (rate > 0) {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium text-yellow-400" style={{ background: 'rgba(234,179,8,0.2)', border: '1px solid rgba(234,179,8,0.3)' }}>
         In Progress
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-500/20 text-gray-400 border border-gray-500/30">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium text-gray-400" style={{ background: 'rgba(107,114,128,0.2)', border: '1px solid rgba(107,114,128,0.3)' }}>
       Just Started
     </span>
   );
@@ -291,15 +291,15 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
         />
         <div className="flex flex-col items-center gap-1">
           <div className="text-xl font-bold" style={{ color: 'var(--text-heading)' }}>{aggregateMetrics.totalCompleted}</div>
-          <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Done</div>
+          <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Done</div>
         </div>
         <div className="flex flex-col items-center gap-1">
           <div className="text-xl font-bold text-blue-400">{aggregateMetrics.totalInProgress}</div>
-          <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Active</div>
+          <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Active</div>
         </div>
         <div className="flex flex-col items-center gap-1">
           <div className="text-xl font-bold" style={{ color: 'var(--text-secondary)' }}>{aggregateMetrics.totalMembers}</div>
-          <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Agents</div>
+          <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Agents</div>
         </div>
       </div>
 
@@ -333,7 +333,7 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
                 </td>
                 <td className="py-3 pr-4">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium truncate max-w-[180px]" style={{ color: 'var(--text-heading)' }}>{team.name}</span>
+                    <span className="font-medium truncate" style={{ maxWidth: '180px', color: 'var(--text-heading)' }}>{team.name}</span>
                     {team.blockedCount > 0 && (
                       <span className="flex items-center gap-0.5 text-xs text-red-400" title={`${team.blockedCount} blocked`}>
                         <AlertTriangle className="h-3 w-3" />
@@ -399,7 +399,7 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
         {/* Highlights */}
         <div className="space-y-3">
           {topAgent && (
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+            <div className="flex items-center gap-3 p-3 rounded-lg" style={{ background: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.2)' }}>
               <Crown className="h-5 w-5 text-yellow-400 flex-shrink-0" />
               <div>
                 <div className="text-xs text-yellow-400/70 font-medium">Most Active Agent</div>
@@ -409,7 +409,7 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
             </div>
           )}
           {slowestTeam && (
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+            <div className="flex items-center gap-3 p-3 rounded-lg" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
               <TrendingDown className="h-5 w-5 text-red-400 flex-shrink-0" />
               <div>
                 <div className="text-xs text-red-400/70 font-medium">Needs Attention</div>
@@ -463,9 +463,9 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
                 <div key={task.id} className="flex items-center gap-2">
                   {task.blocked && <AlertTriangle className="h-3 w-3 text-red-400 flex-shrink-0" />}
                   <span className="text-xs truncate flex-1" style={{ color: 'var(--text-heading)' }} title={task.subject}>{task.subject}</span>
-                  <span className="text-[10px] flex-shrink-0" style={{ color: 'var(--text-muted)' }}>{task.owner}</span>
+                  <span className="flex-shrink-0" style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{task.owner}</span>
                   {task.age > 0 && (
-                    <span className="text-[10px] text-orange-400 font-mono flex-shrink-0">{formatDuration(task.age)}</span>
+                    <span className="text-orange-400 font-mono flex-shrink-0" style={{ fontSize: '10px' }}>{formatDuration(task.age)}</span>
                   )}
                 </div>
               ))}

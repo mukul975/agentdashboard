@@ -41,7 +41,7 @@ export class ErrorBoundary extends React.Component {
       // Panel-level fallback when a name prop is provided
       if (this.props.name) {
         return (
-          <div className="card p-6 border border-red-500/30">
+          <div className="card p-6" style={{ border: '1px solid rgba(239,68,68,0.3)' }}>
             <div className="flex items-start gap-3 mb-4">
               <AlertCircle className="h-6 w-6 text-red-400 flex-shrink-0 mt-0.5" />
               <div>
@@ -102,7 +102,7 @@ export class ErrorBoundary extends React.Component {
 
               {/* Error Details (Development) */}
               {process.env.NODE_ENV === 'development' && this.state.error && (
-                <div className="mb-6 text-left bg-gray-800 rounded-lg p-4 border border-red-500/30">
+                <div className="mb-6 text-left bg-gray-800 rounded-lg p-4" style={{ border: '1px solid rgba(239,68,68,0.3)' }}>
                   <h3 className="text-sm font-semibold text-red-400 mb-2">Error Details:</h3>
                   <pre className="text-xs text-gray-300 overflow-x-auto">
                     {this.state.error.toString()}
@@ -155,7 +155,7 @@ export class ErrorBoundary extends React.Component {
             {/* Tips Card */}
             <div className="mt-6 card p-6">
               <h3 className="text-lg font-semibold text-white mb-3">Troubleshooting Tips:</h3>
-              <ul className="text-sm text-gray-400 space-y-2">
+              <ul className="text-sm text-gray-400" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <li>• Check if the backend server is running on port 3001</li>
                 <li>• Verify that Claude Code agent teams are active</li>
                 <li>• Try clearing your browser cache and reloading</li>

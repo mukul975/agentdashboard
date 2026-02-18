@@ -129,8 +129,8 @@ export function TeamTimeline({ allInboxes = {}, teams = [] }) {
 
       {/* Timeline Container */}
       <div
-        className="max-h-[600px] overflow-y-auto pr-2"
-        style={{ scrollbarWidth: 'thin' }}
+        className="overflow-y-auto pr-2"
+        style={{ scrollbarWidth: 'thin', maxHeight: '600px' }}
       >
         {filteredMessages.length === 0 ? (
           <div

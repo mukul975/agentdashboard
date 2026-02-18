@@ -15,15 +15,15 @@ import React from 'react';
  */
 export function SkeletonCard() {
   return (
-    <div className="card p-6 space-y-4">
+    <div className="card p-6" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <div className="flex items-center gap-4">
         <div className="skeleton-animated w-16 h-16 rounded-full flex-shrink-0" />
-        <div className="flex-1 space-y-2">
+        <div className="flex-1" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <div className="skeleton-animated h-6 w-3/4" />
           <div className="skeleton-animated h-4 w-1/2" />
         </div>
       </div>
-      <div className="space-y-2">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <div className="skeleton-animated h-4 w-full" />
         <div className="skeleton-animated h-4 w-5/6" />
         <div className="skeleton-animated h-4 w-4/5" />
@@ -40,7 +40,7 @@ export function SkeletonStat() {
   return (
     <div className="flex items-center gap-3">
       <div className="skeleton-animated w-12 h-12 rounded-lg flex-shrink-0" />
-      <div className="space-y-2 flex-1">
+      <div className="flex-1" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <div className="skeleton-animated h-3 w-20" />
         <div className="skeleton-animated h-6 w-12" />
       </div>
@@ -70,15 +70,15 @@ export function SkeletonStatsOverview() {
  */
 export function SkeletonTaskItem() {
   return (
-    <div className="bg-gray-700/30 rounded-lg p-4 border border-gray-600">
+    <div className="rounded-lg p-4 border border-gray-600" style={{ backgroundColor: 'rgba(55,65,81,0.3)' }}>
       <div className="flex items-start gap-3">
         <div className="skeleton-animated w-5 h-5 rounded-full mt-1 flex-shrink-0" />
-        <div className="flex-1 space-y-3">
+        <div className="flex-1" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <div className="flex items-start justify-between gap-2">
             <div className="skeleton-animated h-5 w-2/3" />
             <div className="skeleton-animated h-6 w-20 rounded-full" />
           </div>
-          <div className="space-y-2">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <div className="skeleton-animated h-4 w-full" />
             <div className="skeleton-animated h-4 w-4/5" />
           </div>
@@ -98,7 +98,7 @@ export function SkeletonTaskItem() {
  */
 export function SkeletonTaskList({ count = 3 }) {
   return (
-    <div className="space-y-2">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
       {[...Array(count)].map((_, i) => (
         <SkeletonTaskItem key={i} />
       ))}
@@ -112,10 +112,10 @@ export function SkeletonTaskList({ count = 3 }) {
  */
 export function SkeletonAgentCard() {
   return (
-    <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+    <div className="rounded-lg p-4 border border-gray-600" style={{ backgroundColor: 'rgba(55,65,81,0.5)' }}>
       <div className="flex items-start gap-3">
         <div className="skeleton-animated w-10 h-10 rounded-lg flex-shrink-0" />
-        <div className="flex-1 space-y-2">
+        <div className="flex-1" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <div className="flex items-center gap-2">
             <div className="skeleton-animated h-5 w-32" />
             <div className="skeleton-animated h-5 w-12 rounded-full" />
@@ -134,12 +134,12 @@ export function SkeletonAgentCard() {
  */
 export function SkeletonTeamCard() {
   return (
-    <div className="card space-y-6">
+    <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="skeleton-animated w-12 h-12 rounded-lg" />
-          <div className="space-y-2">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <div className="skeleton-animated h-6 w-40" />
             <div className="skeleton-animated h-4 w-32" />
           </div>
@@ -148,16 +148,16 @@ export function SkeletonTeamCard() {
       </div>
 
       {/* Agents */}
-      <div className="space-y-3">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <div className="skeleton-animated h-4 w-20" />
-        <div className="space-y-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <SkeletonAgentCard />
           <SkeletonAgentCard />
         </div>
       </div>
 
       {/* Tasks */}
-      <div className="space-y-3">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <div className="skeleton-animated h-4 w-16" />
         <SkeletonTaskList count={2} />
       </div>
@@ -171,9 +171,9 @@ export function SkeletonTeamCard() {
  */
 export function SkeletonActivityItem() {
   return (
-    <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-700/30">
+    <div className="flex items-start gap-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(55,65,81,0.3)' }}>
       <div className="skeleton-animated w-8 h-8 rounded-full flex-shrink-0" />
-      <div className="flex-1 space-y-2">
+      <div className="flex-1" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <div className="skeleton-animated h-4 w-full" />
         <div className="skeleton-animated h-3 w-3/4" />
         <div className="skeleton-animated h-3 w-20" />
@@ -193,7 +193,7 @@ export function SkeletonActivityFeed({ count = 5 }) {
         <div className="skeleton-animated h-6 w-32" />
         <div className="skeleton-animated h-8 w-8 rounded-full" />
       </div>
-      <div className="space-y-2 max-h-96 overflow-y-auto">
+      <div className="max-h-96 overflow-y-auto" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {[...Array(count)].map((_, i) => (
           <SkeletonActivityItem key={i} />
         ))}
@@ -208,7 +208,7 @@ export function SkeletonActivityFeed({ count = 5 }) {
  */
 export function SkeletonChart() {
   return (
-    <div className="card p-6 space-y-4">
+    <div className="card p-6" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <div className="skeleton-animated h-6 w-48" />
       <div className="flex items-end justify-between h-32 gap-2">
         {[...Array(8)].map((_, i) => (
@@ -237,7 +237,7 @@ export function SkeletonChart() {
  */
 export function SkeletonMetricCard() {
   return (
-    <div className="stat-card p-6 space-y-4">
+    <div className="stat-card p-6" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <div className="flex items-center justify-between">
         <div className="skeleton-animated h-5 w-32" />
         <div className="skeleton-animated h-8 w-8 rounded-lg" />
@@ -285,7 +285,7 @@ export function SkeletonTable({ rows = 5, columns = 4 }) {
  */
 export function SkeletonText({ lines = 3, widths = ['100%', '90%', '80%'] }) {
   return (
-    <div className="space-y-2">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
       {[...Array(lines)].map((_, i) => (
         <div
           key={i}
@@ -336,7 +336,7 @@ export function SkeletonGrid({ columns = 3, rows = 2, Component = SkeletonCard }
  */
 export function SkeletonArchiveCard({ lines = 3, height = 'h-4' }) {
   return (
-    <div className="card animate-pulse border-l-4 border-l-purple-500/30">
+    <div className="card animate-pulse border-l-4" style={{ borderLeftColor: 'rgba(168,85,247,0.3)' }}>
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
@@ -386,8 +386,8 @@ export function SkeletonOutputViewer() {
           <div className="skeleton-animated h-16 w-32 rounded-lg" />
         </div>
       </div>
-      <div className="bg-gray-900 rounded-lg p-4 border border-gray-700 h-[300px]">
-        <div className="space-y-2">
+      <div className="bg-gray-900 rounded-lg p-4 border border-gray-700" style={{ height: '300px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="skeleton-animated h-4 rounded" style={{ width: `${Math.random() * 40 + 40}%` }} />
           ))}
@@ -403,8 +403,8 @@ export function SkeletonOutputViewer() {
  */
 export function SkeletonTeamHistoryRow() {
   return (
-    <div className="border border-gray-700/50 rounded-xl overflow-hidden animate-pulse">
-      <div className="p-4 bg-gray-700/30">
+    <div className="rounded-xl overflow-hidden animate-pulse" style={{ border: '1px solid rgba(55,65,81,0.5)' }}>
+      <div className="p-4" style={{ backgroundColor: 'rgba(55,65,81,0.3)' }}>
         <div className="flex items-start gap-3">
           <div className="skeleton-animated w-5 h-5 rounded mt-1 flex-shrink-0" />
           <div className="flex-1 min-w-0">
@@ -450,7 +450,7 @@ export function SkeletonInboxViewer() {
             <div className="skeleton-animated w-5 h-5 rounded" />
             <div className="skeleton-animated h-5 w-16 rounded" />
           </div>
-          <div className="space-y-2">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="flex items-center gap-2 p-2 rounded-lg">
                 <div className="skeleton-animated w-4 h-4 rounded flex-shrink-0" />
@@ -465,16 +465,16 @@ export function SkeletonInboxViewer() {
         <div style={{ padding: '1rem' }}>
           <div className="flex items-center gap-3 mb-6 pb-3" style={{ borderBottom: '1px solid rgba(55, 65, 81, 0.5)' }}>
             <div className="skeleton-animated w-8 h-8 rounded-full flex-shrink-0" />
-            <div className="space-y-1 flex-1">
+            <div className="flex-1" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
               <div className="skeleton-animated h-4 w-40 rounded" />
               <div className="skeleton-animated h-3 w-24 rounded" />
             </div>
           </div>
-          <div className="space-y-3">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="flex items-start gap-3 p-3 rounded-lg" style={{ borderLeft: '4px solid rgba(75, 85, 99, 0.4)' }}>
                 <div className="skeleton-animated w-7 h-7 rounded-full flex-shrink-0" />
-                <div className="flex-1 space-y-2">
+                <div className="flex-1" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <div className="flex items-center justify-between">
                     <div className="skeleton-animated h-3 w-24 rounded" />
                     <div className="skeleton-animated h-3 w-16 rounded" />
@@ -519,7 +519,7 @@ export function SkeletonActivityTimeline({ count = 4 }) {
           className="absolute left-5 top-0 bottom-0 w-0.5"
           style={{ background: 'rgba(75, 85, 99, 0.3)' }}
         />
-        <div className="space-y-3">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {Array.from({ length: count }).map((_, i) => (
             <div key={i} className="relative pl-14">
               <div
@@ -582,14 +582,14 @@ export function SkeletonButton({ size = 'medium' }) {
  */
 export function SkeletonDashboard() {
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Stats overview */}
       <SkeletonStatsOverview />
 
       {/* Main grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Teams column */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <SkeletonTeamCard />
           <SkeletonTeamCard />
         </div>

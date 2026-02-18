@@ -154,7 +154,7 @@ export function AgentOutputViewer({ agentOutputs }) {
             <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm text-red-400 font-medium">Failed to load outputs</p>
-              <p className="text-xs text-red-400/80 mt-1">{refreshError}</p>
+              <p className="text-xs mt-1" style={{ color: 'rgba(248,113,113,0.8)' }}>{refreshError}</p>
             </div>
           </div>
         )}
@@ -174,7 +174,7 @@ export function AgentOutputViewer({ agentOutputs }) {
         <div className="flex items-center gap-2">
           <Terminal className="h-5 w-5 text-claude-orange animate-pulse" />
           <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>Agent Output Stream</h3>
-          <span className="px-2 py-0.5 bg-green-500/20 text-green-400 text-xs rounded-full border border-green-500/30 flex items-center gap-1">
+          <span className="px-2 py-0.5 text-green-400 text-xs rounded-full flex items-center gap-1" style={{ background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.3)' }}>
             <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse"></span>
             LIVE
           </span>
@@ -195,10 +195,10 @@ export function AgentOutputViewer({ agentOutputs }) {
             onClick={() => setAutoScroll(!autoScroll)}
             className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
               autoScroll
-                ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                ? 'text-green-400'
                 : ''
             }`}
-            style={!autoScroll ? { background: 'var(--bg-secondary)', color: 'var(--text-secondary)', border: '1px solid var(--border-color)' } : {}}
+            style={!autoScroll ? { background: 'var(--bg-secondary)', color: 'var(--text-secondary)', border: '1px solid var(--border-color)' } : { background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.3)' }}
             aria-label={autoScroll ? "Auto-scroll enabled" : "Enable auto-scroll"}
             title={autoScroll ? "Auto-scroll enabled" : "Enable auto-scroll"}
           >
@@ -237,7 +237,7 @@ export function AgentOutputViewer({ agentOutputs }) {
           <AlertCircle className="h-5 w-5 text-yellow-400 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
             <p className="text-sm text-yellow-400 font-medium">Connection Issue</p>
-            <p className="text-xs text-yellow-400/80 mt-1">
+            <p className="text-xs mt-1" style={{ color: 'rgba(250,204,21,0.8)' }}>
               {refreshError} - Displaying cached data or using fallback polling
             </p>
           </div>
@@ -298,9 +298,9 @@ export function AgentOutputViewer({ agentOutputs }) {
           <div
             ref={outputRef}
             className={`font-mono text-sm rounded-lg p-4 overflow-auto ${
-              isExpanded ? 'h-[calc(100vh-300px)]' : 'h-[500px]'
+              isExpanded ? 'h-[calc(100vh-300px)]' : ''
             }`}
-            style={{ background: 'var(--code-bg)', border: '1px solid var(--code-border)' }}
+            style={{ background: 'var(--code-bg)', border: '1px solid var(--code-border)', ...(!isExpanded ? { height: '500px' } : {}) }}
             onScroll={(e) => {
               const { scrollTop, scrollHeight, clientHeight } = e.target;
               const isAtBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 10;

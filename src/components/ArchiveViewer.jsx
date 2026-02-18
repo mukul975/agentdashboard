@@ -104,10 +104,10 @@ export function ArchiveViewer() {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="card border-l-4 border-l-purple-500 bg-gradient-to-r from-purple-900/20 to-transparent">
+      <div className="card border-l-4 border-l-purple-500" style={{ background: 'linear-gradient(to right, rgba(88,28,135,0.2), transparent)' }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-purple-500/20 p-3 rounded-lg">
+            <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(168,85,247,0.2)' }}>
               <Archive className="h-6 w-6 text-purple-400" />
             </div>
             <div>
@@ -117,7 +117,7 @@ export function ArchiveViewer() {
               </p>
             </div>
           </div>
-          <div className="bg-purple-500/20 px-4 py-2 rounded-lg">
+          <div className="px-4 py-2 rounded-lg" style={{ backgroundColor: 'rgba(168,85,247,0.2)' }}>
             <span className="text-2xl font-bold text-purple-400">{archives.length}</span>
             <span className="text-sm text-gray-400 ml-2">archived</span>
           </div>
@@ -135,7 +135,7 @@ export function ArchiveViewer() {
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <h3 className="text-xl font-bold text-white">{archive.overview?.split('"')[1] || 'Unknown Team'}</h3>
-                <span className="px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-medium rounded-full">
+                <span className="px-3 py-1 text-purple-400 text-xs font-medium rounded-full" style={{ backgroundColor: 'rgba(168,85,247,0.2)' }}>
                   #{index + 1}
                 </span>
               </div>
@@ -157,7 +157,7 @@ export function ArchiveViewer() {
 
           {/* Archive Stats */}
           <div className="flex flex-wrap gap-3 mb-4">
-            <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-2 rounded-lg">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ backgroundColor: 'rgba(55,65,81,0.5)' }}>
               <Calendar className="h-4 w-4 text-purple-400" />
               <span className="text-sm text-gray-300">
                 {dayjs(archive.archivedAt).format('MMM D, YYYY')}
@@ -168,7 +168,7 @@ export function ArchiveViewer() {
             </div>
 
             {archive.members && (
-              <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-2 rounded-lg">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ backgroundColor: 'rgba(55,65,81,0.5)' }}>
                 <Users className="h-4 w-4 text-blue-400" />
                 <span className="text-sm text-gray-300">
                   {Array.isArray(archive.members) ? archive.members.length : 0} members
@@ -177,7 +177,7 @@ export function ArchiveViewer() {
             )}
 
             {archive.accomplishments && (
-              <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-2 rounded-lg">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ backgroundColor: 'rgba(55,65,81,0.5)' }}>
                 <CheckCircle className="h-4 w-4 text-green-400" />
                 <span className="text-sm text-gray-300">
                   {archive.accomplishments.length} completed
@@ -186,7 +186,7 @@ export function ArchiveViewer() {
             )}
 
             {archive.duration && (
-              <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-2 rounded-lg">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ backgroundColor: 'rgba(55,65,81,0.5)' }}>
                 <Clock className="h-4 w-4 text-orange-400" />
                 <span className="text-sm text-gray-300">
                   {archive.duration}
@@ -197,7 +197,7 @@ export function ArchiveViewer() {
 
           {/* Quick Summary */}
           {archive.created && (
-            <div className="bg-gray-800/50 rounded-lg p-3 mb-4">
+            <div className="rounded-lg p-3 mb-4" style={{ backgroundColor: 'rgba(31,41,55,0.5)' }}>
               <p className="text-sm text-gray-400 flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-purple-400" />
                 {archive.created}
@@ -217,7 +217,7 @@ export function ArchiveViewer() {
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {archive.members.map((member, idx) => (
-                      <div key={idx} className="bg-gray-800/50 rounded-lg p-3 flex items-center gap-3">
+                      <div key={idx} className="rounded-lg p-3 flex items-center gap-3" style={{ backgroundColor: 'rgba(31,41,55,0.5)' }}>
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
                           {member.split(' ')[0]?.[0] || '?'}
                         </div>
@@ -237,7 +237,7 @@ export function ArchiveViewer() {
                   </h4>
                   <div className="space-y-2">
                     {archive.accomplishments.map((accomplishment, idx) => (
-                      <div key={idx} className="bg-gray-800/50 rounded-lg p-3 flex items-start gap-3">
+                      <div key={idx} className="rounded-lg p-3 flex items-start gap-3" style={{ backgroundColor: 'rgba(31,41,55,0.5)' }}>
                         <CheckCircle className="h-4 w-4 text-green-400 mt-0.5 flex-shrink-0" />
                         <span className="text-sm text-gray-300 leading-relaxed">
                           {accomplishment.replace('✅ ', '')}
@@ -250,7 +250,7 @@ export function ArchiveViewer() {
 
               {/* Full Details Link */}
               {selectedArchiveDetails && (
-                <div className="bg-purple-900/20 rounded-lg p-4 border border-purple-500/30">
+                <div className="rounded-lg p-4" style={{ backgroundColor: 'rgba(88,28,135,0.2)', border: '1px solid rgba(168,85,247,0.3)' }}>
                   <div className="flex items-center gap-2 mb-2">
                     <FileText className="h-4 w-4 text-purple-400" />
                     <h4 className="text-sm font-semibold text-purple-400">Full Archive Data</h4>

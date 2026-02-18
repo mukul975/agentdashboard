@@ -90,7 +90,7 @@ export function TeamHistory({ teamHistory, loading }) {
         </div>
       </div>
 
-      <div className="space-y-3 max-h-[600px] overflow-y-auto">
+      <div className="space-y-3 overflow-y-auto" style={{ maxHeight: '600px' }}>
         {teamHistory.map((team, index) => {
           const stats = getTaskStats(team.tasks);
           const isExpanded = expandedTeam === team.name;
@@ -134,7 +134,7 @@ export function TeamHistory({ teamHistory, loading }) {
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="font-semibold" style={{ color: 'var(--text-heading)' }}>{team.name}</h4>
                       {team.isActive && (
-                        <span className="px-2 py-0.5 bg-green-500/20 text-green-400 text-xs rounded-full border border-green-500/30">
+                        <span className="px-2 py-0.5 text-green-400 text-xs rounded-full" style={{ background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.3)' }}>
                           Active
                         </span>
                       )}
@@ -197,15 +197,15 @@ export function TeamHistory({ teamHistory, loading }) {
                         <div className="text-lg font-bold" style={{ color: 'var(--text-heading)' }}>{stats.total}</div>
                         <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Total</div>
                       </div>
-                      <div className="p-2 rounded-lg bg-green-500/10 text-center">
+                      <div className="p-2 rounded-lg text-center" style={{ background: 'rgba(34,197,94,0.1)' }}>
                         <div className="text-lg font-bold text-green-400">{stats.completed}</div>
                         <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Done</div>
                       </div>
-                      <div className="p-2 rounded-lg bg-blue-500/10 text-center">
+                      <div className="p-2 rounded-lg text-center" style={{ background: 'rgba(59,130,246,0.1)' }}>
                         <div className="text-lg font-bold text-blue-400">{stats.inProgress}</div>
                         <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Active</div>
                       </div>
-                      <div className="p-2 rounded-lg bg-yellow-500/10 text-center">
+                      <div className="p-2 rounded-lg text-center" style={{ background: 'rgba(234,179,8,0.1)' }}>
                         <div className="text-lg font-bold text-yellow-400">{stats.pending}</div>
                         <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Pending</div>
                       </div>

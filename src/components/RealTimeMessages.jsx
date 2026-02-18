@@ -74,15 +74,15 @@ export function RealTimeMessages({ allInboxes = {} }) {
     [allMessages, filter]
   );
 
-  const getMessageColor = (type) => {
+  const getMessageColorStyle = (type) => {
     switch (type) {
-      case 'status':      return 'border-blue-500/40 bg-blue-500/10';
-      case 'completion':  return 'border-green-500/40 bg-green-500/10';
-      case 'coordination':return 'border-purple-500/40 bg-purple-500/10';
-      case 'question':    return 'border-yellow-500/40 bg-yellow-500/10';
-      case 'assignment':  return 'border-cyan-500/40 bg-cyan-500/10';
-      case 'system':      return 'border-gray-500/30 bg-gray-500/10';
-      default:            return 'border-gray-500/30 bg-gray-500/10';
+      case 'status':      return { borderColor: 'rgba(59,130,246,0.4)', backgroundColor: 'rgba(59,130,246,0.1)' };
+      case 'completion':  return { borderColor: 'rgba(34,197,94,0.4)', backgroundColor: 'rgba(34,197,94,0.1)' };
+      case 'coordination':return { borderColor: 'rgba(168,85,247,0.4)', backgroundColor: 'rgba(168,85,247,0.1)' };
+      case 'question':    return { borderColor: 'rgba(234,179,8,0.4)', backgroundColor: 'rgba(234,179,8,0.1)' };
+      case 'assignment':  return { borderColor: 'rgba(6,182,212,0.4)', backgroundColor: 'rgba(6,182,212,0.1)' };
+      case 'system':      return { borderColor: 'rgba(107,114,128,0.3)', backgroundColor: 'rgba(107,114,128,0.1)' };
+      default:            return { borderColor: 'rgba(107,114,128,0.3)', backgroundColor: 'rgba(107,114,128,0.1)' };
     }
   };
 
@@ -158,8 +158,8 @@ export function RealTimeMessages({ allInboxes = {} }) {
           filteredMessages.map(msg => (
             <div
               key={msg.id}
-              className={`p-3.5 rounded-xl border transition-all hover:brightness-110 ${getMessageColor(msg.type)}`}
-              style={{ animation: 'fadeIn 0.3s ease-out' }}
+              className="p-3.5 rounded-xl border transition-all hover:brightness-110"
+              style={{ animation: 'fadeIn 0.3s ease-out', ...getMessageColorStyle(msg.type) }}
             >
               <div className="flex items-start gap-3">
                 <span className="text-xl flex-shrink-0 mt-0.5">{getTypeIcon(msg.type)}</span>
@@ -178,7 +178,7 @@ export function RealTimeMessages({ allInboxes = {} }) {
                   <div className="mt-1.5 flex items-center gap-2">
                     <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Team: {msg.team}</span>
                     {!msg.read && (
-                      <span className="text-xs bg-blue-500/30 text-blue-300 px-1.5 py-0.5 rounded-full">
+                      <span className="text-xs text-blue-300 px-1.5 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(59,130,246,0.3)' }}>
                         New
                       </span>
                     )}

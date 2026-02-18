@@ -80,14 +80,15 @@ export function CommandPalette({ isOpen, onClose, onNavigate }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-[20vh]"
+      className="fixed inset-0 z-50 flex items-start justify-center"
+      style={{ paddingTop: '20vh' }}
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-label="Command palette"
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)' }} />
 
       {/* Palette */}
       <div
@@ -140,9 +141,10 @@ export function CommandPalette({ isOpen, onClose, onNavigate }) {
                   aria-selected={isSelected}
                   className={`flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg cursor-pointer transition-colors ${
                     isSelected
-                      ? 'bg-claude-orange/20 text-white'
+                      ? 'text-white'
                       : 'text-gray-300 hover:bg-gray-800'
                   }`}
+                  style={isSelected ? { background: 'rgba(232,117,10,0.2)' } : undefined}
                   onClick={() => handleSelect(cmd.tab)}
                   onMouseEnter={() => setSelectedIndex(i)}
                 >

@@ -96,12 +96,16 @@ export function LiveAgentStream({ teams }) {
           activities.map(activity => (
             <div
               key={activity.id}
-              className="p-2 rounded-lg bg-gray-700/30 border border-gray-600/50 hover:border-claude-orange/50 transition-all"
+              className="p-2 rounded-lg border transition-all"
               style={{
                 animation: 'fadeIn 0.3s ease-out',
+                backgroundColor: 'rgba(55,65,81,0.3)',
+                borderColor: 'rgba(75,85,99,0.5)',
                 borderLeftWidth: '3px',
                 borderLeftColor: getActivityColor(activity.agentType)
               }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(232,117,10,0.5)'}
+              onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(75,85,99,0.5)'}
             >
               <div className="flex items-start gap-2">
                 <Cpu
@@ -153,17 +157,17 @@ export function LiveAgentStream({ teams }) {
       {/* Live Stats */}
       <div className="pt-3 mt-3 border-t border-gray-700">
         <div className="grid grid-cols-3 gap-2 text-center">
-          <div className="p-2 rounded-lg bg-blue-500/10">
+          <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(59,130,246,0.1)' }}>
             <div className="text-lg font-bold text-blue-400">{activities.length}</div>
             <div className="text-xs text-gray-400">Events</div>
           </div>
-          <div className="p-2 rounded-lg bg-green-500/10">
+          <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(34,197,94,0.1)' }}>
             <div className="text-lg font-bold text-green-400">
               {new Set(activities.map(a => a.agent)).size}
             </div>
             <div className="text-xs text-gray-400">Active</div>
           </div>
-          <div className="p-2 rounded-lg bg-purple-500/10">
+          <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(168,85,247,0.1)' }}>
             <div className="text-lg font-bold text-purple-400">
               {activities.filter(a => Date.now() - a.timestamp < 10000).length}
             </div>

@@ -124,19 +124,18 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
       ) : (
         messages.map(msg => {
           const Icon = getIconComponent(msg.type);
-          const typeColors = {
-            idle:    'bg-gray-500/10 border-gray-500/30',
-            success: 'bg-green-500/10 border-green-500/30',
-            system:  'bg-yellow-500/10 border-yellow-500/30',
-            working: 'bg-blue-500/10 border-blue-500/30',
-            message: 'bg-gray-500/10 border-gray-500/30 hover:border-claude-orange',
+          const typeColorStyles = {
+            idle:    { background: 'rgba(107,114,128,0.1)', borderColor: 'rgba(107,114,128,0.3)' },
+            success: { background: 'rgba(34,197,94,0.1)', borderColor: 'rgba(34,197,94,0.3)' },
+            system:  { background: 'rgba(234,179,8,0.1)', borderColor: 'rgba(234,179,8,0.3)' },
+            working: { background: 'rgba(59,130,246,0.1)', borderColor: 'rgba(59,130,246,0.3)' },
+            message: { background: 'rgba(107,114,128,0.1)', borderColor: 'rgba(107,114,128,0.3)' },
           };
           return (
             <div
               key={msg.id}
-              className={`p-3 rounded-lg border transition-all hover:shadow-lg ${
-                typeColors[msg.type] || typeColors.message
-              }`}
+              className="p-3 rounded-lg border transition-all hover:shadow-lg"
+              style={typeColorStyles[msg.type] || typeColorStyles.message}
             >
               <div className="flex items-start gap-3">
                 <div className={`mt-0.5 flex-shrink-0 ${
@@ -159,7 +158,7 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
                         </>
                       )}
                       {!msg.read && (
-                        <span className="text-xs bg-blue-500/30 text-blue-300 px-2 py-0.5 rounded-full">New</span>
+                        <span className="text-xs text-blue-300 px-2 py-0.5 rounded-full" style={{ background: 'rgba(59,130,246,0.3)' }}>New</span>
                       )}
                     </div>
                     <span className="text-xs whitespace-nowrap ml-2" style={{ color: 'var(--text-muted)' }}>
@@ -200,7 +199,7 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
                   {thread.agents[0]} &#8596; {thread.agents[1]}
                 </span>
                 {thread.unreadCount > 0 && (
-                  <span className="text-xs bg-blue-500/30 text-blue-300 px-2 py-0.5 rounded-full">
+                  <span className="text-xs text-blue-300 px-2 py-0.5 rounded-full" style={{ background: 'rgba(59,130,246,0.3)' }}>
                     {thread.unreadCount} new
                   </span>
                 )}
@@ -210,7 +209,7 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <p className="text-xs truncate mr-4 max-w-[70%]" style={{ color: 'var(--text-secondary)' }}>
+              <p className="text-xs truncate mr-4" style={{ color: 'var(--text-secondary)', maxWidth: '70%' }}>
                 {thread.lastMessage.message}
               </p>
               <span className="text-xs flex-shrink-0" style={{ color: 'var(--text-muted)' }}>
@@ -261,12 +260,11 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
                 className={`flex ${isRight ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[75%] px-3 py-2 rounded-lg border ${
-                    isRight
-                      ? 'bg-claude-orange/20 border-claude-orange/40'
-                      : ''
-                  }`}
-                  style={!isRight ? { background: 'var(--glass-bg)', borderColor: 'var(--border-color)' } : undefined}
+                  className="px-3 py-2 rounded-lg border"
+                  style={isRight
+                    ? { maxWidth: '75%', background: 'rgba(232,117,10,0.2)', borderColor: 'rgba(232,117,10,0.4)' }
+                    : { maxWidth: '75%', background: 'var(--glass-bg)', borderColor: 'var(--border-color)' }
+                  }
                 >
                   <div className="flex items-center gap-2 mb-0.5">
                     <span className={`text-xs font-semibold ${isRight ? 'text-orange-300' : ''}`}
@@ -301,12 +299,11 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
           <div className="flex items-center rounded-lg p-0.5" style={{ background: 'var(--bg-secondary)' }}>
             <button
               onClick={() => setViewMode('flat')}
-              className={`flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${
-                viewMode === 'flat'
-                  ? 'bg-claude-orange/20 text-claude-orange'
-                  : ''
-              }`}
-              style={viewMode !== 'flat' ? { color: 'var(--text-muted)' } : undefined}
+              className="flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors"
+              style={viewMode === 'flat'
+                ? { background: 'rgba(232,117,10,0.2)', color: 'var(--claude-orange)' }
+                : { color: 'var(--text-muted)' }
+              }
               title="Flat view"
               aria-pressed={viewMode === 'flat'}
             >
@@ -315,12 +312,11 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
             </button>
             <button
               onClick={() => setViewMode('threads')}
-              className={`flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${
-                viewMode === 'threads'
-                  ? 'bg-claude-orange/20 text-claude-orange'
-                  : ''
-              }`}
-              style={viewMode !== 'threads' ? { color: 'var(--text-muted)' } : undefined}
+              className="flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors"
+              style={viewMode === 'threads'
+                ? { background: 'rgba(232,117,10,0.2)', color: 'var(--claude-orange)' }
+                : { color: 'var(--text-muted)' }
+              }
               title="Threads view"
               aria-pressed={viewMode === 'threads'}
             >
@@ -330,10 +326,11 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
           </div>
           <button
             onClick={() => setAutoScroll(!autoScroll)}
-            className={`text-xs px-2 py-1 rounded transition-colors ${
-              autoScroll ? 'bg-green-500/20 text-green-400' : ''
-            }`}
-            style={!autoScroll ? { background: 'var(--bg-secondary)', color: 'var(--text-muted)' } : undefined}
+            className="text-xs px-2 py-1 rounded transition-colors"
+            style={autoScroll
+              ? { background: 'rgba(34,197,94,0.2)', color: '#4ade80' }
+              : { background: 'var(--bg-secondary)', color: 'var(--text-muted)' }
+            }
             aria-pressed={autoScroll}
             aria-label={autoScroll ? 'Disable auto-scroll' : 'Enable auto-scroll'}
           >

@@ -435,17 +435,31 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
               <div className="relative">
                 <button
                   onClick={onToggleNotifications}
-                  className={`relative p-2 rounded-lg transition-all duration-150 active:scale-95 ${
+                  className={`relative p-2 rounded-lg transition-all duration-150 ${
                     notifUnreadCount > 0
-                      ? 'text-claude-orange hover:bg-orange-500/10'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                      ? 'text-claude-orange'
+                      : 'text-gray-400 hover:text-white'
                   }`}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = notifUnreadCount > 0
+                      ? 'rgba(249,115,22,0.1)'
+                      : 'rgba(255,255,255,0.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                  }}
+                  onMouseDown={(e) => {
+                    e.currentTarget.style.transform = 'scale(0.95)';
+                  }}
+                  onMouseUp={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
                   aria-label={`Notifications${notifUnreadCount > 0 ? ` (${notifUnreadCount} unread)` : ''}`}
                   title="Notifications"
                 >
                   <Bell className="h-5 w-5" />
                   {notifUnreadCount > 0 && (
-                    <span className="notif-badge-appear absolute -top-1 -right-1 bg-claude-orange text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 leading-none">
+                    <span className="notif-badge-appear absolute -top-1 -right-1 bg-claude-orange text-white font-bold rounded-full flex items-center justify-center px-1 leading-none" style={{ fontSize: '10px', minWidth: '18px', height: '18px' }}>
                       {notifUnreadCount > 99 ? '99+' : notifUnreadCount}
                     </span>
                   )}

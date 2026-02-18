@@ -71,7 +71,7 @@ function getMostActiveAgent(teamInbox) {
 function ComparisonBar({ value, max, color }) {
   const pct = max > 0 ? Math.round((value / max) * 100) : 0;
   return (
-    <div className="w-full h-2 rounded-full bg-gray-700/60 overflow-hidden">
+    <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'rgba(55,65,81,0.6)' }}>
       <div
         className="h-full rounded-full transition-all duration-500 ease-out"
         style={{
@@ -86,7 +86,7 @@ function ComparisonBar({ value, max, color }) {
 
 function WinnerBadge() {
   return (
-    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-500/20 text-green-400 text-xs font-bold flex-shrink-0">
+    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full text-green-400 text-xs font-bold flex-shrink-0" style={{ background: 'rgba(34,197,94,0.2)' }}>
       &#10003;
     </span>
   );
@@ -105,7 +105,7 @@ function MetricRow({ label, valueA, valueB, higherIsBetter = true, formatFn, uni
   const displayB = formatFn ? formatFn(valueB) : `${valueB}${unitSuffix}`;
 
   return (
-    <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center py-3 border-b border-gray-700/50 last:border-b-0">
+    <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center py-3 last:border-b-0" style={{ borderBottom: '1px solid rgba(55,65,81,0.5)' }}>
       {/* Team A side */}
       <div className="flex items-center gap-2">
         <div className="flex-1 text-right">
@@ -122,7 +122,7 @@ function MetricRow({ label, valueA, valueB, higherIsBetter = true, formatFn, uni
       </div>
 
       {/* Label */}
-      <div className="text-center px-3 min-w-[140px]">
+      <div className="text-center px-3" style={{ minWidth: 140 }}>
         <span className="text-sm font-medium text-gray-400">{label}</span>
       </div>
 
@@ -146,11 +146,11 @@ function MetricRow({ label, valueA, valueB, higherIsBetter = true, formatFn, uni
 
 function StringMetricRow({ label, valueA, valueB }) {
   return (
-    <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center py-3 border-b border-gray-700/50 last:border-b-0">
+    <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center py-3 last:border-b-0" style={{ borderBottom: '1px solid rgba(55,65,81,0.5)' }}>
       <div className="text-right">
         <span className="text-sm font-semibold text-gray-200">{valueA || '--'}</span>
       </div>
-      <div className="text-center px-3 min-w-[140px]">
+      <div className="text-center px-3" style={{ minWidth: 140 }}>
         <span className="text-sm font-medium text-gray-400">{label}</span>
       </div>
       <div>
@@ -261,7 +261,7 @@ export function TeamComparison({ teams, allInboxes }) {
                 <h3 className="text-lg font-bold text-white truncate">{teamA.name}</h3>
               </div>
             </div>
-            <div className="text-center px-3 min-w-[140px]">
+            <div className="text-center px-3" style={{ minWidth: 140 }}>
               <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">VS</span>
             </div>
             <div>

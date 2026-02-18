@@ -118,7 +118,7 @@ export function TaskList({ tasks }) {
   };
 
   return (
-    <div className="space-y-3">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       {tasks.map((task, index) => {
         const statusConfig = getStatusConfig(task.status, task.blockedBy);
         const isExpanded = expandedTasks.has(task.id || index);
@@ -193,10 +193,11 @@ export function TaskList({ tasks }) {
                 {task.description && (
                   <div className="mb-3">
                     <p
-                      className={`text-sm leading-relaxed ${!isExpanded && hasDescription ? 'line-clamp-2' : ''}`}
+                      className="text-sm leading-relaxed"
                       style={{
                         color: 'rgba(209, 213, 219, 0.85)',
-                        letterSpacing: '-0.01em'
+                        letterSpacing: '-0.01em',
+                        ...(!isExpanded && hasDescription ? { display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' } : {})
                       }}
                     >
                       {task.description}
@@ -231,8 +232,9 @@ export function TaskList({ tasks }) {
                 <div className="flex flex-wrap gap-2">
                   {task.owner && (
                     <div
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+                      className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium"
                       style={{
+                        gap: 6,
                         background: 'rgba(59, 130, 246, 0.15)',
                         color: '#93c5fd',
                         border: '1px solid rgba(59, 130, 246, 0.3)'
@@ -245,8 +247,9 @@ export function TaskList({ tasks }) {
 
                   {task.blockedBy && task.blockedBy.length > 0 && (
                     <div
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+                      className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium"
                       style={{
+                        gap: 6,
                         background: 'rgba(239, 68, 68, 0.15)',
                         color: '#fca5a5',
                         border: '1px solid rgba(239, 68, 68, 0.35)',
@@ -260,8 +263,9 @@ export function TaskList({ tasks }) {
 
                   {task.blocks && task.blocks.length > 0 && (
                     <div
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+                      className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium"
                       style={{
+                        gap: 6,
                         background: 'rgba(249, 115, 22, 0.15)',
                         color: '#fdba74',
                         border: '1px solid rgba(249, 115, 22, 0.3)'

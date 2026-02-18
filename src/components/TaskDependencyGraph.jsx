@@ -83,8 +83,9 @@ function TaskInfoCard({ task, onClose }) {
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1 min-w-0">
             <span
-              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2"
+              className="inline-flex items-center px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider mb-2"
               style={{
+                fontSize: 10,
                 background: color.bg,
                 color: color.text,
                 border: `1px solid ${color.border}`,
@@ -96,7 +97,10 @@ function TaskInfoCard({ task, onClose }) {
           </div>
           <button
             onClick={onClose}
-            className="ml-3 p-1 rounded-lg hover:bg-gray-700/50 transition-colors flex-shrink-0"
+            className="ml-3 p-1 rounded-lg transition-colors flex-shrink-0"
+            style={{ backgroundColor: 'transparent' }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(55,65,81,0.5)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
@@ -188,14 +192,14 @@ function SvgTooltip({ task, x, y, svgRect }) {
         backdropFilter: 'blur(8px)',
       }}
     >
-      <div className="flex items-center gap-2 mb-1.5">
+      <div className="flex items-center mb-1.5" style={{ gap: 8 }}>
         <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color.fill }} />
         <span className="text-white text-xs font-bold leading-tight">{truncate(task.subject, 40)}</span>
       </div>
       {task.description && (
-        <p className="text-gray-400 text-[10px] leading-relaxed mb-1.5 line-clamp-2">{task.description}</p>
+        <p className="text-gray-400 leading-relaxed mb-1.5" style={{ fontSize: 10, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{task.description}</p>
       )}
-      <div className="flex items-center gap-3 text-[10px]">
+      <div className="flex items-center" style={{ gap: 12, fontSize: 10 }}>
         {task._teamName && <span className="text-gray-500">{task._teamName}</span>}
         {task.owner && <span style={{ color: color.text }}>{task.owner}</span>}
         <span className="font-semibold uppercase" style={{ color: color.text }}>{color.label}</span>
@@ -264,7 +268,7 @@ function StatusBoard({ allTasks, onTaskClick }) {
             </div>
 
             {/* Scrollable Task Cards */}
-            <div className="p-3 space-y-2 max-h-[420px] overflow-y-auto custom-scrollbar">
+            <div className="p-3 space-y-2 overflow-y-auto custom-scrollbar" style={{ maxHeight: 420 }}>
               {tasks.length === 0 ? (
                 <div className="text-center py-6">
                   <p className="text-gray-500 text-xs">No tasks</p>
@@ -290,8 +294,9 @@ function StatusBoard({ allTasks, onTaskClick }) {
                   >
                     {task._teamName && (
                       <span
-                        className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded mb-1.5 inline-block"
+                        className="font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded mb-1.5 inline-block"
                         style={{
+                          fontSize: 10,
                           background: 'rgba(249, 115, 22, 0.15)',
                           color: '#fb923c',
                           border: '1px solid rgba(249, 115, 22, 0.3)',
@@ -304,7 +309,7 @@ function StatusBoard({ allTasks, onTaskClick }) {
                       {truncate(task.subject, 60)}
                     </p>
                     {task.owner && (
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center" style={{ gap: 6 }}>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                           <circle cx="12" cy="7" r="4" />

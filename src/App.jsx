@@ -192,7 +192,7 @@ function App() {
               }`}
             >
               <BarChart3 className="h-4 w-4" aria-hidden="true" />
-              Live Metrics<span className="ml-1.5 text-[10px] opacity-40 font-mono hidden lg:inline" aria-hidden="true">⌘1</span>
+              Live Metrics<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘1</span>
             </button>
             <button
               id="tab-teams"
@@ -208,7 +208,7 @@ function App() {
               }`}
             >
               <Users className="h-4 w-4" aria-hidden="true" />
-              Teams & Tasks<span className="ml-1.5 text-[10px] opacity-40 font-mono hidden lg:inline" aria-hidden="true">⌘2</span>
+              Teams & Tasks<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘2</span>
             </button>
             <button
               id="tab-communication"
@@ -224,7 +224,7 @@ function App() {
               }`}
             >
               <MessageSquare className="h-4 w-4" aria-hidden="true" />
-              Communication<span className="ml-1.5 text-[10px] opacity-40 font-mono hidden lg:inline" aria-hidden="true">⌘3</span>
+              Communication<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘3</span>
             </button>
             <button
               id="tab-monitoring"
@@ -240,7 +240,7 @@ function App() {
               }`}
             >
               <Settings className="h-4 w-4" aria-hidden="true" />
-              Monitoring<span className="ml-1.5 text-[10px] opacity-40 font-mono hidden lg:inline" aria-hidden="true">⌘4</span>
+              Monitoring<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘4</span>
             </button>
             <button
               id="tab-history"
@@ -256,7 +256,7 @@ function App() {
               }`}
             >
               <HistoryIcon className="h-4 w-4" aria-hidden="true" />
-              History & Outputs<span className="ml-1.5 text-[10px] opacity-40 font-mono hidden lg:inline" aria-hidden="true">⌘5</span>
+              History & Outputs<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘5</span>
             </button>
             <button
               id="tab-archive"
@@ -272,7 +272,7 @@ function App() {
               }`}
             >
               <Archive className="h-4 w-4" aria-hidden="true" />
-              Archive<span className="ml-1.5 text-[10px] opacity-40 font-mono hidden lg:inline" aria-hidden="true">⌘6</span>
+              Archive<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘6</span>
             </button>
             <button
               id="tab-inboxes"
@@ -288,9 +288,9 @@ function App() {
               }`}
             >
               <Inbox className="h-4 w-4" aria-hidden="true" />
-              Inboxes<span className="ml-1.5 text-[10px] opacity-40 font-mono hidden lg:inline" aria-hidden="true">⌘7</span>
+              Inboxes<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘7</span>
               {unreadCount > 0 && (
-                <span className="bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5">
+                <span className="bg-red-500 text-white text-xs font-bold rounded-full h-5 flex items-center justify-center px-1.5" style={{ minWidth: '20px' }}>
                   {unreadCount}
                 </span>
               )}
@@ -309,7 +309,7 @@ function App() {
               }`}
             >
               <TrendingUp className="h-4 w-4" aria-hidden="true" />
-              Analytics<span className="ml-1.5 text-[10px] opacity-40 font-mono hidden lg:inline" aria-hidden="true">⌘8</span>
+              Analytics<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘8</span>
             </button>
           </div>
         </nav>

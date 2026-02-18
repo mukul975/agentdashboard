@@ -46,9 +46,9 @@ export function DetailedTaskProgress({ tasks }) {
       {/* Detailed Breakdown */}
       <div className="space-y-3">
         {/* Pending */}
-        <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
+        <div className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.3)' }}>
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-yellow-500/20">
+            <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(234,179,8,0.2)' }}>
               <Clock className="h-4 w-4 text-yellow-400" />
             </div>
             <div>
@@ -65,9 +65,9 @@ export function DetailedTaskProgress({ tasks }) {
         </div>
 
         {/* In Progress */}
-        <div className="flex items-center justify-between p-3 rounded-lg bg-blue-500/10 border border-blue-500/30">
+        <div className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)' }}>
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-blue-500/20">
+            <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(59,130,246,0.2)' }}>
               <div className="h-4 w-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
             </div>
             <div>
@@ -84,9 +84,9 @@ export function DetailedTaskProgress({ tasks }) {
         </div>
 
         {/* Completed */}
-        <div className="flex items-center justify-between p-3 rounded-lg bg-green-500/10 border border-green-500/30">
+        <div className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)' }}>
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-green-500/20">
+            <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(34,197,94,0.2)' }}>
               <CheckCircle className="h-4 w-4 text-green-400" />
             </div>
             <div>
@@ -102,9 +102,9 @@ export function DetailedTaskProgress({ tasks }) {
 
         {/* Blocked */}
         {blockedTasks.length > 0 && (
-          <div className="flex items-center justify-between p-3 rounded-lg bg-red-500/10 border border-red-500/30">
+          <div className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)' }}>
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-red-500/20">
+              <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(239,68,68,0.2)' }}>
                 <AlertCircle className="h-4 w-4 text-red-400" />
               </div>
               <div>
