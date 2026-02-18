@@ -970,23 +970,21 @@ function setupWatchers() {
 
 // WebSocket connection handler
 wss.on('connection', async (ws, req) => {
-  // If auth is enabled, require a valid token in the URL query string
-  if (DASHBOARD_PASSWORD) {
-    const url = new URL(req.url, `http://${req.headers.host}`);
-    const token = url.searchParams.get('token');
+  // Always require a valid token in the URL query string
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const token = url.searchParams.get('token');
 
-    if (!token) {
-      ws.close(4001, 'Authentication required');
-      return;
-    }
+  if (!token) {
+    ws.close(4001, 'Authentication required');
+    return;
+  }
 
-    const tokenBuffer = Buffer.from(token);
-    const expectedBuffer = Buffer.from(authToken);
+  const tokenBuffer = Buffer.from(token);
+  const expectedBuffer = Buffer.from(authToken);
 
-    if (tokenBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(tokenBuffer, expectedBuffer)) {
-      ws.close(4001, 'Invalid token');
-      return;
-    }
+  if (tokenBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(tokenBuffer, expectedBuffer)) {
+    ws.close(4001, 'Invalid token');
+    return;
   }
 
   console.log('👋 A new viewer joined the dashboard');
