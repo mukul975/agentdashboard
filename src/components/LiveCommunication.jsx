@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { MessageSquare, Users, Clock, Bot, CheckCircle, AlertCircle, Zap } from 'lucide-react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -94,19 +94,53 @@ const getIconComponent = (iconType) => {
   }
 };
 
-export function LiveCommunication({ teams }) {
-  const [messages, setMessages] = useState([]);
+export function LiveCommunication({ teams, allInboxes = {} }) {
   const [selectedTeam, setSelectedTeam] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [autoScroll, setAutoScroll] = useState(true);
   const messagesEndRef = React.useRef(null);
 
+  // Build team list from union of teams prop and allInboxes keys
+  const teamNames = useMemo(() => {
+    const fromProps = (teams || []).map(t => t.name);
+    const fromInboxes = Object.keys(allInboxes);
+    return [...new Set([...fromProps, ...fromInboxes])];
+  }, [teams, allInboxes]);
+
+  // Auto-select first team if none selected
   useEffect(() => {
-    if (teams && teams.length > 0 && !selectedTeam) {
-      setSelectedTeam(teams[0].name);
+    if (teamNames.length > 0 && !selectedTeam) {
+      setSelectedTeam(teamNames[0]);
     }
-  }, [teams, selectedTeam]);
+  }, [teamNames, selectedTeam]);
+
+  // Derive messages from allInboxes for the selected team
+  const messages = useMemo(() => {
+    if (!selectedTeam) return [];
+
+    const teamInboxes = allInboxes[selectedTeam] || {};
+    const allMessages = Object.entries(teamInboxes)
+      .flatMap(([agentName, inbox]) =>
+        (inbox.messages || []).map(msg => {
+          const naturalMsg = parseMessageToNatural(msg.text, msg.summary);
+          return {
+            id: `${agentName}-${msg.timestamp}`,
+            from: msg.from || agentName,
+            to: agentName,
+            message: naturalMsg.text,
+            fullText: naturalMsg.fullText || msg.text,
+            timestamp: new Date(msg.timestamp),
+            type: naturalMsg.type,
+            icon: naturalMsg.icon,
+            color: msg.color || 'blue',
+            read: msg.read || false
+          };
+        })
+      )
+      .sort((a, b) => a.timestamp - b.timestamp)
+      .slice(-50);
+
+    return allMessages;
+  }, [allInboxes, selectedTeam]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -114,72 +148,6 @@ export function LiveCommunication({ teams }) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, autoScroll]);
-
-  // Fetch real inbox messages from API
-  useEffect(() => {
-    if (!selectedTeam) return;
-
-    const fetchMessages = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const response = await fetch(`http://localhost:3001/api/teams/${encodeURIComponent(selectedTeam)}/inboxes`);
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch messages: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        // Convert inbox data to message format
-        const allMessages = [];
-
-        if (data.inboxes && typeof data.inboxes === 'object') {
-          Object.entries(data.inboxes).forEach(([agentName, inbox]) => {
-            if (inbox.messages && Array.isArray(inbox.messages)) {
-              inbox.messages.forEach(msg => {
-                // Convert to natural language
-                const naturalMsg = parseMessageToNatural(msg.text, msg.summary);
-
-                allMessages.push({
-                  id: `${agentName}-${msg.timestamp}-${Math.random()}`,
-                  from: msg.from || agentName,
-                  to: agentName,
-                  message: naturalMsg.text,
-                  fullText: naturalMsg.fullText || msg.text,
-                  timestamp: new Date(msg.timestamp),
-                  type: naturalMsg.type,
-                  icon: naturalMsg.icon,
-                  color: msg.color || 'blue',
-                  read: msg.read || false
-                });
-              });
-            }
-          });
-        }
-
-        // Sort by timestamp (oldest first for chat-style)
-        allMessages.sort((a, b) => a.timestamp - b.timestamp);
-
-        // Keep last 50 messages
-        setMessages(allMessages.slice(-50));
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching messages:', err);
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    // Fetch immediately
-    fetchMessages();
-
-    // Then poll every 5 seconds
-    const interval = setInterval(fetchMessages, 5000);
-
-    return () => clearInterval(interval);
-  }, [selectedTeam]);
 
   const currentTeam = teams?.find(t => t.name === selectedTeam);
 
@@ -189,6 +157,7 @@ export function LiveCommunication({ teams }) {
         <div className="flex items-center gap-2">
           <MessageSquare className="h-5 w-5 text-claude-orange" />
           <h3 className="text-lg font-semibold text-white">Live Communication</h3>
+          <span className="text-xs text-green-400 font-medium">(live)</span>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -210,36 +179,28 @@ export function LiveCommunication({ teams }) {
       </div>
 
       {/* Team Selector */}
-      {teams && teams.length > 0 && (
+      {teamNames.length > 0 && (
         <div className="mb-4">
           <select
             value={selectedTeam || ''}
             onChange={(e) => setSelectedTeam(e.target.value)}
             className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-claude-orange focus:outline-none"
           >
-            {teams.map(team => (
-              <option key={team.name} value={team.name}>
-                {team.name} ({team.config?.members?.length || 0} members)
-              </option>
-            ))}
+            {teamNames.map(name => {
+              const team = teams?.find(t => t.name === name);
+              return (
+                <option key={name} value={name}>
+                  {name} ({team?.config?.members?.length || 0} members)
+                </option>
+              );
+            })}
           </select>
         </div>
       )}
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto space-y-2 mb-4" style={{ minHeight: 0 }}>
-        {error ? (
-          <div className="text-center py-8 text-red-400">
-            <MessageSquare className="h-12 w-12 mx-auto mb-2 opacity-50" />
-            <p className="text-sm">Error loading messages</p>
-            <p className="text-xs mt-1">{error}</p>
-          </div>
-        ) : loading && messages.length === 0 ? (
-          <div className="text-center py-8 text-gray-400">
-            <MessageSquare className="h-12 w-12 mx-auto mb-2 opacity-50 animate-pulse" />
-            <p className="text-sm">Loading messages...</p>
-          </div>
-        ) : messages.length === 0 ? (
+        {messages.length === 0 ? (
           <div className="text-center py-8 text-gray-400">
             <MessageSquare className="h-12 w-12 mx-auto mb-2 opacity-50" />
             <p className="text-sm">No messages yet</p>

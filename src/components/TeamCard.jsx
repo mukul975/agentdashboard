@@ -1,18 +1,26 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Users, ChevronDown, ChevronUp, Activity, Clock, CheckCircle, Loader } from 'lucide-react';
+import { Users, ChevronDown, ChevronUp, Activity, Clock, CheckCircle, Loader, Mail } from 'lucide-react';
 import { AgentCard } from './AgentCard';
 import { TaskList } from './TaskList';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
-export function TeamCard({ team }) {
+export function TeamCard({ team, inboxes = {} }) {
   const [isExpanded, setIsExpanded] = useState(true);
 
   const { name, config, tasks, lastUpdated } = team;
   const members = config.members || [];
   const lead = members.find(m => m.name === config.leadName);
+
+  const inboxEntries = Object.values(inboxes);
+  const totalMessages = inboxEntries.reduce((total, agentInbox) => {
+    return total + (agentInbox.messages || []).length;
+  }, 0);
+  const unreadCount = inboxEntries.reduce((total, agentInbox) => {
+    return total + (agentInbox.messages || []).filter(m => m.read === false).length;
+  }, 0);
 
   const taskStats = {
     pending: tasks.filter(t => t.status === 'pending').length,
@@ -28,7 +36,14 @@ export function TeamCard({ team }) {
             <Users className="h-6 w-6 text-claude-orange" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-white">{name}</h3>
+            <h3 className="text-xl font-bold text-white flex items-center">
+              {name}
+              {unreadCount > 0 && (
+                <span className="ml-2 bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
+            </h3>
             {config.description && (
               <p className="text-gray-400 text-sm mt-1">{config.description}</p>
             )}
@@ -63,6 +78,14 @@ export function TeamCard({ team }) {
             {dayjs(new Date(lastUpdated)).fromNow()}
           </span>
         </div>
+        {totalMessages > 0 && (
+          <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-1 rounded-full">
+            <Mail className="h-4 w-4 text-gray-400" />
+            <span className="text-sm text-gray-300">
+              {totalMessages} messages{unreadCount > 0 ? `, ${unreadCount} unread` : ''}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex gap-2 mb-4">
@@ -122,5 +145,12 @@ TeamCard.propTypes = {
     }),
     tasks: PropTypes.array,
     lastUpdated: PropTypes.string
-  }).isRequired
+  }).isRequired,
+  inboxes: PropTypes.objectOf(
+    PropTypes.shape({
+      messages: PropTypes.arrayOf(PropTypes.shape({
+        read: PropTypes.bool
+      }))
+    })
+  )
 };

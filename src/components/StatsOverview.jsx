@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Users, ListTodo, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Users, ListTodo, Clock, CheckCircle, AlertCircle, MessageSquare, Bell } from 'lucide-react';
 import { useCounterAnimation } from '../hooks/useCounterAnimation';
 
-export function StatsOverview({ stats }) {
+export function StatsOverview({ stats, allInboxes = {} }) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -20,6 +20,16 @@ export function StatsOverview({ stats }) {
   const animatedCompleted = useCounterAnimation(stats?.completedTasks ?? 0, 1000); // lgtm[js/invocation-of-non-function]
   const animatedBlocked = useCounterAnimation(stats?.blockedTasks ?? 0, 1000); // lgtm[js/invocation-of-non-function]
 
+  // Inbox stats
+  const totalMessages = Object.values(allInboxes).reduce((t, agents) =>
+    t + Object.values(agents || {}).reduce((s, a) => s + (a.messages || []).length, 0), 0);
+
+  const unreadMessages = Object.values(allInboxes).reduce((t, agents) =>
+    t + Object.values(agents || {}).reduce((s, a) => s + (a.messages || []).filter(m => m.read === false).length, 0), 0);
+
+  const animatedTotalMessages = useCounterAnimation(totalMessages, 1000); // lgtm[js/invocation-of-non-function]
+  const animatedUnreadMessages = useCounterAnimation(unreadMessages, 1000); // lgtm[js/invocation-of-non-function]
+
   if (!stats) return null;
 
   // Map stat keys to their animated values
@@ -30,7 +40,9 @@ export function StatsOverview({ stats }) {
     pendingTasks: animatedPendingTasks,
     inProgressTasks: animatedInProgress,
     completedTasks: animatedCompleted,
-    blockedTasks: animatedBlocked
+    blockedTasks: animatedBlocked,
+    totalMessages: animatedTotalMessages,
+    unreadMessages: animatedUnreadMessages
   };
 
   const statCards = [
@@ -87,6 +99,25 @@ export function StatsOverview({ stats }) {
       iconColor: '#f87171',
       glowColor: 'rgba(239, 68, 68, 0.4)',
       borderColor: 'rgba(239, 68, 68, 0.3)'
+    },
+    {
+      label: 'Messages',
+      key: 'totalMessages',
+      icon: MessageSquare,
+      gradient: 'linear-gradient(135deg, rgba(14, 165, 233, 0.25) 0%, rgba(56, 189, 248, 0.15) 100%)',
+      iconColor: '#38bdf8',
+      glowColor: 'rgba(14, 165, 233, 0.4)',
+      borderColor: 'rgba(14, 165, 233, 0.3)'
+    },
+    {
+      label: 'Unread',
+      key: 'unreadMessages',
+      icon: Bell,
+      gradient: 'linear-gradient(135deg, rgba(244, 114, 182, 0.25) 0%, rgba(236, 72, 153, 0.15) 100%)',
+      iconColor: '#f472b6',
+      glowColor: 'rgba(244, 114, 182, 0.4)',
+      borderColor: 'rgba(244, 114, 182, 0.3)',
+      extraClass: unreadMessages > 0 ? 'text-red-400' : ''
     }
   ];
 
@@ -100,7 +131,7 @@ export function StatsOverview({ stats }) {
         backdropFilter: 'blur(16px)'
       }}
     >
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
         {statCards.map((stat, index) => {
           const Icon = stat.icon;
           const value = animatedValuesMap[stat.key];
@@ -149,9 +180,9 @@ export function StatsOverview({ stats }) {
               {/* Value */}
               <div className="mb-1">
                 <p
-                  className="text-3xl font-extrabold tabular-nums"
+                  className={`text-3xl font-extrabold tabular-nums ${stat.extraClass || ''}`}
                   style={{
-                    color: '#ffffff',
+                    color: stat.extraClass ? undefined : '#ffffff',
                     letterSpacing: '-0.03em',
                     textShadow: `0 2px 4px rgba(0, 0, 0, 0.3), 0 0 12px ${stat.glowColor}`,
                     lineHeight: 1
@@ -205,5 +236,6 @@ StatsOverview.propTypes = {
     inProgressTasks: PropTypes.number,
     completedTasks: PropTypes.number,
     blockedTasks: PropTypes.number
-  })
+  }),
+  allInboxes: PropTypes.object
 };

@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Activity, ExternalLink, Menu, X } from 'lucide-react';
+import { Activity, ExternalLink, Menu, X, Bell } from 'lucide-react';
 import { ConnectionStatus } from './ConnectionStatus';
 
-export function Header({ isConnected, error, onMenuToggle, isMenuOpen }) {
+export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificationPermission, onRequestNotification }) {
   return (
     <header
       className="sticky top-0 z-50 border-b backdrop-blur-xl"
@@ -93,6 +93,27 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen }) {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-4">
+            {/* Notification Bell */}
+            {notificationPermission === 'default' && (
+              <button
+                onClick={onRequestNotification}
+                className="relative p-2 rounded-lg transition-all duration-200 hover:bg-gray-700/50 group"
+                title="Enable notifications"
+                aria-label="Enable desktop notifications"
+              >
+                <Bell className="h-5 w-5 text-gray-400 group-hover:text-claude-orange transition-colors duration-200" />
+              </button>
+            )}
+            {notificationPermission === 'granted' && (
+              <div
+                className="relative p-2 rounded-lg"
+                title="Notifications enabled"
+                aria-label="Desktop notifications are enabled"
+              >
+                <Bell className="h-5 w-5 text-green-400" />
+              </div>
+            )}
+
             {/* Connection Status */}
             <ConnectionStatus isConnected={isConnected} error={error} />
 
@@ -145,10 +166,14 @@ Header.propTypes = {
   isConnected: PropTypes.bool.isRequired,
   error: PropTypes.string,
   onMenuToggle: PropTypes.func,
-  isMenuOpen: PropTypes.bool
+  isMenuOpen: PropTypes.bool,
+  notificationPermission: PropTypes.oneOf(['default', 'granted', 'denied']),
+  onRequestNotification: PropTypes.func
 };
 
 Header.defaultProps = {
   onMenuToggle: () => {},
-  isMenuOpen: false
+  isMenuOpen: false,
+  notificationPermission: 'denied',
+  onRequestNotification: () => {}
 };

@@ -1,14 +1,19 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 
 /**
- * WebSocket hook for managing WebSocket connections
+ * WebSocket hook with structured per-type state
  * @param {string} url - WebSocket URL to connect to
- * @returns {{data: any, isConnected: boolean, error: string|null}} WebSocket state
+ * @returns {Object} Typed WebSocket state
  */
 export function useWebSocket(url) {
-  const [data, setData] = useState(null);
+  const [teams, setTeams] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [teamHistory, setTeamHistory] = useState([]);
+  const [agentOutputs, setAgentOutputs] = useState([]);
+  const [allInboxes, setAllInboxes] = useState({});
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
+  const [lastRawMessage, setLastRawMessage] = useState(null);
   const wsRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
   const reconnectAttempts = useRef(0);
@@ -28,7 +33,20 @@ export function useWebSocket(url) {
       ws.onmessage = (event) => {
         try {
           const message = JSON.parse(event.data);
-          setData(message);
+          setLastRawMessage(message);
+
+          // Dispatch by message type
+          if (message.data) setTeams(message.data);
+          if (message.stats) setStats(message.stats);
+          if (message.teamHistory) setTeamHistory(message.teamHistory);
+          if (message.agentOutputs || message.outputs) setAgentOutputs(message.agentOutputs || message.outputs);
+          if (message.allInboxes) setAllInboxes(message.allInboxes);
+          if (message.type === 'inbox_update') {
+            setAllInboxes(prev => ({ ...prev, [message.teamName]: message.inboxes }));
+          }
+          if (message.type === 'task_update' && message.data) setTeams(message.data);
+          if (message.type === 'teams_update' && message.data) setTeams(message.data);
+          if (message.type === 'agent_outputs_update') setAgentOutputs(message.outputs);
         } catch (err) {
           console.error('Error parsing WebSocket message:', err);
         }
@@ -72,5 +90,5 @@ export function useWebSocket(url) {
     };
   }, [connect]);
 
-  return { data, isConnected, error };
+  return { teams, stats, teamHistory, agentOutputs, allInboxes, isConnected, error, lastRawMessage };
 }
