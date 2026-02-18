@@ -4,7 +4,7 @@ module.exports = {
   PORT: process.env.PORT || 3001,
 
   // Allowed CORS Origins
-  CORS_ORIGINS: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  CORS_ORIGINS: ['http://localhost:3001', 'http://127.0.0.1:3001', 'http://localhost:5173', 'http://127.0.0.1:5173'],
 
   // Rate Limiting
   RATE_LIMIT: {

@@ -42,6 +42,9 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Serve pre-built frontend from dist/ (used when installed as global npm package)
+app.use(express.static(path.join(__dirname, 'dist')));
+
 // Paths to Claude Code agent team files
 const homeDir = os.homedir();
 const TEAMS_DIR = path.join(homeDir, '.claude', 'teams');
@@ -939,6 +942,11 @@ function setupGracefulShutdown() {
   process.on('SIGTERM', () => shutdown('SIGTERM'));
   process.on('SIGINT', () => shutdown('SIGINT'));
 }
+
+// SPA fallback — serve index.html for all non-API routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 // Start server
 server.listen(config.PORT, () => {
