@@ -42,7 +42,7 @@ function App() {
   const [inboxTeamFilter, setInboxTeamFilter] = useState(null);
   const { theme, toggleTheme } = useTheme();
 
-  const wsUrl = `ws://${window.location.hostname}:3001`;
+  const wsUrl = useMemo(() => `ws://${window.location.hostname}:3001`, []);
   const { teams, stats, teamHistory, agentOutputs, allInboxes, isConnected, error, lastRawMessage, connectionStatus, reconnectAttempts } = useWebSocket(wsUrl);
 
   const { permission, requestPermission } = useInboxNotifications(allInboxes);
@@ -83,7 +83,7 @@ function App() {
   }, [allInboxes]);
 
   // Keyboard navigation handler for tabs
-  const handleTabKeyDown = (e) => {
+  const handleTabKeyDown = useCallback((e) => {
     const tabs = ['overview', 'teams', 'communication', 'monitoring', 'history', 'archive', 'inboxes', 'analytics'];
     const currentIndex = tabs.indexOf(activeTab);
 
@@ -91,7 +91,6 @@ function App() {
       e.preventDefault();
       const nextIndex = (currentIndex + 1) % tabs.length;
       setActiveTab(tabs[nextIndex]);
-      // Focus the new tab button
       document.getElementById(`tab-${tabs[nextIndex]}`)?.focus();
     } else if (e.key === 'ArrowLeft') {
       e.preventDefault();
@@ -107,7 +106,7 @@ function App() {
       setActiveTab(tabs[tabs.length - 1]);
       document.getElementById(`tab-${tabs[tabs.length - 1]}`)?.focus();
     }
-  };
+  }, [activeTab]);
 
   return (
     <div style={{ background: 'var(--bg-primary)', minHeight: '100vh' }}>
@@ -412,7 +411,9 @@ function App() {
                       </div>
                     ) : (
                       teams.map((team, index) => (
-                        <TeamCard key={team.name || index} team={team} inboxes={allInboxes[team.name] || {}} allInboxes={allInboxes} onNavigateToInboxes={(teamName) => { setInboxTeamFilter(teamName); setActiveTab('inboxes'); }} />
+                        <ErrorBoundary key={team.name || index} name={`Team: ${team.name}`}>
+                          <TeamCard team={team} inboxes={allInboxes[team.name] || {}} allInboxes={allInboxes} onNavigateToInboxes={(teamName) => { setInboxTeamFilter(teamName); setActiveTab('inboxes'); }} />
+                        </ErrorBoundary>
                       ))
                     )}
                   </div>
@@ -424,7 +425,9 @@ function App() {
 
                   {/* Task Dependency Graph - Full Width */}
                   <div className="lg:col-span-3">
-                    <TaskDependencyGraph teams={teams} />
+                    <ErrorBoundary name="Task Dependency Graph">
+                      <TaskDependencyGraph teams={teams} />
+                    </ErrorBoundary>
                   </div>
                 </div>
               )}
@@ -445,7 +448,9 @@ function App() {
                 <LiveCommunication teams={teams} allInboxes={allInboxes} />
               </ErrorBoundary>
               <div className="mt-6 lg:col-span-2">
-                <AgentNetworkGraph allInboxes={allInboxes} teams={teams} />
+                <ErrorBoundary name="Agent Network Graph">
+                  <AgentNetworkGraph allInboxes={allInboxes} teams={teams} />
+                </ErrorBoundary>
               </div>
             </div>
           )}
@@ -505,7 +510,9 @@ function App() {
 
           {activeTab === 'analytics' && (
             <div role="tabpanel" id="tab-panel-analytics" aria-labelledby="tab-analytics" className="animate-fadeIn">
-              <AnalyticsPanel teams={teams} allInboxes={allInboxes} />
+              <ErrorBoundary name="Analytics Panel">
+                <AnalyticsPanel teams={teams} allInboxes={allInboxes} />
+              </ErrorBoundary>
             </div>
           )}
         </div>

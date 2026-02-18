@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 
 const STORAGE_KEY = 'dashboard-notifications';
 const MAX_NOTIFICATIONS = 100;
@@ -62,7 +62,7 @@ export function useNotifications({ lastRawMessage } = {}) {
     setNotifications([]);
   }, []);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = useMemo(() => notifications.filter(n => !n.read).length, [notifications]);
 
   // Watch WebSocket events and auto-generate notifications
   useEffect(() => {

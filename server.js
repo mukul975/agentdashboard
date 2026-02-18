@@ -309,10 +309,12 @@ async function readTasks(teamName) {
 const cache = new Map();
 const CACHE_TTL = 5000; // 5 seconds
 
-function getCached(key, fn) {
+// Async-aware cache: stores resolved values, not Promises.
+// Rejected promises are not cached (they fall through to re-fetch).
+async function getCached(key, asyncFn) {
   const cached = cache.get(key);
   if (cached && Date.now() - cached.time < CACHE_TTL) return cached.value;
-  const value = fn();
+  const value = await asyncFn();
   cache.set(key, { value, time: Date.now() });
   return value;
 }
@@ -625,6 +627,7 @@ async function readAllInboxes() {
 
 // Watch for file system changes
 let teamWatcher = null;
+let teamDirWatcher = null;
 let taskWatcher = null;
 let outputWatcher = null;
 let inboxWatcher = null;
@@ -656,8 +659,13 @@ function setupWatchers() {
         created: Date.now(),
         lastSeen: Date.now()
       });
-      const teams = await getActiveTeams();
-      broadcast({ type: 'teams_update', data: teams, stats: calculateTeamStats(teams) });
+      try {
+        cache.delete('activeTeams');
+        const teams = await getActiveTeams();
+        broadcast({ type: 'teams_update', data: teams, stats: calculateTeamStats(teams) });
+      } catch (err) {
+        console.error('[TEAM] Error on add:', err.message);
+      }
     })
     .on('change', async (filePath) => {
       const teamName = path.basename(path.dirname(filePath));
@@ -665,29 +673,38 @@ function setupWatchers() {
       if (teamLifecycle.has(teamName)) {
         teamLifecycle.get(teamName).lastSeen = Date.now();
       }
-      const teams = await getActiveTeams();
-      broadcast({ type: 'teams_update', data: teams, stats: calculateTeamStats(teams) });
+      try {
+        cache.delete('activeTeams');
+        const teams = await getActiveTeams();
+        broadcast({ type: 'teams_update', data: teams, stats: calculateTeamStats(teams) });
+      } catch (err) {
+        console.error('[TEAM] Error on change:', err.message);
+      }
     })
     .on('unlink', async (filePath) => {
       const teamName = path.basename(path.dirname(filePath));
       console.log(`👋 Team completed: ${teamName} - archiving for reference...`);
+      try {
+        cache.delete('activeTeams');
+        // Try to get team data before it's gone
+        const teams = await getActiveTeams();
+        const teamData = teams.find(t => t.name === teamName);
 
-      // Try to get team data before it's gone
-      const teams = await getActiveTeams();
-      const teamData = teams.find(t => t.name === teamName);
-
-      if (teamData) {
-        await archiveTeam(teamName, teamData);
-        const lifecycle = teamLifecycle.get(teamName);
-        if (lifecycle) {
-          const duration = Math.round((Date.now() - lifecycle.created) / 1000 / 60);
-          console.log(`   📊 Team "${teamName}" was active for ${duration} minutes`);
+        if (teamData) {
+          await archiveTeam(teamName, teamData);
+          const lifecycle = teamLifecycle.get(teamName);
+          if (lifecycle) {
+            const duration = Math.round((Date.now() - lifecycle.created) / 1000 / 60);
+            console.log(`   📊 Team "${teamName}" was active for ${duration} minutes`);
+          }
         }
-      }
 
-      teamLifecycle.delete(teamName);
-      const updatedTeams = await getActiveTeams();
-      broadcast({ type: 'teams_update', data: updatedTeams, stats: calculateTeamStats(updatedTeams) });
+        teamLifecycle.delete(teamName);
+        const updatedTeams = await getActiveTeams();
+        broadcast({ type: 'teams_update', data: updatedTeams, stats: calculateTeamStats(updatedTeams) });
+      } catch (err) {
+        console.error('[TEAM] Error on unlink:', err.message);
+      }
     })
     .on('error', error => {
       console.error('[TEAM] Watcher error:', error);
@@ -695,19 +712,24 @@ function setupWatchers() {
 
   // Watch for team directory deletions (TeamDelete removes the whole dir, not just config.json)
   // chokidar fires 'unlinkDir' instead of 'unlink' when a directory is removed
-  chokidar.watch(TEAMS_DIR, { ...watchOptions, depth: 0 })
+  teamDirWatcher = chokidar.watch(TEAMS_DIR, { ...watchOptions, depth: 0 })
     .on('unlinkDir', async (dirPath) => {
       if (path.resolve(dirPath) === path.resolve(TEAMS_DIR)) return; // ignore root dir
       const teamName = path.basename(dirPath);
       console.log(`🗑️ Team directory removed: ${teamName}`);
-      teamLifecycle.delete(teamName);
-      const updatedTeams = await getActiveTeams();
-      broadcast({
-        type: 'teams_update',
-        data: updatedTeams,
-        stats: calculateTeamStats(updatedTeams),
-        removedTeam: teamName
-      });
+      try {
+        teamLifecycle.delete(teamName);
+        cache.delete('activeTeams');
+        const updatedTeams = await getActiveTeams();
+        broadcast({
+          type: 'teams_update',
+          data: updatedTeams,
+          stats: calculateTeamStats(updatedTeams),
+          removedTeam: teamName
+        });
+      } catch (err) {
+        console.error('[TEAMDIR] Error on unlinkDir:', err.message);
+      }
     });
 
   // Watch inbox files — ~/.claude/teams/*/inboxes/*.json
@@ -764,18 +786,33 @@ function setupWatchers() {
     })
     .on('add', async (filePath) => {
       console.log(`✨ New task created: ${path.basename(filePath)}`);
-      const teams = await getActiveTeams();
-      broadcast({ type: 'task_update', data: teams, stats: calculateTeamStats(teams) });
+      try {
+        cache.delete('activeTeams');
+        const teams = await getActiveTeams();
+        broadcast({ type: 'task_update', data: teams, stats: calculateTeamStats(teams) });
+      } catch (err) {
+        console.error('[TASK] Error on add:', err.message);
+      }
     })
     .on('change', async (filePath) => {
       console.log(`📝 Task updated: ${path.basename(filePath)}`);
-      const teams = await getActiveTeams();
-      broadcast({ type: 'task_update', data: teams, stats: calculateTeamStats(teams) });
+      try {
+        cache.delete('activeTeams');
+        const teams = await getActiveTeams();
+        broadcast({ type: 'task_update', data: teams, stats: calculateTeamStats(teams) });
+      } catch (err) {
+        console.error('[TASK] Error on change:', err.message);
+      }
     })
     .on('unlink', async (filePath) => {
       console.log(`✅ Task completed/removed: ${path.basename(filePath)}`);
-      const teams = await getActiveTeams();
-      broadcast({ type: 'task_update', data: teams, stats: calculateTeamStats(teams) });
+      try {
+        cache.delete('activeTeams');
+        const teams = await getActiveTeams();
+        broadcast({ type: 'task_update', data: teams, stats: calculateTeamStats(teams) });
+      } catch (err) {
+        console.error('[TASK] Error on unlink:', err.message);
+      }
     })
     .on('error', error => {
       console.error('[TASK] Watcher error:', error);
@@ -793,13 +830,21 @@ function setupWatchers() {
     })
     .on('change', async (filePath) => {
       console.log(`💬 Agent is working: ${path.basename(filePath)}`);
-      const outputs = await getAgentOutputs();
-      broadcast({ type: 'agent_outputs_update', outputs });
+      try {
+        const outputs = await getAgentOutputs();
+        broadcast({ type: 'agent_outputs_update', outputs });
+      } catch (err) {
+        console.error('[OUTPUT] Error on change:', err.message);
+      }
     })
     .on('add', async (filePath) => {
       console.log(`🎯 Agent started: ${path.basename(filePath)}`);
-      const outputs = await getAgentOutputs();
-      broadcast({ type: 'agent_outputs_update', outputs });
+      try {
+        const outputs = await getAgentOutputs();
+        broadcast({ type: 'agent_outputs_update', outputs });
+      } catch (err) {
+        console.error('[OUTPUT] Error on add:', err.message);
+      }
     })
     .on('error', error => {
       console.error('[OUTPUT] Watcher error:', error);
@@ -1476,6 +1521,7 @@ function setupGracefulShutdown() {
     // Close file watchers
     try {
       if (teamWatcher) await teamWatcher.close();
+      if (teamDirWatcher) await teamDirWatcher.close();
       if (taskWatcher) await taskWatcher.close();
       if (outputWatcher) await outputWatcher.close();
       if (inboxWatcher) await inboxWatcher.close();

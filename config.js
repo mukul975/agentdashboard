@@ -22,8 +22,8 @@ module.exports = {
     BINARY_INTERVAL: 1000,
     DEPTH: 10,
     AWAIT_WRITE_FINISH: {
-      STABILITY_THRESHOLD: 500,
-      POLL_INTERVAL: 100
+      stabilityThreshold: 500,
+      pollInterval: 100
     }
   },
 

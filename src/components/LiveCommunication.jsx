@@ -2,49 +2,16 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { MessageSquare, Users, Clock, Bot, CheckCircle, AlertCircle, Zap, ChevronLeft, Layers, List } from 'lucide-react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { parseMessageToNatural } from '../utils/messageParser';
 dayjs.extend(relativeTime);
 
-function parseMessageToNatural(text, summary) {
-  if (summary && !summary.includes('{') && !summary.includes('idle_notification')) {
-    return { text: summary, type: 'message', icon: 'message' };
-  }
-  try {
-    const parsed = JSON.parse(text);
-    switch (parsed.type) {
-      case 'idle_notification':
-        return {
-          text: parsed.lastTaskSubject
-            ? `Finished "${parsed.lastTaskSubject}" and ready for next task`
-            : 'Available and waiting for assignment',
-          type: 'idle', icon: 'idle'
-        };
-      case 'task_completed':
-        return { text: `Completed: ${parsed.taskSubject || 'Task'}`, type: 'success', icon: 'check' };
-      case 'task_assigned':
-        return { text: `Working on: ${parsed.taskSubject || 'New task'}`, type: 'working', icon: 'zap' };
-      case 'shutdown_request':
-        return { text: 'Shutdown requested', type: 'system', icon: 'alert' };
-      case 'shutdown_response':
-        return { text: parsed.approve ? 'Shutdown approved' : 'Shutdown rejected', type: 'system', icon: 'alert' };
-      default:
-        if (parsed.content) return { text: parsed.content, type: 'message', icon: 'message' };
-        if (parsed.message) return { text: parsed.message, type: 'message', icon: 'message' };
-        return { text: 'Message received', type: 'message', icon: 'message' };
-    }
-  } catch (e) {
-    if (!text || text.trim() === '') return { text: 'Empty message', type: 'message', icon: 'message' };
-    const clean = text.length > 200 ? text.substring(0, 150) + '...' : text;
-    return { text: clean, type: 'message', icon: 'message' };
-  }
-}
-
-const getIconComponent = (iconType) => {
-  switch (iconType) {
-    case 'check': return CheckCircle;
-    case 'alert': return AlertCircle;
-    case 'zap':   return Zap;
-    case 'idle':  return Bot;
-    default:      return MessageSquare;
+const getIconComponent = (type) => {
+  switch (type) {
+    case 'completion':   return CheckCircle;
+    case 'system':       return AlertCircle;
+    case 'assignment':   return Zap;
+    case 'status':       return Bot;
+    default:             return MessageSquare;
   }
 };
 
@@ -54,20 +21,21 @@ function buildMessages(allInboxes, selectedTeam) {
   return Object.entries(teamInboxes)
     .flatMap(([agentName, inbox]) => {
       const msgs = Array.isArray(inbox) ? inbox : (inbox.messages || []);
-      return msgs.map(msg => {
-        const naturalMsg = parseMessageToNatural(msg.text, msg.summary);
-        return {
-          id: `${agentName}-${msg.timestamp}-${(msg.text || '').slice(0, 8)}`,
-          from: msg.from || agentName,
-          to: agentName,
-          message: naturalMsg.text,
-          timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(0),
-          type: naturalMsg.type,
-          icon: naturalMsg.icon,
-          color: msg.color || 'blue',
-          read: msg.read !== false,
-        };
-      });
+      return msgs
+        .filter(msg => msg != null)
+        .map(msg => {
+          const naturalMsg = parseMessageToNatural(msg.text, msg.summary);
+          return {
+            id: `${agentName}-${msg.timestamp}-${(msg.text || '').slice(0, 8)}`,
+            from: msg.from || agentName,
+            to: agentName,
+            message: naturalMsg.text,
+            timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(0),
+            type: naturalMsg.type,
+            color: msg.color || 'blue',
+            read: msg.read !== false,
+          };
+        });
     })
     .sort((a, b) => a.timestamp - b.timestamp)
     .slice(-50);
@@ -112,7 +80,7 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
     if (hasWsData) return;
     let cancelled = false;
     fetch('/api/inboxes')
-      .then(r => r.json())
+      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then(data => { if (!cancelled) setFetchedInboxes(data.inboxes || {}); })
       .catch(() => {});
     return () => { cancelled = true; };
@@ -155,7 +123,7 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
         </div>
       ) : (
         messages.map(msg => {
-          const Icon = getIconComponent(msg.icon);
+          const Icon = getIconComponent(msg.type);
           const typeColors = {
             idle:    'bg-gray-500/10 border-gray-500/30',
             success: 'bg-green-500/10 border-green-500/30',

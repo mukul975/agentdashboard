@@ -161,9 +161,15 @@ MessageContent.propTypes = {
   text: PropTypes.string,
 };
 
+// Normalize inbox entry to a messages array regardless of shape ({ messages: [...] } or plain array)
+function getMessages(agentData) {
+  if (!agentData) return [];
+  if (Array.isArray(agentData)) return agentData;
+  return agentData.messages || [];
+}
+
 function getUnreadCount(agentData) {
-  if (!agentData || !agentData.messages) return 0;
-  return agentData.messages.filter(m => m.read === false).length;
+  return getMessages(agentData).filter(m => m != null && m.read === false).length;
 }
 
 function getTeamUnreadCount(teamData) {
@@ -238,7 +244,9 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
     }
   }, [allInboxes, teamNames, selectedTeam]);
 
-  const currentMessages = (selectedTeam && selectedAgent && allInboxes?.[selectedTeam]?.[selectedAgent]?.messages) || [];
+  const currentMessages = selectedTeam && selectedAgent
+    ? getMessages(allInboxes?.[selectedTeam]?.[selectedAgent])
+    : [];
 
   useEffect(() => {
     if (currentMessages.length > prevMessageCountRef.current) {
@@ -278,7 +286,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
     setSelectedAgent(agentName);
     setSearchQuery('');
     setHasNewMessages(false);
-    prevMessageCountRef.current = allInboxes?.[teamName]?.[agentName]?.messages?.length || 0;
+    prevMessageCountRef.current = getMessages(allInboxes?.[teamName]?.[agentName]).length;
   };
 
   // Collect all messages from the current team (for sender dropdown)
@@ -286,9 +294,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
     if (!selectedTeam || !allInboxes?.[selectedTeam]) return [];
     const msgs = [];
     Object.values(allInboxes[selectedTeam]).forEach(agentData => {
-      if (agentData?.messages) {
-        msgs.push(...agentData.messages);
-      }
+      msgs.push(...getMessages(agentData));
     });
     return msgs;
   }, [allInboxes, selectedTeam]);
@@ -338,7 +344,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
 
   // Apply all filters: search + date range + sender + type + sort
   const filteredMessages = useMemo(() => {
-    let msgs = [...currentMessages];
+    let msgs = currentMessages.filter(msg => msg != null);
 
     // Text search
     if (searchQuery.trim()) {
@@ -531,7 +537,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                       {agentNames.map(agentName => {
                         const agentData = teamData[agentName];
                         const agentUnread = getUnreadCount(agentData);
-                        const msgCount = agentData?.messageCount || agentData?.messages?.length || 0;
+                        const msgCount = agentData?.messageCount || getMessages(agentData).length;
                         const isSelected = selectedTeam === teamName && selectedAgent === agentName;
 
                         return (

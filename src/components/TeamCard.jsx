@@ -119,7 +119,7 @@ function TaskCompletionRing({ completed, total, size = 36 }) {
 export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInboxes }) {
   const [isExpanded, setIsExpanded] = useState(true);
 
-  const { name, config, tasks, lastUpdated } = team;
+  const { name, config = {}, tasks = [], lastUpdated } = team;
   const members = config.members || [];
   // Detect this team's lead per team: config.leadName → agentType contains 'lead'/'manager'/'coordinator' → member named 'team-lead' → first member
   const lead = members.find(m => m.name === config.leadName)

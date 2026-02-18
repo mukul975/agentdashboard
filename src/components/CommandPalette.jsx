@@ -30,9 +30,10 @@ export function CommandPalette({ isOpen, onClose, onNavigate }) {
       setQuery('');
       setSelectedIndex(0);
       // Small delay to ensure the modal is rendered before focusing
-      requestAnimationFrame(() => {
+      const rafId = requestAnimationFrame(() => {
         inputRef.current?.focus();
       });
+      return () => cancelAnimationFrame(rafId);
     }
   }, [isOpen]);
 

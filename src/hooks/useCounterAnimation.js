@@ -90,6 +90,7 @@ export function useCounterAnimationWithHighlight(targetValue, duration = 600) {
   const [changeDirection, setChangeDirection] = useState(null); // 'increase', 'decrease', or null
   const prevValueRef = useRef(targetValue);
   const animationFrameRef = useRef(null);
+  const resetTimeoutRef = useRef(null);
 
   useEffect(() => {
     if (targetValue === prevValueRef.current) {
@@ -105,6 +106,9 @@ export function useCounterAnimationWithHighlight(targetValue, duration = 600) {
 
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
+    }
+    if (resetTimeoutRef.current) {
+      clearTimeout(resetTimeoutRef.current);
     }
 
     const animate = (currentTime) => {
@@ -123,7 +127,7 @@ export function useCounterAnimationWithHighlight(targetValue, duration = 600) {
         animationFrameRef.current = null;
 
         // Reset change direction after a delay
-        setTimeout(() => setChangeDirection(null), 1000);
+        resetTimeoutRef.current = setTimeout(() => setChangeDirection(null), 1000);
       }
     };
 
@@ -132,6 +136,9 @@ export function useCounterAnimationWithHighlight(targetValue, duration = 600) {
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
+      }
+      if (resetTimeoutRef.current) {
+        clearTimeout(resetTimeoutRef.current);
       }
     };
   }, [targetValue, duration]);

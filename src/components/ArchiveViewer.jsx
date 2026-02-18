@@ -23,7 +23,7 @@ export function ArchiveViewer() {
   const fetchArchives = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3001/api/archive');
+      const response = await fetch('/api/archive');
       if (!response.ok) {
         throw new Error('Failed to fetch archives');
       }
@@ -40,7 +40,7 @@ export function ArchiveViewer() {
 
   const fetchArchiveDetails = async (filename) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/archive/${filename}`);
+      const response = await fetch(`/api/archive/${encodeURIComponent(filename)}`);
       if (!response.ok) {
         throw new Error('Failed to fetch archive details');
       }

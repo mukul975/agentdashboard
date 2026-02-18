@@ -11,7 +11,7 @@ function flattenInboxes(allInboxes) {
     .flatMap(([teamName, agents]) =>
       Object.entries(agents || {}).flatMap(([agentName, inbox]) => {
         const messages = Array.isArray(inbox) ? inbox : (inbox.messages || []);
-        return messages.map(msg => {
+        return messages.filter(msg => msg != null).map(msg => {
           const naturalMsg = parseMessageToNatural(msg.text, msg.summary);
           return {
             id: `${teamName}-${agentName}-${msg.timestamp}-${(msg.text || '').slice(0, 8)}`,
@@ -48,7 +48,7 @@ export function RealTimeMessages({ allInboxes = {} }) {
     setFetchError(null);
 
     fetch('/api/inboxes')
-      .then(r => r.json())
+      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then(data => {
         if (!cancelled) {
           setFetchedInboxes(data.inboxes || {});
@@ -69,9 +69,10 @@ export function RealTimeMessages({ allInboxes = {} }) {
   const source = hasWsData ? allInboxes : (fetchedInboxes || {});
   const allMessages = useMemo(() => flattenInboxes(source), [source]);
 
-  const filteredMessages = filter === 'all'
-    ? allMessages
-    : allMessages.filter(m => m.type === filter);
+  const filteredMessages = useMemo(
+    () => filter === 'all' ? allMessages : allMessages.filter(m => m.type === filter),
+    [allMessages, filter]
+  );
 
   const getMessageColor = (type) => {
     switch (type) {

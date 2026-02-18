@@ -51,16 +51,18 @@ export function useWebSocket(url) {
           const message = JSON.parse(event.data);
           setLastRawMessage(message);
 
-          if (message.data) setTeams(message.data);
           if (message.stats) setStats(message.stats);
           if (message.teamHistory) setTeamHistory(message.teamHistory);
-          if (message.agentOutputs || message.outputs) setAgentOutputs(message.agentOutputs || message.outputs);
           if (message.allInboxes) setAllInboxes(message.allInboxes);
-          if (message.type === 'inbox_update') {
+
+          if (message.type === 'initial_data') {
+            if (message.data) setTeams(message.data);
+            if (message.agentOutputs || message.outputs) setAgentOutputs(message.agentOutputs || message.outputs);
+          } else if (message.type === 'inbox_update') {
             setAllInboxes(prev => ({ ...prev, [message.teamName]: message.inboxes }));
-          }
-          if (message.type === 'task_update' && message.data) setTeams(message.data);
-          if (message.type === 'teams_update' && message.data) {
+          } else if (message.type === 'task_update' && message.data) {
+            setTeams(message.data);
+          } else if (message.type === 'teams_update' && message.data) {
             setTeams(message.data);
             if (message.removedTeam) {
               setAllInboxes(prev => {
@@ -69,8 +71,12 @@ export function useWebSocket(url) {
                 return next;
               });
             }
+          } else if (message.type === 'agent_outputs_update') {
+            setAgentOutputs(message.outputs);
+          } else if (message.data) {
+            // Fallback: any message with .data updates teams
+            setTeams(message.data);
           }
-          if (message.type === 'agent_outputs_update') setAgentOutputs(message.outputs);
         } catch (err) {
           console.error('Error parsing WebSocket message:', err);
         }
