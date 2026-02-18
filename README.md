@@ -4,8 +4,6 @@
 
 ### Stop Flying Blind — Monitor Your Claude Code Agent Teams in Real Time
 
-[![npm version](https://img.shields.io/npm/v/claude-team-dashboard.svg?style=flat&color=blue)](https://www.npmjs.com/package/claude-team-dashboard)
-[![npm downloads](https://img.shields.io/npm/dm/claude-team-dashboard.svg?style=flat&color=brightgreen)](https://www.npmjs.com/package/claude-team-dashboard)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/mukul975/claude-team-dashboard/blob/main/LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![JavaScript](https://img.shields.io/badge/JavaScript-58%25-F7DF1E.svg?logo=javascript&logoColor=black)](https://github.com/mukul975/claude-team-dashboard)
@@ -16,7 +14,7 @@
 
 **Monitor, track, and orchestrate** your [Claude Code](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview) agent teams from a **single, unified dashboard** — with **zero-delay WebSocket streaming**.
 
-[**Get Started in 60 Seconds**](#-quick-start) · [**See Features**](#-features) · [**Live Demo**](#-demo) · [**Docs**](#-documentation) · [**Contributing**](#-contributing)
+[**Get Started**](#-quick-start) · [**See Features**](#-features) · [**Live Demo**](#-demo) · [**Docs**](#-documentation) · [**Contributing**](#-contributing)
 
 ---
 
@@ -91,43 +89,28 @@ Instant desktop notifications for task completions, errors, and state changes. *
 
 ## 🚀 Quick Start
 
-### ⚡ 60-Second Setup (npm Package)
+### ✅ Prerequisites
 
-Install and run with a single command:
+- **Node.js** v18+ ([Download](https://nodejs.org/))
 
-```bash
-# Install globally
-npm install -g claude-team-dashboard
-
-# Launch dashboard
-claude-dashboard
-```
-
-**Or use npx** (no installation required):
+### 🛠️ Setup
 
 ```bash
-npx claude-team-dashboard
-```
-
-**That's it.** Open **http://localhost:5173** and you're monitoring agents in real time.
-
----
-
-### 🛠️ Development Setup (From Source)
-
-Want to contribute or customize? Clone and develop locally:
-
-```bash
-# 1. Clone and enter
+# 1. Clone the repo
 git clone https://github.com/mukul975/claude-team-dashboard.git
 cd claude-team-dashboard
 
 # 2. Install dependencies
 npm install
 
-# 3. Launch dashboard (starts both frontend + backend)
+# 3. Build the frontend
+npm run build
+
+# 4. Start the dashboard
 npm start
 ```
+
+Open **http://localhost:3001** and you're monitoring agents in real time.
 
 ### 🎁 Dev Container (Instant Environment)
 
@@ -137,50 +120,22 @@ Have VS Code + Docker? **Skip setup entirely**:
 2. Click "Reopen in Container" when prompted
 3. Everything auto-installs. You're ready.
 
-### 📦 Alternative Package Managers
+### 🧑‍💻 Development Mode
+
+To work on the frontend with hot-reload:
 
 ```bash
-# Using Yarn
-yarn global add claude-team-dashboard
-claude-dashboard
+# Terminal 1 — backend
+npm run server
 
-# Using pnpm
-pnpm add -g claude-team-dashboard
-claude-dashboard
+# Terminal 2 — frontend dev server
+npm run dev
 ```
 
-### ✅ Prerequisites
-
-- **Node.js** v18+ ([Download](https://nodejs.org/))
-- **npm** v9+ (comes with Node.js)
-
-### 🖥️ CLI Usage
-
-Once installed, the `claude-dashboard` command is available globally:
-
-```bash
-# Start the dashboard
-claude-dashboard
-
-# The dashboard will:
-# ✓ Start backend server on http://localhost:3001
-# ✓ Start frontend on http://localhost:5173
-# ✓ Auto-watch ~/.claude/teams for agent activity
-# ✓ Stream real-time updates via WebSocket
-
-# Stop with Ctrl+C
-```
-
-**What gets monitored:**
-- `~/.claude/teams/` - Active agent teams
-- `~/.claude/tasks/` - Task management
-- `/tmp/claude/{project}/tasks/` - Agent outputs
-
-**Automatic features:**
-- Team lifecycle tracking
-- Auto-archiving on completion
-- Real-time message parsing
-- WebSocket streaming
+**What gets monitored automatically:**
+- `~/.claude/teams/` — Active agent teams
+- `~/.claude/tasks/` — Task management
+- `/tmp/claude/{project}/tasks/` — Agent outputs
 
 ---
 
@@ -231,12 +186,11 @@ claude-team-dashboard/
 │   └── test/                 # Test setup
 ├── .devcontainer/            # VS Code dev container config
 ├── .github/                  # GitHub templates & workflows
-│   ├── ISSUE_TEMPLATE/       # Bug/feature issue forms
 │   └── workflows/            # CI/CD pipelines
 ├── test/                     # Test files
 ├── dist/                     # Production build output
 ├── server.js                 # WebSocket backend server
-├── start.js                  # Unified launcher script (CLI entry)
+├── start.js                  # Launcher script
 ├── cleanup.js                # Process cleanup utility
 ├── config.js                 # Server configuration
 ├── vite.config.js            # Vite bundler config
@@ -555,8 +509,7 @@ GET /api/archive
       "members": ["team-lead (general-purpose)", "..."],
       "accomplishments": ["✅ Task 1", "✅ Task 2", "..."],
       "duration": "Active for 45 minutes",
-      "archivedAt": "2026-02-10T15:30:00.000Z",
-      "fullPath": "/home/user/.claude/archive/dashboard-devops_2026-02-10T15-30-00-000Z.json"
+      "archivedAt": "2026-02-10T15:30:00.000Z"
     }
   ],
   "count": 1
@@ -712,7 +665,7 @@ We love contributions! Whether you're fixing bugs, adding features, or improving
 
 ```bash
 # 1. Fork & clone
-git clone https://github.com/YOUR_USERNAME/agentdashboard.git
+git clone https://github.com/YOUR_USERNAME/claude-team-dashboard.git
 
 # 2. Create feature branch
 git checkout -b feature/amazing-feature
