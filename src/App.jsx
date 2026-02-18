@@ -87,6 +87,10 @@ function App() {
   const handleCloseNotifications = useCallback(() => setNotifOpen(false), []);
   const handleNotifNavigate = useCallback((tab) => { setActiveTab(tab); setNotifOpen(false); }, []);
 
+  // Stable callbacks for Header — prevents unnecessary re-renders
+  const handleHeaderNavigate = useCallback((tab) => setActiveTab(tab), []);
+  const handleOpenShortcuts = useCallback(() => setShortcutsOpen(true), []);
+
   // Keyboard navigation handler for tabs
   const handleTabKeyDown = useCallback((e) => {
     const tabs = ['overview', 'teams', 'communication', 'monitoring', 'history', 'archive', 'inboxes', 'analytics'];
@@ -124,7 +128,7 @@ function App() {
       </a>
 
       {/* Header - New Glassmorphism Design */}
-      <Header isConnected={isConnected} error={error} notificationPermission={permission} onRequestNotification={requestPermission} teams={teams} allInboxes={allInboxes} onNavigate={(tab) => setActiveTab(tab)} theme={theme} onToggleTheme={toggleTheme} notifUnreadCount={notifUnreadCount} onToggleNotifications={handleToggleNotifications} onToggleShortcuts={() => setShortcutsOpen(true)} />
+      <Header isConnected={isConnected} error={error} notificationPermission={permission} onRequestNotification={requestPermission} teams={teams} allInboxes={allInboxes} onNavigate={handleHeaderNavigate} theme={theme} onToggleTheme={toggleTheme} notifUnreadCount={notifUnreadCount} onToggleNotifications={handleToggleNotifications} onToggleShortcuts={handleOpenShortcuts} />
 
       {/* WebSocket Connecting Overlay - shown only on initial connection */}
       {connectionStatus === 'connecting' && teams.length === 0 && !error && (

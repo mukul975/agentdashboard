@@ -432,31 +432,29 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
 
             {/* Notification Center Bell */}
             {onToggleNotifications && (
-              <button
-                onClick={onToggleNotifications}
-                className="relative p-2 rounded-lg transition-all duration-200 group"
-                onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--glass-bg)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                title="Notification center"
-                aria-label={`Notifications${notifUnreadCount > 0 ? ` (${notifUnreadCount} unread)` : ''}`}
-              >
-                <Bell className="h-5 w-5 group-hover:text-claude-orange transition-colors duration-200" style={{ color: 'var(--text-muted)' }} aria-hidden="true" />
-                {notifUnreadCount > 0 && (
-                  <span
-                    className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[18px] h-[18px] rounded-full text-[10px] font-bold text-white px-1"
-                    style={{
-                      background: 'linear-gradient(135deg, #f97316, #ef4444)',
-                      boxShadow: '0 2px 6px rgba(249, 115, 22, 0.5)',
-                    }}
-                  >
-                    {notifUnreadCount > 99 ? '99+' : notifUnreadCount}
-                  </span>
-                )}
-              </button>
+              <div className="relative">
+                <button
+                  onClick={onToggleNotifications}
+                  className={`relative p-2 rounded-lg transition-all duration-150 active:scale-95 ${
+                    notifUnreadCount > 0
+                      ? 'text-claude-orange hover:bg-orange-500/10'
+                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  }`}
+                  aria-label={`Notifications${notifUnreadCount > 0 ? ` (${notifUnreadCount} unread)` : ''}`}
+                  title="Notifications"
+                >
+                  <Bell className="h-5 w-5" />
+                  {notifUnreadCount > 0 && (
+                    <span className="notif-badge-appear absolute -top-1 -right-1 bg-claude-orange text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 leading-none">
+                      {notifUnreadCount > 99 ? '99+' : notifUnreadCount}
+                    </span>
+                  )}
+                </button>
+              </div>
             )}
 
-            {/* Desktop Notification Permission */}
-            {notificationPermission === 'default' && (
+            {/* Desktop Notification Permission — only show when notification center bell is not present */}
+            {notificationPermission === 'default' && !onToggleNotifications && (
               <button
                 onClick={onRequestNotification}
                 className="relative p-2 rounded-lg transition-all duration-200 group"
@@ -467,15 +465,6 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
               >
                 <Bell className="h-5 w-5 group-hover:text-claude-orange transition-colors duration-200" style={{ color: 'var(--text-muted)' }} aria-hidden="true" />
               </button>
-            )}
-            {notificationPermission === 'granted' && !onToggleNotifications && (
-              <div
-                className="relative p-2 rounded-lg"
-                title="Notifications enabled"
-                aria-label="Desktop notifications are enabled"
-              >
-                <Bell className="h-5 w-5 text-green-400" aria-hidden="true" />
-              </div>
             )}
 
             {/* Keyboard Shortcuts */}
