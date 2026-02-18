@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Activity, Github, ExternalLink, BarChart3, MessageSquare, Users, Settings, History as HistoryIcon, Archive } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Activity, Github, ExternalLink, BarChart3, MessageSquare, Users, Settings, History as HistoryIcon, Archive, Inbox } from 'lucide-react';
 import { useWebSocket } from './hooks/useWebSocket';
+import { useInboxNotifications } from './hooks/useInboxNotifications';
 import { Header } from './components/Header';
 import { StatsOverview } from './components/StatsOverview';
 import { TeamCard } from './components/TeamCard';
@@ -10,22 +11,21 @@ import { SystemStatus } from './components/SystemStatus';
 import { DetailedTaskProgress } from './components/DetailedTaskProgress';
 import { AgentActivity } from './components/AgentActivity';
 import { RealTimeMessages } from './components/RealTimeMessages';
+import { LiveCommunication } from './components/LiveCommunication';
 import { LiveAgentStream } from './components/LiveAgentStream';
 import { TeamHistory } from './components/TeamHistory';
 import { AgentOutputViewer } from './components/AgentOutputViewer';
 import { ArchiveViewer } from './components/ArchiveViewer';
+import { InboxViewer } from './components/InboxViewer';
+import { TeamTimeline } from './components/TeamTimeline';
 
 function App() {
-  const [teams, setTeams] = useState([]);
-  const [stats, setStats] = useState(null);
-  const [lastUpdate, setLastUpdate] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
-  const [teamHistory, setTeamHistory] = useState([]);
-  const [agentOutputs, setAgentOutputs] = useState([]);
 
   const wsUrl = `ws://${window.location.hostname}:3001`;
-  // lgtm[js/invocation-of-non-function] useWebSocket is a valid React hook
-  const { data, isConnected, error } = useWebSocket(wsUrl);
+  const { teams, stats, teamHistory, agentOutputs, allInboxes, isConnected, error, lastRawMessage } = useWebSocket(wsUrl);
+
+  const { permission, requestPermission } = useInboxNotifications(allInboxes);
 
   // Memoize expensive computations
   const allTasks = useMemo(
@@ -33,35 +33,23 @@ function App() {
     [teams]
   );
 
-  useEffect(() => {
-    if (data) {
-      setLastUpdate(data);
-
-      if (data.data) {
-        setTeams(data.data);
-      }
-
-      if (data.stats) {
-        setStats(data.stats);
-      }
-
-      if (data.teamHistory) {
-        setTeamHistory(data.teamHistory);
-      }
-
-      if (data.agentOutputs) {
-        setAgentOutputs(data.agentOutputs);
-      }
-
-      if (data.outputs) {
-        setAgentOutputs(data.outputs);
-      }
-    }
-  }, [data]);
+  const unreadCount = useMemo(() => {
+    let count = 0;
+    Object.values(allInboxes).forEach(teamInboxes => {
+      Object.values(teamInboxes).forEach(messages => {
+        if (Array.isArray(messages)) {
+          messages.forEach(msg => {
+            if (msg.read === false) count++;
+          });
+        }
+      });
+    });
+    return count;
+  }, [allInboxes]);
 
   // Keyboard navigation handler for tabs
   const handleTabKeyDown = (e) => {
-    const tabs = ['overview', 'teams', 'communication', 'monitoring', 'history', 'archive'];
+    const tabs = ['overview', 'teams', 'communication', 'monitoring', 'history', 'archive', 'inboxes'];
     const currentIndex = tabs.indexOf(activeTab);
 
     if (e.key === 'ArrowRight') {
@@ -97,13 +85,13 @@ function App() {
       </a>
 
       {/* Header - New Glassmorphism Design */}
-      <Header isConnected={isConnected} error={error} />
+      <Header isConnected={isConnected} error={error} notificationPermission={permission} onRequestNotification={requestPermission} />
 
       {/* Main Content */}
       <main id="main-content" className="container mx-auto px-6 py-6" role="main">
         {/* Statistics Overview - Always Visible */}
         <div className="mb-6">
-          <StatsOverview stats={stats} />
+          <StatsOverview stats={stats} allInboxes={allInboxes} />
         </div>
 
         {/* Navigation Tabs */}
@@ -205,6 +193,27 @@ function App() {
               <Archive className="h-4 w-4" aria-hidden="true" />
               Archive
             </button>
+            <button
+              id="tab-inboxes"
+              onClick={() => setActiveTab('inboxes')}
+              onKeyDown={handleTabKeyDown}
+              role="tab"
+              aria-selected={activeTab === 'inboxes'}
+              aria-controls="tab-panel-inboxes"
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
+                activeTab === 'inboxes'
+                  ? 'bg-claude-orange text-white shadow-lg'
+                  : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700'
+              }`}
+            >
+              <Inbox className="h-4 w-4" aria-hidden="true" />
+              Inboxes
+              {unreadCount > 0 && (
+                <span className="bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
           </div>
         </nav>
 
@@ -224,8 +233,11 @@ function App() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <DetailedTaskProgress tasks={allTasks} />
                 <AgentActivity teams={teams} />
-                <SystemStatus isConnected={isConnected} lastUpdate={lastUpdate} />
+                <SystemStatus isConnected={isConnected} lastRawMessage={lastRawMessage} />
               </div>
+
+              {/* Team Activity Timeline */}
+              <TeamTimeline allInboxes={allInboxes} teams={teams} />
             </div>
           )}
 
@@ -268,14 +280,14 @@ function App() {
                   </div>
                 ) : (
                   teams.map((team, index) => (
-                    <TeamCard key={team.name || index} team={team} />
+                    <TeamCard key={team.name || index} team={team} inboxes={allInboxes[team.name] || {}} />
                   ))
                 )}
               </div>
 
               {/* Activity Feed Section */}
               <div className="lg:col-span-1">
-                <ActivityFeed updates={lastUpdate} />
+                <ActivityFeed updates={lastRawMessage} />
               </div>
             </div>
           )}
@@ -287,8 +299,8 @@ function App() {
               aria-labelledby="tab-communication"
               className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fadeIn"
             >
-              <RealTimeMessages teams={teams} />
-              <LiveAgentStream teams={teams} />
+              <RealTimeMessages teams={teams} allInboxes={allInboxes} />
+              <LiveCommunication teams={teams} allInboxes={allInboxes} />
             </div>
           )}
 
@@ -299,8 +311,8 @@ function App() {
               aria-labelledby="tab-monitoring"
               className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fadeIn"
             >
-              <SystemStatus isConnected={isConnected} lastUpdate={lastUpdate} />
-              <ActivityFeed updates={lastUpdate} />
+              <SystemStatus isConnected={isConnected} lastRawMessage={lastRawMessage} />
+              <ActivityFeed updates={lastRawMessage} />
             </div>
           )}
 
@@ -328,6 +340,12 @@ function App() {
             >
               {/* Archive Viewer - Full Width */}
               <ArchiveViewer />
+            </div>
+          )}
+
+          {activeTab === 'inboxes' && (
+            <div role="tabpanel" id="tab-panel-inboxes" aria-labelledby="tab-inboxes" className="animate-fadeIn">
+              <InboxViewer allInboxes={allInboxes} />
             </div>
           )}
         </div>

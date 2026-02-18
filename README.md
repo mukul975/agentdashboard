@@ -174,13 +174,88 @@ npm run dev
 └─────────────────────────────────────────────────────────┘
 ```
 
+## 📬 Inbox Monitoring
+
+### How Claude Code Agent Teams Communicate
+
+When Claude Code creates a team, it creates this folder structure:
+```
+~/.claude/teams/
+└── {team-name}/
+    ├── config.json          ← team configuration & members
+    └── inboxes/
+        ├── team-lead.json   ← messages for team-lead
+        ├── researcher.json  ← messages for researcher
+        └── ...              ← one file per agent
+```
+
+Each inbox file is a JSON array of messages:
+```json
+[
+  {
+    "from": "team-lead",
+    "text": "Your task assignment...",
+    "summary": "Brief summary",
+    "timestamp": "2026-02-18T10:00:00.000Z",
+    "read": false,
+    "color": "green"
+  }
+]
+```
+
+### Real-Time Inbox Monitoring
+
+The dashboard watches `~/.claude/teams/*/inboxes/*.json` with a dedicated chokidar watcher. Every time an inbox file changes:
+- The new messages are read immediately
+- An `inbox_update` WebSocket event is pushed to all connected dashboard clients
+- The UI updates in real-time — no polling required
+
+On initial connection, `allInboxes` is included in the `initial_data` payload so you see all current messages instantly.
+
+### What the Dashboard Shows
+
+| Feature | Description |
+|---------|-------------|
+| **Inbox Viewer** | Browse all teams → agents → message threads |
+| **Unread Badges** | Red badge on team cards and Inboxes tab |
+| **Activity Timeline** | All agent messages in chronological order |
+| **Desktop Notifications** | Browser notifications for new messages |
+| **Search** | Full-text search across all messages |
+| **Export** | Download messages as JSON or CSV |
+
+### API Endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/inboxes` | All teams' inboxes at once |
+| `GET /api/teams/:teamName/inboxes` | All agents' inboxes for one team |
+| `GET /api/teams/:teamName/inboxes/:agentName` | Specific agent's inbox |
+
+### WebSocket Events
+
+```js
+// On connect — full inbox snapshot
+{ type: 'initial_data', allInboxes: { [teamName]: { [agentName]: { messages, messageCount } } } }
+
+// On inbox change — targeted update
+{ type: 'inbox_update', teamName: string, inboxes: { [agentName]: { messages, messageCount } } }
+```
+
+---
+
 ### Project Structure
 
 ```
 claude-team-dashboard/
 ├── src/                      # Frontend source code
 │   ├── components/           # React UI components
+│   │   ├── InboxViewer.jsx       # Browse agent inbox messages
+│   │   └── TeamTimeline.jsx      # Chronological activity timeline
 │   ├── hooks/                # Custom React hooks
+│   │   └── useInboxNotifications.js  # Browser notifications for new messages
+│   ├── utils/                # Shared utilities
+│   │   ├── messageParser.js      # Natural language message parsing
+│   │   └── formatting.js         # Time, color, initials utilities
 │   ├── config/               # Configuration constants
 │   ├── styles/               # CSS stylesheets
 │   └── test/                 # Test setup
