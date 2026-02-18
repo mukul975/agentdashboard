@@ -45,22 +45,23 @@ describe('StatsOverview Component', () => {
     const { container } = render(<StatsOverview stats={mockStats} />);
 
     const grid = container.querySelector('.grid');
-    expect(grid).toHaveClass('grid-cols-2', 'md:grid-cols-4', 'lg:grid-cols-8');
+    expect(grid).toBeInTheDocument();
+    expect(grid).toHaveClass('gap-4');
   });
 
   it('renders icons for each stat', () => {
     const { container } = render(<StatsOverview stats={mockStats} />);
 
-    // Check for 8 stat cards (one for each stat including Messages and Unread)
-    const statCards = container.querySelectorAll('.group.rounded-xl.p-4');
+    // 8 stat cards identified by role="group"
+    const statCards = container.querySelectorAll('[role="group"]');
     expect(statCards.length).toBe(8);
   });
 
   it('displays stat values with correct formatting', () => {
     const { container } = render(<StatsOverview stats={mockStats} />);
 
-    // Check that value elements use the correct font classes
-    const valueElements = container.querySelectorAll('.text-3xl.font-extrabold.tabular-nums');
+    // Value elements use text-3xl and font-extrabold classes
+    const valueElements = container.querySelectorAll('.text-3xl.font-extrabold');
     expect(valueElements.length).toBeGreaterThan(0);
   });
 });

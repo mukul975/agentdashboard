@@ -14,6 +14,16 @@ const config = require('./config');
 
 const app = express();
 const server = http.createServer(app);
+
+// --- Optional Password Authentication ---
+const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD || null;
+let authToken = null;
+
+if (DASHBOARD_PASSWORD) {
+  authToken = crypto.randomBytes(32).toString('hex');
+  console.log('🔒 Password authentication is ENABLED (DASHBOARD_PASSWORD is set)');
+}
+
 const wss = new WebSocket.Server({
   server,
   verifyClient: (info) => {
@@ -64,6 +74,64 @@ app.use('/api/', (req, res, next) => {
 });
 
 app.use(express.json({ limit: '10kb' }));
+
+// --- Auth endpoints (always available, even when auth is disabled) ---
+app.get('/api/auth/required', (req, res) => {
+  res.json({ required: !!DASHBOARD_PASSWORD });
+});
+
+app.post('/api/auth/login', (req, res) => {
+  if (!DASHBOARD_PASSWORD) {
+    return res.json({ token: null, message: 'No authentication required' });
+  }
+
+  const { password } = req.body || {};
+
+  if (!password || typeof password !== 'string') {
+    return res.status(400).json({ error: 'Password is required' });
+  }
+
+  // Constant-time comparison to prevent timing attacks
+  const passwordBuffer = Buffer.from(password);
+  const expectedBuffer = Buffer.from(DASHBOARD_PASSWORD);
+
+  if (passwordBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(passwordBuffer, expectedBuffer)) {
+    return res.status(401).json({ error: 'Invalid password' });
+  }
+
+  res.json({ token: authToken });
+});
+
+// --- Auth middleware for protected /api/* routes (skip /api/auth/*) ---
+app.use('/api/', (req, res, next) => {
+  // Skip auth routes
+  if (req.path.startsWith('/auth/')) {
+    return next();
+  }
+
+  // If no password is configured, allow all requests
+  if (!DASHBOARD_PASSWORD) {
+    return next();
+  }
+
+  // Check Authorization header
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  const token = authHeader.slice(7);
+
+  // Constant-time comparison
+  const tokenBuffer = Buffer.from(token);
+  const expectedBuffer = Buffer.from(authToken);
+
+  if (tokenBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(tokenBuffer, expectedBuffer)) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+
+  next();
+});
 
 // Serve pre-built frontend from dist/ (used when installed as global npm package)
 app.use(express.static(path.join(__dirname, 'dist')));
@@ -852,7 +920,26 @@ function setupWatchers() {
 }
 
 // WebSocket connection handler
-wss.on('connection', async (ws) => {
+wss.on('connection', async (ws, req) => {
+  // If auth is enabled, require a valid token in the URL query string
+  if (DASHBOARD_PASSWORD) {
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const token = url.searchParams.get('token');
+
+    if (!token) {
+      ws.close(4001, 'Authentication required');
+      return;
+    }
+
+    const tokenBuffer = Buffer.from(token);
+    const expectedBuffer = Buffer.from(authToken);
+
+    if (tokenBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(tokenBuffer, expectedBuffer)) {
+      ws.close(4001, 'Invalid token');
+      return;
+    }
+  }
+
   console.log('👋 A new viewer joined the dashboard');
   clients.add(ws);
 

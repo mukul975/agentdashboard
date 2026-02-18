@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Activity, Github, ExternalLink, BarChart3, MessageSquare, Users, Settings, History as HistoryIcon, Archive, Inbox, TrendingUp } from 'lucide-react';
 import { useWebSocket } from './hooks/useWebSocket';
@@ -12,25 +12,27 @@ import { LiveMetrics } from './components/LiveMetrics';
 import { SystemStatus } from './components/SystemStatus';
 import { DetailedTaskProgress } from './components/DetailedTaskProgress';
 import { AgentActivity } from './components/AgentActivity';
-import { AgentNetworkGraph } from './components/AgentNetworkGraph';
+const AgentNetworkGraph = lazy(() => import('./components/AgentNetworkGraph').then(m => ({ default: m.AgentNetworkGraph })));
 import { RealTimeMessages } from './components/RealTimeMessages';
 import { LiveCommunication } from './components/LiveCommunication';
 import { TeamHistory } from './components/TeamHistory';
 import { AgentOutputViewer } from './components/AgentOutputViewer';
-import { ArchiveViewer } from './components/ArchiveViewer';
+const ArchiveViewer = lazy(() => import('./components/ArchiveViewer').then(m => ({ default: m.ArchiveViewer })));
 import { InboxViewer } from './components/InboxViewer';
 import { TeamTimeline } from './components/TeamTimeline';
 import { CommandPalette } from './components/CommandPalette';
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useNotifications } from './hooks/useNotifications';
-import { AnalyticsPanel } from './components/AnalyticsPanel';
+const AnalyticsPanel = lazy(() => import('./components/AnalyticsPanel').then(m => ({ default: m.AnalyticsPanel })));
 import { TeamPerformancePanel } from './components/TeamPerformancePanel';
 import { NotificationCenter } from './components/NotificationCenter';
 import { useTheme } from './hooks/useTheme';
+import { SkeletonCard, SkeletonChart } from './components/SkeletonLoader';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { TaskDependencyGraph } from './components/TaskDependencyGraph';
+const TaskDependencyGraph = lazy(() => import('./components/TaskDependencyGraph').then(m => ({ default: m.TaskDependencyGraph })));
 import { TeamComparison } from './components/TeamComparison';
+import { LoginScreen } from './components/LoginScreen';
 
 
 function App() {
@@ -42,8 +44,33 @@ function App() {
   const [inboxTeamFilter, setInboxTeamFilter] = useState(null);
   const { theme, toggleTheme } = useTheme();
 
-  const wsUrl = useMemo(() => `ws://${window.location.hostname}:3001`, []);
+  // Auth state
+  const [authRequired, setAuthRequired] = useState(null); // null = loading, true/false = known
+  const [authToken, setAuthToken] = useState(() => sessionStorage.getItem('dashboard-token'));
+
+  // Check if auth is required on mount
+  useEffect(() => {
+    fetch('/api/auth/required')
+      .then(res => res.json())
+      .then(data => setAuthRequired(data.required))
+      .catch(() => setAuthRequired(false));
+  }, []);
+
+  const handleLogin = useCallback((token) => {
+    sessionStorage.setItem('dashboard-token', token);
+    setAuthToken(token);
+  }, []);
+
+  // Build WebSocket URL with token if auth is enabled
+  const wsUrl = useMemo(() => {
+    const base = `ws://${window.location.hostname}:3001`;
+    if (authToken) return `${base}?token=${authToken}`;
+    return base;
+  }, [authToken]);
   const { teams, stats, teamHistory, agentOutputs, allInboxes, isConnected, error, lastRawMessage, connectionStatus, reconnectAttempts } = useWebSocket(wsUrl);
+
+  // Auth gate: show loading or login screen before dashboard (after all hooks)
+  const showAuthGate = authRequired === null || (authRequired && !authToken);
 
   const { permission, requestPermission } = useInboxNotifications(allInboxes);
 
@@ -116,6 +143,21 @@ function App() {
       document.getElementById(`tab-${tabs[tabs.length - 1]}`)?.focus();
     }
   }, [activeTab]);
+
+  // Auth gate rendering
+  if (showAuthGate) {
+    if (authRequired === null) {
+      return (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg-primary)' }}>
+          <div style={{ textAlign: 'center' }}>
+            <Activity style={{ width: '32px', height: '32px', color: '#f97316', margin: '0 auto 12px', display: 'block' }} />
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Loading dashboard...</p>
+          </div>
+        </div>
+      );
+    }
+    return <LoginScreen onLogin={handleLogin} />;
+  }
 
   return (
     <div style={{ background: 'var(--bg-primary)', minHeight: '100vh' }}>
@@ -447,7 +489,9 @@ function App() {
                   {/* Task Dependency Graph - Full Width */}
                   <div className="lg:col-span-3">
                     <ErrorBoundary name="Task Dependency Graph">
-                      <TaskDependencyGraph teams={teams} />
+                      <Suspense fallback={<SkeletonCard />}>
+                        <TaskDependencyGraph teams={teams} />
+                      </Suspense>
                     </ErrorBoundary>
                   </div>
                 </div>
@@ -470,7 +514,9 @@ function App() {
               </ErrorBoundary>
               <div className="mt-6 lg:col-span-2">
                 <ErrorBoundary name="Agent Network Graph">
-                  <AgentNetworkGraph allInboxes={allInboxes} teams={teams} />
+                  <Suspense fallback={<SkeletonCard />}>
+                    <AgentNetworkGraph allInboxes={allInboxes} teams={teams} />
+                  </Suspense>
                 </ErrorBoundary>
               </div>
             </div>
@@ -516,7 +562,9 @@ function App() {
             >
               {/* Archive Viewer - Full Width */}
               <ErrorBoundary name="Archive Viewer">
-                <ArchiveViewer />
+                <Suspense fallback={<SkeletonCard />}>
+                  <ArchiveViewer />
+                </Suspense>
               </ErrorBoundary>
             </div>
           )}
@@ -532,7 +580,9 @@ function App() {
           {activeTab === 'analytics' && (
             <div role="tabpanel" id="tab-panel-analytics" aria-labelledby="tab-analytics" className="animate-fadeIn">
               <ErrorBoundary name="Analytics Panel">
-                <AnalyticsPanel teams={teams} allInboxes={allInboxes} />
+                <Suspense fallback={<SkeletonChart />}>
+                  <AnalyticsPanel teams={teams} allInboxes={allInboxes} />
+                </Suspense>
               </ErrorBoundary>
             </div>
           )}
