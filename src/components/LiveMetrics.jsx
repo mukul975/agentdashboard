@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Zap, TrendingUp, Users, Clock, CheckCircle, Loader, AlertTriangle } from 'lucide-react';
+import { Zap, Clock, CheckCircle, Loader, AlertTriangle } from 'lucide-react';
 
 // Tiny SVG sparkline from an array of numbers
 function Sparkline({ data, width = 40, height = 20, color = '#10b981' }) {
