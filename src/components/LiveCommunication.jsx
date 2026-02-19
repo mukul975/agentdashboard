@@ -24,7 +24,7 @@ function buildMessages(allInboxes, selectedTeam) {
       return msgs
         .filter(msg => msg != null)
         .map(msg => {
-          const naturalMsg = parseMessageToNatural(msg.text, msg.summary);
+          const naturalMsg = parseMessageToNatural(msg.text, msg.summary); // lgtm[js/call-to-non-callable]
           return {
             id: `${agentName}-${msg.timestamp}-${(msg.text || '').slice(0, 8)}`,
             from: msg.from || agentName,

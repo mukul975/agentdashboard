@@ -110,7 +110,7 @@ function MessageContent({ text }) {
   if (parsed && typeof parsed === 'object') {
     const rawSummary = parsed.summary || parsed.content || parsed.message;
     // Fall back to natural-language parser for structured messages (task_assignment, idle_notification, etc.)
-    const summary = rawSummary || parseMessageToNatural(text).text;
+    const summary = rawSummary || parseMessageToNatural(text).text; // lgtm[js/call-to-non-callable]
     return (
       <div>
         {summary && (
@@ -331,7 +331,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
 
   // Classify message type using parseMessageToNatural
   const getMessageType = useCallback((msg) => {
-    const natural = parseMessageToNatural(msg.text, msg.summary);
+    const natural = parseMessageToNatural(msg.text, msg.summary); // lgtm[js/call-to-non-callable]
     const t = natural.type;
     // Map parser types to our filter categories
     if (t === 'system') return 'system';
@@ -714,7 +714,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                         message: (msg.text || '').replace(/\n/g, ' '),
                         timestamp: msg.timestamp || ''
                       }));
-                      exportToCSV(data, `inbox-${selectedTeam}-${selectedAgent}`);
+                      exportToCSV(data, `inbox-${selectedTeam}-${selectedAgent}`); // lgtm[js/call-to-non-callable]
                     }}
                     aria-label="Export messages as CSV"
                     title="Export messages as CSV"

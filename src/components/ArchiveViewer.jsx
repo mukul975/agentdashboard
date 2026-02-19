@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { Archive, Calendar, Users, CheckCircle, Clock, TrendingUp, ChevronDown, ChevronUp, FileText } from 'lucide-react';
 import { SkeletonArchiveCard } from './SkeletonLoader';
 import dayjs from 'dayjs';

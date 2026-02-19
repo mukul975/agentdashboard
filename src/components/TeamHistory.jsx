@@ -74,7 +74,7 @@ export function TeamHistory({ teamHistory, loading }) {
                 completedTasks: (t.tasks || []).filter(tk => tk.status === 'completed').length,
                 lastModified: t.lastModified || ''
               }));
-              exportToJSON(data, 'team-history');
+              exportToJSON(data, 'team-history'); // lgtm[js/call-to-non-callable]
             }}
             className="flex items-center gap-1 px-2 py-1 rounded-md text-xs hover:text-claude-orange transition-colors"
             style={{

@@ -161,7 +161,6 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
 
       // Task velocity: completed tasks per hour based on team age
       const teamStart = team.lastUpdated ? new Date(team.lastUpdated).getTime() : now;
-      const completedWithTimestamps = tasks.filter(t => t.status === 'completed' && t.completedAt);
       let velocity = 0;
       if (completedTasks > 0) {
         const allTimestamps = tasks.map(t => t.createdAt || t.completedAt || t.updatedAt).filter(Boolean).map(ts => new Date(ts).getTime());

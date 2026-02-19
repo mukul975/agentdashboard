@@ -490,7 +490,6 @@ function DependencyGraph({ allTasks, onTaskClick }) {
     if (container) {
       const rect = container.getBoundingClientRect();
       const svgEl = e.currentTarget.closest('svg');
-      const svgRect = svgEl.getBoundingClientRect();
       setHoverPos({
         x: e.clientX - rect.left,
         y: e.clientY - rect.top,
@@ -728,8 +727,6 @@ function GanttView({ allTasks, onTaskClick }) {
           const tasks = grouped[statusKey];
           if (tasks.length === 0) return null;
           const color = STATUS_COLORS[statusKey];
-          const sectionStartRow = currentRow;
-
           // Section header
           const headerY = padY + currentRow * (barH + rowGap);
           currentRow++;
