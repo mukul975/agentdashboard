@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Bot, Crown, Cpu, Zap } from 'lucide-react';
+import { Crown, Cpu, Zap } from 'lucide-react';
+import { getInitials, getAvatarColor } from "../utils/agentUtils";
 
 export function AgentCard({ agent, isLead, agentStatus }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -42,58 +43,28 @@ export function AgentCard({ agent, isLead, agentStatus }) {
 
       <div className="flex items-start justify-between" style={{ position: 'relative', zIndex: 10 }}>
         <div className="flex items-start gap-4 flex-1">
-          {/* Icon Container with Glow */}
+
+          {/* Avatar Circle */}
           <div
-            className="p-3"
             style={{
-              position: 'relative',
-              borderRadius: '12px',
-              transition: 'all 0.3s',
-              background: isLead
-                ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.25) 0%, rgba(202, 138, 4, 0.15) 100%)'
-                : 'linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(37, 99, 235, 0.15) 100%)',
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 'bold',
+              fontSize: '14px',
+              color: '#ffffff',
+              backgroundColor: getAvatarColor(agent.name),
               boxShadow: isHovered
-                ? `0 4px 16px ${isLead ? 'rgba(234, 179, 8, 0.4)' : 'rgba(59, 130, 246, 0.35)'}, inset 0 1px 0 rgba(255, 255, 255, 0.15)`
-                : `0 2px 8px ${isLead ? 'rgba(234, 179, 8, 0.3)' : 'rgba(59, 130, 246, 0.25)'}, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
-              border: `1px solid ${isLead ? 'rgba(234, 179, 8, 0.4)' : 'rgba(59, 130, 246, 0.35)'}`,
-              transform: isHovered ? 'scale(1.1) rotate(-5deg)' : 'scale(1) rotate(0deg)'
+                ? `0 0 12px ${getAvatarColor(agent.name)}`
+                : 'none',
+              transition: 'all 0.3s',
+              flexShrink: 0
             }}
           >
-            {isLead ? (
-              <Crown
-                className="h-6 w-6"
-                aria-hidden="true"
-                style={{
-                  color: '#facc15',
-                  filter: 'drop-shadow(0 0 8px rgba(234, 179, 8, 0.6))'
-                }}
-              />
-            ) : (
-              <Bot
-                className="h-6 w-6"
-                aria-hidden="true"
-                style={{
-                  color: '#60a5fa',
-                  filter: 'drop-shadow(0 0 8px rgba(59, 130, 246, 0.5))'
-                }}
-              />
-            )}
-
-            {/* Pulsing Glow Effect */}
-            {isHovered && (
-              <div
-                className="animate-pulse"
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  borderRadius: '12px',
-                  background: isLead
-                    ? 'radial-gradient(circle, rgba(234, 179, 8, 0.3), transparent 70%)'
-                    : 'radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent 70%)',
-                  zIndex: -1
-                }}
-              />
-            )}
+            {getInitials(agent.name)}
           </div>
 
           {/* Agent Details */}
@@ -140,6 +111,7 @@ export function AgentCard({ agent, isLead, agentStatus }) {
                   </div>
                 </div>
               )}
+
               <h5
                 className="text-white font-bold text-lg truncate"
                 style={{
@@ -200,7 +172,6 @@ export function AgentCard({ agent, isLead, agentStatus }) {
         </div>
       </div>
 
-      {/* Shine Effect on Hover */}
       {isHovered && (
         <div
           style={{
