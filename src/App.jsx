@@ -78,7 +78,7 @@ function App() {
 
   useToastNotifications({ teams, allInboxes, lastRawMessage });
 
-  const { notifications, unreadCount: notifUnreadCount, addNotification, markAsRead, markAllRead, clearAll } = useNotifications({ lastRawMessage });
+  const { notifications, unreadCount: notifUnreadCount, markAsRead, markAllRead, clearAll } = useNotifications({ lastRawMessage });
 
   // Global keyboard shortcuts via custom hook
   useKeyboardShortcuts({

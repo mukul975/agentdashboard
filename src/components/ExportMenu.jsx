@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Download, FileJson, FileSpreadsheet, FileText } from 'lucide-react';
 import { exportToCSV, exportToJSON } from '../utils/exportUtils';
@@ -122,7 +122,7 @@ export function ExportMenu({ teams, allInboxes }) {
           role="menu"
         >
           {menuItems.map((item) => {
-            const Icon = item.icon;
+            const Icon = item.icon; // lgtm[js/call-to-non-callable]
             return (
               <button
                 key={item.label}

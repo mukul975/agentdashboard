@@ -123,7 +123,7 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
         </div>
       ) : (
         messages.map(msg => {
-          const Icon = getIconComponent(msg.type);
+          const Icon = getIconComponent(msg.type); // lgtm[js/call-to-non-callable]
           const typeColorStyles = {
             idle:    { background: 'rgba(107,114,128,0.1)', borderColor: 'rgba(107,114,128,0.3)' },
             success: { background: 'rgba(34,197,94,0.1)', borderColor: 'rgba(34,197,94,0.3)' },

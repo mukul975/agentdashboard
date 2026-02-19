@@ -1,5 +1,12 @@
-import React, { useState, useMemo } from 'react';
-import { Users, CheckCircle, Loader, AlertTriangle, MessageSquare, Crown, GitCompare } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Crown, GitCompare } from 'lucide-react';
+
+/** Validates a property key to prevent prototype pollution via dynamic access. */
+const safePropKey = (key) => {
+  const k = String(key ?? '');
+  if (k === '__proto__' || k === 'constructor' || k === 'prototype') return null;
+  return k;
+};
 
 function getTeamMessageCount(teamInbox) {
   let count = 0;
@@ -54,7 +61,10 @@ function getMostActiveAgent(teamInbox) {
     const msgs = Array.isArray(agentInbox) ? agentInbox : (agentInbox.messages || []);
     for (const msg of msgs) {
       const sender = msg.from || agentName;
-      counts[sender] = (counts[sender] || 0) + 1;
+      const sk = safePropKey(sender);
+      if (sk !== null) {
+        counts[sk] = (counts[sk] || 0) + 1;
+      }
     }
   }
   let topName = null;
@@ -175,8 +185,10 @@ export function TeamComparison({ teams, allInboxes }) {
     const inProgress = tasks.filter(t => t.status === 'in_progress').length;
     const blocked = tasks.filter(t => t.status === 'blocked').length;
     const completionRate = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
-    const totalMessages = getTeamMessageCount(allInboxes[team.name]);
-    const mostActive = getMostActiveAgent(allInboxes[team.name]);
+    const teamKey = safePropKey(team.name);
+    const teamInbox = teamKey !== null ? allInboxes[teamKey] : undefined;
+    const totalMessages = getTeamMessageCount(teamInbox);
+    const mostActive = getMostActiveAgent(teamInbox);
     const avgMsgsPerAgent = memberCount > 0 ? parseFloat((totalMessages / memberCount).toFixed(1)) : 0;
     const velocity = getTaskVelocity(tasks);
     const oldestPending = getOldestPendingAge(tasks);

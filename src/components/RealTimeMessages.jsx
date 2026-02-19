@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { MessageCircle, ArrowRight, Radio, RefreshCw } from 'lucide-react';
 import dayjs from 'dayjs';
@@ -220,6 +220,5 @@ export function RealTimeMessages({ allInboxes = {} }) {
 }
 
 RealTimeMessages.propTypes = {
-  teams: PropTypes.array,
   allInboxes: PropTypes.object,
 };

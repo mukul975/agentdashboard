@@ -48,13 +48,13 @@ export function StatsOverview({ stats, allInboxes = {} }) {
 
   // Use optimized counter animation hook for each stat
   // Hook returns a number value, not a function (false positive)
-  const animatedTotalTeams = useCounterAnimation(stats?.totalTeams ?? 0, 1000); // lgtm[js/invocation-of-non-function]
-  const animatedTotalAgents = useCounterAnimation(stats?.totalAgents ?? 0, 1000); // lgtm[js/invocation-of-non-function]
-  const animatedTotalTasks = useCounterAnimation(stats?.totalTasks ?? 0, 1000); // lgtm[js/invocation-of-non-function]
-  const animatedPendingTasks = useCounterAnimation(stats?.pendingTasks ?? 0, 1000); // lgtm[js/invocation-of-non-function]
-  const animatedInProgress = useCounterAnimation(stats?.inProgressTasks ?? 0, 1000); // lgtm[js/invocation-of-non-function]
-  const animatedCompleted = useCounterAnimation(stats?.completedTasks ?? 0, 1000); // lgtm[js/invocation-of-non-function]
-  const animatedBlocked = useCounterAnimation(stats?.blockedTasks ?? 0, 1000); // lgtm[js/invocation-of-non-function]
+  const animatedTotalTeams = useCounterAnimation(stats?.totalTeams ?? 0, 1000); // lgtm[js/call-to-non-callable]
+  const animatedTotalAgents = useCounterAnimation(stats?.totalAgents ?? 0, 1000); // lgtm[js/call-to-non-callable]
+  const animatedTotalTasks = useCounterAnimation(stats?.totalTasks ?? 0, 1000); // lgtm[js/call-to-non-callable]
+  const animatedPendingTasks = useCounterAnimation(stats?.pendingTasks ?? 0, 1000); // lgtm[js/call-to-non-callable]
+  const animatedInProgress = useCounterAnimation(stats?.inProgressTasks ?? 0, 1000); // lgtm[js/call-to-non-callable]
+  const animatedCompleted = useCounterAnimation(stats?.completedTasks ?? 0, 1000); // lgtm[js/call-to-non-callable]
+  const animatedBlocked = useCounterAnimation(stats?.blockedTasks ?? 0, 1000); // lgtm[js/call-to-non-callable]
 
   // Inbox stats
   const totalMessages = Object.values(allInboxes).reduce((t, agents) =>
@@ -63,8 +63,8 @@ export function StatsOverview({ stats, allInboxes = {} }) {
   const unreadMessages = Object.values(allInboxes).reduce((t, agents) =>
     t + Object.values(agents || {}).reduce((s, a) => s + (a.messages || []).filter(m => m.read === false).length, 0), 0);
 
-  const animatedTotalMessages = useCounterAnimation(totalMessages, 1000); // lgtm[js/invocation-of-non-function]
-  const animatedUnreadMessages = useCounterAnimation(unreadMessages, 1000); // lgtm[js/invocation-of-non-function]
+  const animatedTotalMessages = useCounterAnimation(totalMessages, 1000); // lgtm[js/call-to-non-callable]
+  const animatedUnreadMessages = useCounterAnimation(unreadMessages, 1000); // lgtm[js/call-to-non-callable]
 
   // Track stats history in localStorage
   const appendHistory = useCallback((currentStats, msgTotal, msgUnread) => {

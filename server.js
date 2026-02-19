@@ -158,7 +158,7 @@ app.use((req, res, next) => {
   const start = Date.now();
   res.on('finish', () => {
     if (req.path.startsWith('/api/')) {
-      console.log(`${req.method} ${req.path} ${res.statusCode} ${Date.now()-start}ms`);
+      console.log(`${sanitizeForLog(req.method)} ${sanitizeForLog(req.path)} ${res.statusCode} ${Date.now()-start}ms`);
     }
   });
   next();
@@ -397,11 +397,7 @@ function sanitizeAgentName(agentName) {
 
 // Sanitize string for logging to prevent log injection
 function sanitizeForLog(input) {
-  if (typeof input !== 'string') {
-    return String(input);
-  }
-  // Remove control characters that could be used for log injection
-  return input.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+  return String(input ?? '').replace(/[\r\n\t\x00-\x1f\x7f]/g, ' ').slice(0, 200);
 }
 
 // Sanitize filename to prevent path traversal
@@ -667,7 +663,7 @@ async function getAgentOutputs() {
             size: stats.size
           });
         } catch (error) {
-          console.error(`Error reading output file ${file}:`, error.message);
+          console.error(`Error reading output file ${sanitizeForLog(file)}:`, error.message);
         }
       }
     }
@@ -759,7 +755,7 @@ async function getSessionHistory(projectPath) {
             });
           }
         } catch (error) {
-          console.error(`Error reading session file ${file}:`, error.message);
+          console.error(`Error reading session file ${sanitizeForLog(file)}:`, error.message);
         }
       }
     }
@@ -799,7 +795,7 @@ async function readTeamInboxes(teamName) {
             const agentName = path.basename(sanitizedFile, '.json');
             inboxes[agentName] = { messages, messageCount: messages.length };
           } catch (err) {
-            console.error(`Error reading inbox ${file}:`, err.message);
+            console.error(`Error reading inbox ${sanitizeForLog(file)}:`, err.message);
           }
         })
     );
@@ -807,7 +803,7 @@ async function readTeamInboxes(teamName) {
     return inboxes;
   } catch (error) {
     if (error.code === 'ENOENT') return {};
-    console.error(`Error reading inboxes for team ${teamName}:`, error.message);
+    console.error(`Error reading inboxes for team ${sanitizeForLog(teamName)}:`, error.message);
     return {};
   }
 }
@@ -866,7 +862,7 @@ function setupWatchers() {
     })
     .on('add', async (filePath) => {
       const teamName = path.basename(path.dirname(filePath));
-      console.log(`🎉 New team created: ${teamName}`);
+      console.log(`🎉 New team created: ${sanitizeForLog(teamName)}`);
       teamLifecycle.set(teamName, {
         created: Date.now(),
         lastSeen: Date.now()
@@ -881,7 +877,7 @@ function setupWatchers() {
     })
     .on('change', async (filePath) => {
       const teamName = path.basename(path.dirname(filePath));
-      console.log(`🔄 Team active: ${teamName}`);
+      console.log(`🔄 Team active: ${sanitizeForLog(teamName)}`);
       if (teamLifecycle.has(teamName)) {
         teamLifecycle.get(teamName).lastSeen = Date.now();
       }
@@ -895,7 +891,7 @@ function setupWatchers() {
     })
     .on('unlink', async (filePath) => {
       const teamName = path.basename(path.dirname(filePath));
-      console.log(`👋 Team completed: ${teamName} - archiving for reference...`);
+      console.log(`👋 Team completed: ${sanitizeForLog(teamName)} - archiving for reference...`);
       try {
         cache.delete('activeTeams');
         // Try to get team data before it's gone
@@ -907,7 +903,7 @@ function setupWatchers() {
           const lifecycle = teamLifecycle.get(teamName);
           if (lifecycle) {
             const duration = Math.round((Date.now() - lifecycle.created) / 1000 / 60);
-            console.log(`   📊 Team "${teamName}" was active for ${duration} minutes`);
+            console.log(`   📊 Team "${sanitizeForLog(teamName)}" was active for ${duration} minutes`);
           }
         }
 
@@ -928,7 +924,7 @@ function setupWatchers() {
     .on('unlinkDir', async (dirPath) => {
       if (path.resolve(dirPath) === path.resolve(TEAMS_DIR)) return; // ignore root dir
       const teamName = path.basename(dirPath);
-      console.log(`🗑️ Team directory removed: ${teamName}`);
+      console.log(`🗑️ Team directory removed: ${sanitizeForLog(teamName)}`);
       try {
         teamLifecycle.delete(teamName);
         cache.delete('activeTeams');
@@ -955,7 +951,7 @@ function setupWatchers() {
       // filePath: ~/.claude/teams/<team>/inboxes/<agent>.json
       const agentName = path.basename(filePath, '.json');
       const teamName = path.basename(path.dirname(path.dirname(filePath)));
-      console.log(`📬 New inbox: ${teamName}/${agentName}`);
+      console.log(`📬 New inbox: ${sanitizeForLog(teamName)}/${sanitizeForLog(agentName)}`);
       try {
         const inboxes = await readTeamInboxes(teamName);
         broadcast({ type: 'inbox_update', teamName, inboxes });
@@ -966,7 +962,7 @@ function setupWatchers() {
     .on('change', async (filePath) => {
       const agentName = path.basename(filePath, '.json');
       const teamName = path.basename(path.dirname(path.dirname(filePath)));
-      console.log(`💬 Message received: ${teamName} → ${agentName}`);
+      console.log(`💬 Message received: ${sanitizeForLog(teamName)} → ${sanitizeForLog(agentName)}`);
       try {
         const inboxes = await readTeamInboxes(teamName);
         broadcast({ type: 'inbox_update', teamName, inboxes });
@@ -977,7 +973,7 @@ function setupWatchers() {
     .on('unlink', async (filePath) => {
       const agentName = path.basename(filePath, '.json');
       const teamName = path.basename(path.dirname(path.dirname(filePath)));
-      console.log(`🗑️ Inbox removed: ${teamName}/${agentName}`);
+      console.log(`🗑️ Inbox removed: ${sanitizeForLog(teamName)}/${sanitizeForLog(agentName)}`);
       try {
         const inboxes = await readTeamInboxes(teamName);
         broadcast({ type: 'inbox_update', teamName, inboxes });
@@ -997,7 +993,7 @@ function setupWatchers() {
       console.log('   ✓ Task watcher is ready - tracking all your agent tasks');
     })
     .on('add', async (filePath) => {
-      console.log(`✨ New task created: ${path.basename(filePath)}`);
+      console.log(`✨ New task created: ${sanitizeForLog(path.basename(filePath))}`);
       try {
         cache.delete('activeTeams');
         const teams = await getActiveTeams();
@@ -1007,7 +1003,7 @@ function setupWatchers() {
       }
     })
     .on('change', async (filePath) => {
-      console.log(`📝 Task updated: ${path.basename(filePath)}`);
+      console.log(`📝 Task updated: ${sanitizeForLog(path.basename(filePath))}`);
       try {
         cache.delete('activeTeams');
         const teams = await getActiveTeams();
@@ -1017,7 +1013,7 @@ function setupWatchers() {
       }
     })
     .on('unlink', async (filePath) => {
-      console.log(`✅ Task completed/removed: ${path.basename(filePath)}`);
+      console.log(`✅ Task completed/removed: ${sanitizeForLog(path.basename(filePath))}`);
       try {
         cache.delete('activeTeams');
         const teams = await getActiveTeams();
@@ -1041,7 +1037,7 @@ function setupWatchers() {
       console.log('   ✓ Output watcher is ready - monitoring agent activity\n');
     })
     .on('change', async (filePath) => {
-      console.log(`💬 Agent is working: ${path.basename(filePath)}`);
+      console.log(`💬 Agent is working: ${sanitizeForLog(path.basename(filePath))}`);
       try {
         const outputs = await getAgentOutputs();
         broadcast({ type: 'agent_outputs_update', outputs });
@@ -1050,7 +1046,7 @@ function setupWatchers() {
       }
     })
     .on('add', async (filePath) => {
-      console.log(`🎯 Agent started: ${path.basename(filePath)}`);
+      console.log(`🎯 Agent started: ${sanitizeForLog(path.basename(filePath))}`);
       try {
         const outputs = await getAgentOutputs();
         broadcast({ type: 'agent_outputs_update', outputs });
@@ -1092,7 +1088,7 @@ wss.on('connection', async (ws, req) => {
 
   // Connection audit logging
   const clientIp = req.socket.remoteAddress || 'unknown';
-  console.log(`WS connected: ${clientIp}`);
+  console.log(`WS connected: ${sanitizeForLog(clientIp)}`);
   clients.add(ws);
 
   // --- Ping/pong heartbeat ---
@@ -1109,7 +1105,7 @@ wss.on('connection', async (ws, req) => {
 
   const heartbeatInterval = setInterval(() => {
     if (!ws.isAlive) {
-      console.log(`WS heartbeat timeout, terminating: ${clientIp}`);
+      console.log(`WS heartbeat timeout, terminating: ${sanitizeForLog(clientIp)}`);
       clearInterval(heartbeatInterval);
       ws.terminate();
       return;
@@ -1118,7 +1114,7 @@ wss.on('connection', async (ws, req) => {
     ws.ping();
     pongTimeout = setTimeout(() => {
       if (!ws.isAlive) {
-        console.log(`WS pong timeout, terminating: ${clientIp}`);
+        console.log(`WS pong timeout, terminating: ${sanitizeForLog(clientIp)}`);
         clearInterval(heartbeatInterval);
         ws.terminate();
       }
@@ -1133,7 +1129,7 @@ wss.on('connection', async (ws, req) => {
   ws.on('message', (data) => {
     const messageSize = Buffer.isBuffer(data) ? data.length : Buffer.byteLength(data);
     if (messageSize > WS_MAX_MESSAGE_SIZE) {
-      console.log(`WS message too large (${messageSize} bytes) from: ${clientIp}`);
+      console.log(`WS message too large (${messageSize} bytes) from: ${sanitizeForLog(clientIp)}`);
       ws.close(1009, 'Message too big');
       return;
     }
@@ -1145,7 +1141,7 @@ wss.on('connection', async (ws, req) => {
     }
     messageCount++;
     if (messageCount > WS_RATE_LIMIT_MAX) {
-      console.log(`WS rate limit exceeded from: ${clientIp}`);
+      console.log(`WS rate limit exceeded from: ${sanitizeForLog(clientIp)}`);
       ws.close(1008, 'Policy violation: rate limit exceeded');
       return;
     }
@@ -1172,14 +1168,14 @@ wss.on('connection', async (ws, req) => {
   }
 
   ws.on('close', () => {
-    console.log(`WS disconnected: ${clientIp}`);
+    console.log(`WS disconnected: ${sanitizeForLog(clientIp)}`);
     clearInterval(heartbeatInterval);
     if (pongTimeout) clearTimeout(pongTimeout);
     clients.delete(ws);
   });
 
   ws.on('error', (error) => {
-    console.error(`WebSocket error from ${clientIp}:`, error.message);
+    console.error(`WebSocket error from ${sanitizeForLog(clientIp)}:`, error.message);
     clearInterval(heartbeatInterval);
     if (pongTimeout) clearTimeout(pongTimeout);
     clients.delete(ws);

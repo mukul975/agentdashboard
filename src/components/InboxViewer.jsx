@@ -55,6 +55,13 @@ function getBorderColor(color) {
   return BORDER_COLOR_MAP[color.toLowerCase()] || DEFAULT_BORDER_COLOR;
 }
 
+/** Sanitize a dynamic property key to prevent prototype pollution. */
+function safePropKey(key) {
+  const k = String(key ?? '');
+  if (k === '__proto__' || k === 'constructor' || k === 'prototype') return null;
+  return k;
+}
+
 function renderBoldMarkdown(text) {
   if (!text) return null;
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
@@ -185,7 +192,10 @@ function getTeamUnreadCount(teamData) {
 
 export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
   const [selectedTeam, setSelectedTeam] = useState(initialTeam);
-  const [expandedTeams, setExpandedTeams] = useState(initialTeam ? { [initialTeam]: true } : {});
+  const [expandedTeams, setExpandedTeams] = useState(() => {
+    const key = safePropKey(initialTeam);
+    return key ? { [key]: true } : {};
+  });
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isAtBottom, setIsAtBottom] = useState(true);
@@ -224,10 +234,11 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
 
   // When initialTeam changes externally (e.g. "View Inboxes" from TeamCard), update selection
   useEffect(() => {
-    if (initialTeam && allInboxes?.[initialTeam]) {
-      setSelectedTeam(initialTeam);
-      setExpandedTeams(prev => ({ ...prev, [initialTeam]: true }));
-      const agents = Object.keys(allInboxes[initialTeam] || {});
+    const safeInitial = safePropKey(initialTeam);
+    if (safeInitial && allInboxes?.[safeInitial]) {
+      setSelectedTeam(safeInitial);
+      setExpandedTeams(prev => ({ ...prev, [safeInitial]: true }));
+      const agents = Object.keys(allInboxes[safeInitial] || {});
       if (agents.length > 0) {
         setSelectedAgent(agents[0]);
       }
@@ -236,7 +247,8 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
 
   useEffect(() => {
     if (teamNames.length > 0 && !selectedTeam) {
-      const firstTeam = teamNames[0];
+      const firstTeam = safePropKey(teamNames[0]);
+      if (!firstTeam) return;
       setSelectedTeam(firstTeam);
       setExpandedTeams(prev => ({ ...prev, [firstTeam]: true }));
       const agents = Object.keys(allInboxes[firstTeam] || {});
@@ -280,15 +292,22 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
   };
 
   const toggleTeam = (teamName) => {
-    setExpandedTeams(prev => ({ ...prev, [teamName]: !prev[teamName] }));
+    const key = safePropKey(teamName);
+    if (!key) return;
+    setExpandedTeams(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   const selectAgent = (teamName, agentName) => {
-    setSelectedTeam(teamName);
-    setSelectedAgent(agentName);
+    const safeTeam = safePropKey(teamName);
+    const safeAgent = safePropKey(agentName);
+    if (!safeTeam || !safeAgent) return;
+    setSelectedTeam(safeTeam);
+    setSelectedAgent(safeAgent);
     setSearchQuery('');
     setHasNewMessages(false);
-    prevMessageCountRef.current = getMessages(allInboxes?.[teamName]?.[agentName]).length;
+    const teamData = allInboxes && Object.hasOwn(allInboxes, safeTeam) ? allInboxes[safeTeam] : null;
+    const agentData = teamData && Object.hasOwn(teamData, safeAgent) ? teamData[safeAgent] : null;
+    prevMessageCountRef.current = getMessages(agentData).length;
   };
 
   // Collect all messages from the current team (for sender dropdown)
