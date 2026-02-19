@@ -1,6 +1,13 @@
 import React, { useMemo } from 'react';
 import { Trophy, Users, AlertTriangle, Crown, TrendingDown, ShieldAlert, CheckCircle } from 'lucide-react';
 
+/** Validates a property key to prevent prototype pollution via dynamic access. */
+const safePropKey = (key) => {
+  const k = String(key ?? '');
+  if (k === '__proto__' || k === 'constructor' || k === 'prototype') return null;
+  return k;
+};
+
 function getMessageCount(teamInbox) {
   let count = 0;
   if (!teamInbox) return count;
@@ -35,7 +42,10 @@ function getTopAgent(allInboxes) {
       const msgs = Array.isArray(agentInbox) ? agentInbox : (agentInbox.messages || []);
       for (const msg of msgs) {
         const sender = msg.from || agentName;
-        counts[sender] = (counts[sender] || 0) + 1;
+        const sk = safePropKey(sender);
+        if (sk !== null) {
+          counts[sk] = (counts[sk] || 0) + 1;
+        }
       }
     }
   }
@@ -140,8 +150,10 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
       const inProgressCount = inProgressTasks.length;
       const blockedCount = tasks.filter(t => t.blockedBy && t.blockedBy.length > 0).length;
       const blockerRatio = totalTasks > 0 ? (blockedCount / totalTasks) * 100 : 0;
-      const messageCount = getMessageCount(allInboxes[team.name]);
-      const activeAgents = getActiveAgents(allInboxes[team.name], members);
+      const teamKey = safePropKey(team.name);
+      const teamInbox = teamKey !== null ? allInboxes[teamKey] : undefined;
+      const messageCount = getMessageCount(teamInbox);
+      const activeAgents = getActiveAgents(teamInbox, members);
 
       // Agent utilization: agents with in_progress tasks / total agents
       const agentsWithWork = new Set(inProgressTasks.map(t => t.owner).filter(Boolean));
@@ -149,7 +161,6 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
 
       // Task velocity: completed tasks per hour based on team age
       const teamStart = team.lastUpdated ? new Date(team.lastUpdated).getTime() : now;
-      const completedWithTimestamps = tasks.filter(t => t.status === 'completed' && t.completedAt);
       let velocity = 0;
       if (completedTasks > 0) {
         const allTimestamps = tasks.map(t => t.createdAt || t.completedAt || t.updatedAt).filter(Boolean).map(ts => new Date(ts).getTime());
@@ -216,7 +227,10 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
     const counts = {};
     for (const task of allTasks) {
       if (task.status === 'completed' && task.owner) {
-        counts[task.owner] = (counts[task.owner] || 0) + 1;
+        const ok = safePropKey(task.owner);
+        if (ok !== null) {
+          counts[ok] = (counts[ok] || 0) + 1;
+        }
       }
     }
     return Object.entries(counts)

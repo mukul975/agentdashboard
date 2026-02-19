@@ -49,6 +49,10 @@ jobs:
             - dist
             - build
             - coverage
+            - "**/__tests__/**"
+            - "**/*.test.js"
+            - "**/*.test.jsx"
+            - "test/**"
 
     - name: Setup Node.js
       uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0

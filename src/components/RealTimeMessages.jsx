@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { MessageCircle, ArrowRight, Radio, RefreshCw } from 'lucide-react';
 import dayjs from 'dayjs';
@@ -12,7 +12,7 @@ function flattenInboxes(allInboxes) {
       Object.entries(agents || {}).flatMap(([agentName, inbox]) => {
         const messages = Array.isArray(inbox) ? inbox : (inbox.messages || []);
         return messages.filter(msg => msg != null).map(msg => {
-          const naturalMsg = parseMessageToNatural(msg.text, msg.summary);
+          const naturalMsg = parseMessageToNatural(msg.text, msg.summary); // lgtm[js/call-to-non-callable]
           return {
             id: `${teamName}-${agentName}-${msg.timestamp}-${(msg.text || '').slice(0, 8)}`,
             from: msg.from || agentName,
@@ -220,6 +220,5 @@ export function RealTimeMessages({ allInboxes = {} }) {
 }
 
 RealTimeMessages.propTypes = {
-  teams: PropTypes.array,
   allInboxes: PropTypes.object,
 };

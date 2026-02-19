@@ -7,16 +7,25 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
+/** Validates a property key to prevent prototype pollution via dynamic access. */
+const safePropKey = (key) => {
+  const k = String(key ?? '');
+  if (k === '__proto__' || k === 'constructor' || k === 'prototype') return null;
+  return k;
+};
+
 /**
  * Derives the latest message timestamp for a given agent from the team inbox data.
  * Searches allInboxes[teamName][agentName].messages for the most recent timestamp.
  */
 function getLatestTimestamp(allInboxes, teamName, agentName) {
-  const teamInboxes = allInboxes[teamName];
+  const teamKey = safePropKey(teamName);
+  const teamInboxes = teamKey !== null ? allInboxes[teamKey] : undefined;
   if (!teamInboxes) return null;
 
   // Check direct agent inbox
-  const agentInbox = teamInboxes[agentName];
+  const agentKey = safePropKey(agentName);
+  const agentInbox = agentKey !== null ? teamInboxes[agentKey] : undefined;
   let latest = null;
 
   if (agentInbox) {
@@ -148,11 +157,14 @@ export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInbo
     const statuses = {};
     for (const member of members) {
       const latestTs = getLatestTimestamp(allInboxes, name, member.name);
-      statuses[member.name] = {
-        ...getAgentStatus(latestTs),
-        latestTimestamp: latestTs,
-        tooltipText: formatLastActive(latestTs)
-      };
+      const mk = safePropKey(member.name);
+      if (mk !== null) {
+        statuses[mk] = {
+          ...getAgentStatus(latestTs),
+          latestTimestamp: latestTs,
+          tooltipText: formatLastActive(latestTs)
+        };
+      }
     }
     return statuses;
   }, [allInboxes, name, members]);
@@ -161,7 +173,8 @@ export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInbo
   const teamHealth = useMemo(() => {
     if (members.length === 0) return 0;
     const activeCount = members.filter(m => {
-      const s = agentStatuses[m.name];
+      const mk = safePropKey(m.name);
+      const s = mk !== null ? agentStatuses[mk] : undefined;
       return s && (s.status === 'active' || s.status === 'recent');
     }).length;
     return Math.round((activeCount / members.length) * 100);
@@ -286,12 +299,12 @@ export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInbo
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {lead && (
-                <AgentCard agent={lead} isLead={true} agentStatus={agentStatuses[lead.name]} />
+                <AgentCard agent={lead} isLead={true} agentStatus={safePropKey(lead.name) !== null ? agentStatuses[safePropKey(lead.name)] : undefined} />
               )}
               {members
                 .filter(m => m !== lead)
                 .map((agent, index) => (
-                  <AgentCard key={index} agent={agent} isLead={false} agentStatus={agentStatuses[agent.name]} />
+                  <AgentCard key={index} agent={agent} isLead={false} agentStatus={safePropKey(agent.name) !== null ? agentStatuses[safePropKey(agent.name)] : undefined} />
                 ))}
             </div>
           </div>

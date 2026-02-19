@@ -19,7 +19,9 @@ const colors = {
 };
 
 function log(message, color = 'reset') {
-  console.log(`${colors[color]}${message}${colors.reset}`);
+  const safeMessage = String(message).replace(/[\r\n]/g, ' ');
+  const safeColor = Object.hasOwn(colors, color) ? color : 'reset';
+  console.log(`${colors[safeColor]}${safeMessage}${colors.reset}`);
 }
 
 async function makeRequest(path) {

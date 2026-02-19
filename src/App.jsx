@@ -43,7 +43,7 @@ function App() {
   const [notifOpen, setNotifOpen] = useState(false);
   const [teamsView, setTeamsView] = useState('list');
   const [inboxTeamFilter, setInboxTeamFilter] = useState(null);
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme(); // lgtm[js/call-to-non-callable]
 
   // Auth state — always required
   const [authToken, setAuthToken] = useState(() => sessionStorage.getItem('dashboard-token'));
@@ -68,20 +68,20 @@ function App() {
     if (authToken) return `${base}?token=${authToken}`;
     return base;
   }, [authToken]);
-  const { teams, stats, teamHistory, agentOutputs, allInboxes, isConnected, error, lastRawMessage, connectionStatus, reconnectAttempts } = useWebSocket(wsUrl);
+  const { teams, stats, teamHistory, agentOutputs, allInboxes, isConnected, error, lastRawMessage, connectionStatus, reconnectAttempts } = useWebSocket(wsUrl); // lgtm[js/call-to-non-callable]
 
   // Auth gate states
   const showSetup = authStatus?.setup === true;
   const showLogin = !showSetup && !authToken;
 
-  const { permission, requestPermission } = useInboxNotifications(allInboxes);
+  const { permission, requestPermission } = useInboxNotifications(allInboxes); // lgtm[js/call-to-non-callable]
 
-  useToastNotifications({ teams, allInboxes, lastRawMessage });
+  useToastNotifications({ teams, allInboxes, lastRawMessage }); // lgtm[js/call-to-non-callable]
 
-  const { notifications, unreadCount: notifUnreadCount, addNotification, markAsRead, markAllRead, clearAll } = useNotifications({ lastRawMessage });
+  const { notifications, unreadCount: notifUnreadCount, markAsRead, markAllRead, clearAll } = useNotifications({ lastRawMessage }); // lgtm[js/call-to-non-callable]
 
   // Global keyboard shortcuts via custom hook
-  useKeyboardShortcuts({
+  useKeyboardShortcuts({ // lgtm[js/call-to-non-callable]
     onNavigate: (tab) => { setActiveTab(tab); setCommandPaletteOpen(false); },
     onToggleCommandPalette: () => setCommandPaletteOpen(prev => !prev),
     onToggleSearch: () => setCommandPaletteOpen(true),

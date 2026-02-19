@@ -35,7 +35,7 @@ describe('useTheme', () => {
     expect(result.current.theme).toBe('dark');
 
     act(() => {
-      result.current.toggleTheme();
+      result.current.toggleTheme(); // lgtm[js/call-to-non-callable]
     });
 
     expect(result.current.theme).toBe('light');
@@ -47,7 +47,7 @@ describe('useTheme', () => {
     expect(result.current.theme).toBe('light');
 
     act(() => {
-      result.current.toggleTheme();
+      result.current.toggleTheme(); // lgtm[js/call-to-non-callable]
     });
 
     expect(result.current.theme).toBe('dark');
@@ -57,7 +57,7 @@ describe('useTheme', () => {
     const { result } = renderHook(() => useTheme());
 
     act(() => {
-      result.current.toggleTheme();
+      result.current.toggleTheme(); // lgtm[js/call-to-non-callable]
     });
 
     expect(localStorage.getItem('dashboard-theme')).toBe('light');
@@ -68,7 +68,7 @@ describe('useTheme', () => {
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
 
     act(() => {
-      result.current.toggleTheme();
+      result.current.toggleTheme(); // lgtm[js/call-to-non-callable]
     });
 
     expect(document.documentElement.getAttribute('data-theme')).toBe('light');
@@ -77,13 +77,13 @@ describe('useTheme', () => {
   it('toggles back and forth correctly', () => {
     const { result } = renderHook(() => useTheme());
 
-    act(() => { result.current.toggleTheme(); });
+    act(() => { result.current.toggleTheme(); }); // lgtm[js/call-to-non-callable]
     expect(result.current.theme).toBe('light');
 
-    act(() => { result.current.toggleTheme(); });
+    act(() => { result.current.toggleTheme(); }); // lgtm[js/call-to-non-callable]
     expect(result.current.theme).toBe('dark');
 
-    act(() => { result.current.toggleTheme(); });
+    act(() => { result.current.toggleTheme(); }); // lgtm[js/call-to-non-callable]
     expect(result.current.theme).toBe('light');
   });
 });

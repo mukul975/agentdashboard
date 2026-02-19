@@ -1,5 +1,12 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 
+/** Reject prototype-polluting keys from server-supplied property names. */
+const safeTeamKey = (key) => {
+  const k = String(key ?? '');
+  if (k === '__proto__' || k === 'constructor' || k === 'prototype' || k === '') return null;
+  return k;
+};
+
 /**
  * WebSocket hook with structured per-type state, exponential backoff,
  * and online/offline awareness.
@@ -61,17 +68,23 @@ export function useWebSocket(url) {
             if (message.data) setTeams(message.data);
             if (message.agentOutputs || message.outputs) setAgentOutputs(message.agentOutputs || message.outputs);
           } else if (message.type === 'inbox_update') {
-            setAllInboxes(prev => ({ ...prev, [message.teamName]: message.inboxes }));
+            const teamKey = safeTeamKey(message.teamName);
+            if (teamKey !== null) {
+              setAllInboxes(prev => ({ ...prev, [teamKey]: message.inboxes }));
+            }
           } else if (message.type === 'task_update' && message.data) {
             setTeams(message.data);
           } else if (message.type === 'teams_update' && message.data) {
             setTeams(message.data);
             if (message.removedTeam) {
-              setAllInboxes(prev => {
-                const next = { ...prev };
-                delete next[message.removedTeam];
-                return next;
-              });
+              const removedKey = safeTeamKey(message.removedTeam);
+              if (removedKey !== null) {
+                setAllInboxes(prev => {
+                  const next = { ...prev };
+                  delete next[removedKey];
+                  return next;
+                });
+              }
             }
           } else if (message.type === 'agent_outputs_update') {
             setAgentOutputs(message.outputs);
