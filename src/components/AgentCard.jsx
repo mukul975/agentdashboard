@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Crown, Cpu, Zap } from 'lucide-react';
-import { getInitials, getAvatarColor } from "../utils/agentUtils";
+import { getAgentInitials, getAgentColor } from "../utils/formatting";
+
 
 export function AgentCard({ agent, isLead, agentStatus }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -44,28 +45,47 @@ export function AgentCard({ agent, isLead, agentStatus }) {
       <div className="flex items-start justify-between" style={{ position: 'relative', zIndex: 10 }}>
         <div className="flex items-start gap-4 flex-1">
 
-          {/* Avatar Circle */}
-          <div
-            style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              fontSize: '14px',
-              color: '#ffffff',
-              backgroundColor: getAvatarColor(agent.name),
-              boxShadow: isHovered
-                ? `0 0 12px ${getAvatarColor(agent.name)}`
-                : 'none',
-              transition: 'all 0.3s',
-              flexShrink: 0
-            }}
-          >
-            {getInitials(agent.name)}
-          </div>
+        {/* Avatar Circle */}
+<div
+  style={{
+    width: '36px',
+    height: '36px',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: 'bold',
+    fontSize: '14px',
+    color: '#ffffff',
+    backgroundColor: getAgentColor(agent?.name),
+    border: isLead ? '2px solid #facc15' : '2px solid transparent',
+    boxShadow: isHovered
+      ? `0 0 12px ${getAgentColor(agent?.name)}`
+      : 'none',
+    position: 'relative',
+    transition: 'all 0.3s',
+    flexShrink: 0
+  }}
+>
+  {getAgentInitials(agent?.name)}
+
+  {/* Lead Crown Badge */}
+  {isLead && (
+    <Crown
+      size={12}
+      style={{
+        position: 'absolute',
+        top: '-4px',
+        right: '-4px',
+        background: '#111827',
+        borderRadius: '50%',
+        padding: '2px',
+        color: '#facc15'
+      }}
+    />
+  )}
+</div>
+
 
           {/* Agent Details */}
           <div className="flex-1 min-w-0">
