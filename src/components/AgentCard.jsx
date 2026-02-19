@@ -3,10 +3,25 @@ import PropTypes from 'prop-types';
 import { Crown, Cpu, Zap } from 'lucide-react';
 import { getAgentInitials, getAgentColor } from "../utils/formatting";
 
+const TAILWIND_TO_HEX = {
+  'bg-blue-600':   '#2563eb',
+  'bg-purple-600': '#9333ea',
+  'bg-green-600':  '#16a34a',
+  'bg-red-600':    '#dc2626',
+  'bg-yellow-600': '#ca8a04',
+  'bg-pink-600':   '#db2777',
+  'bg-indigo-600': '#4f46e5',
+  'bg-orange-500': '#f97316',
+};
+
+
 
 export function AgentCard({ agent, isLead, agentStatus }) {
   const [isHovered, setIsHovered] = useState(false);
   const [statusHovered, setStatusHovered] = useState(false);
+  const agentColorClass = getAgentColor(agent?.name);
+  const avatarHex = TAILWIND_TO_HEX[agentColorClass] ?? '#6b7280';
+
 
   return (
     <div
@@ -57,11 +72,12 @@ export function AgentCard({ agent, isLead, agentStatus }) {
     fontWeight: 'bold',
     fontSize: '14px',
     color: '#ffffff',
-    backgroundColor: getAgentColor(agent?.name),
     border: isLead ? '2px solid #facc15' : '2px solid transparent',
+    backgroundColor: avatarHex,
     boxShadow: isHovered
-      ? `0 0 12px ${getAgentColor(agent?.name)}`
-      : 'none',
+       ? `0 0 12px ${avatarHex}`
+       : 'none',
+
     position: 'relative',
     transition: 'all 0.3s',
     flexShrink: 0
