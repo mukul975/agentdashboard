@@ -184,8 +184,8 @@ export function AgentCard({ agent, isLead, agentStatus }) {
                 style={{
                   paddingLeft: '10px',
                   paddingRight: '10px',
-                  background: 'rgba(55, 65, 81, 0.4)',
-                  border: '1px solid rgba(75, 85, 99, 0.3)',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
                 }}
               >
                 <Cpu className="h-4 w-4" aria-hidden="true" style={{ color: 'var(--text-secondary)' }} />
@@ -199,7 +199,7 @@ export function AgentCard({ agent, isLead, agentStatus }) {
               className="text-xs truncate"
               style={{
                 fontFamily: 'monospace',
-                color: 'rgba(156, 163, 175, 0.8)',
+                color: 'var(--text-muted)',
               }}
               title={agent.agentId}
             >
