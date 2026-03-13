@@ -3,14 +3,18 @@ import PropTypes from 'prop-types';
 import { Activity, ExternalLink, Menu, X, Bell, Sun, Moon, Search, Keyboard } from 'lucide-react';
 import { ConnectionStatus } from './ConnectionStatus';
 import { ExportMenu } from './ExportMenu';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificationPermission, onRequestNotification, teams, allInboxes, theme, onToggleTheme, onNavigate, notifUnreadCount, onToggleNotifications, onToggleShortcuts }) {
+  console.log("Header rendered");
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef(null);
   const dropdownRef = useRef(null);
   const containerRef = useRef(null);
+  const {t} = useTranslation();
 
   // Build search results from real data only
   const searchResults = useMemo(() => {
@@ -170,7 +174,7 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
             boxShadow: 'var(--card-shadow)'
           }}
         >
-          <div className="px-4 py-3 text-sm" style={{ color: 'var(--text-muted)' }}>No results found</div>
+          <div className="px-4 py-3 text-sm" style={{ color: 'var(--text-muted)' }}>{t("search.no_results")}</div>
         </div>
       );
     }
@@ -257,7 +261,7 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
             <button
               onClick={onMenuToggle}
               className="lg:hidden p-2 rounded-lg transition-all duration-200"
-              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              aria-label={isMenuOpen ? t("header.close_menu") : t("header.open_menu")}
               onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--glass-bg)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
             >
@@ -275,7 +279,7 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
               role="button"
               tabIndex={0}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate && onNavigate('overview'); } }}
-              aria-label="Go to overview"
+              aria-label={t("header.go_to_overview")}
             >
               {/* Logo with Animated Orange Sweep */}
               <div
@@ -317,7 +321,7 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
                     letterSpacing: '-0.02em'
                   }}
                 >
-                  Claude Agent Dashboard
+                  {t("header.title")}
                 </h1>
                 <p
                   className="text-xs mt-0.5"
@@ -326,7 +330,7 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
                     letterSpacing: '0.02em'
                   }}
                 >
-                  Real-time agent monitoring
+                  {t("header.subtitle")}
                 </p>
               </div>
             </div>
@@ -353,10 +357,10 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
                       value={searchQuery}
                       onChange={(e) => { setSearchQuery(e.target.value); setSelectedIndex(-1); }}
                       onKeyDown={handleKeyDown}
-                      placeholder="Search teams, agents, tasks..."
+                      placeholder={t("header.search_placeholder")}
                       className="bg-transparent text-sm outline-none py-2 pr-3 w-48 md:w-64 header-search-input"
                       style={{ color: 'var(--text-primary)' }}
-                      aria-label="Search teams, agents, tasks"
+                      aria-label={t("search.group_teams")}
                     />
                     <button
                       onClick={() => { setSearchOpen(false); setSearchQuery(''); setSelectedIndex(-1); }}
@@ -364,7 +368,7 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
                       style={{ color: 'var(--text-muted)' }}
                       onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--glass-bg)'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                      aria-label="Close search"
+                      aria-label={t("header.close_search")}
                     >
                       <X className="h-4 w-4" aria-hidden="true" />
                     </button>
@@ -378,8 +382,8 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
                   style={{ color: 'var(--text-muted)' }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--glass-bg)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                  title="Search (Ctrl+K)"
-                  aria-label="Open search"
+                  title={t("header.search_hover")}
+                  aria-label={t("header.open_search")}
                 >
                   <Search className="h-5 w-5 group-hover:text-claude-orange transition-colors duration-200" aria-hidden="true" />
                 </button>
@@ -397,7 +401,7 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
                 color: isConnected ? '#4ade80' : '#f87171',
               }}
               role="status"
-              aria-label={isConnected ? 'Live and connected' : 'Disconnected'}
+              aria-label={isConnected ? t("header.live_connected"): t("header.live_disconnected")}
             >
               <div
                 className="h-1.5 w-1.5 rounded-full"
@@ -409,7 +413,7 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
                   animation: isConnected ? 'live-pulse-dot 1.5s ease-in-out infinite' : 'none',
                 }}
               />
-              LIVE
+              {t("live_metrics.live")}
             </div>
 
             {/* Theme Toggle */}
@@ -419,8 +423,8 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
                 className="p-2 rounded-lg transition-all duration-200"
                 onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--glass-bg)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-                title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                aria-label={theme === 'dark' ? t("header.switch_to_light") : t("header.switch_to_dark")}
+                title={theme === 'dark' ? t("header.switch_to_light") : t("header.switch_to_dark")}
               >
                 {theme === 'dark' ? (
                   <Sun className="h-4.5 w-4.5" style={{ color: '#fbbf24' }} aria-hidden="true" />
@@ -454,8 +458,11 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
                   onMouseUp={(e) => {
                     e.currentTarget.style.transform = 'scale(1)';
                   }}
-                  aria-label={`Notifications${notifUnreadCount > 0 ? ` (${notifUnreadCount} unread)` : ''}`}
-                  title="Notifications"
+                  aria-label={ notifUnreadCount > 0
+                              ? t("notifications_unread", { count: notifUnreadCount })
+                              : t("notifications")
+}
+                  title={t("header.notifications")}
                 >
                   <Bell className="h-5 w-5" />
                   {notifUnreadCount > 0 && (
@@ -474,8 +481,8 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
                 className="relative p-2 rounded-lg transition-all duration-200 group"
                 onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--glass-bg)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                title="Enable desktop notifications"
-                aria-label="Enable desktop notifications"
+                title={t("header.enable_notifications")}
+                aria-label={t("header.enable_notifications")}
               >
                 <Bell className="h-5 w-5 group-hover:text-claude-orange transition-colors duration-200" style={{ color: 'var(--text-muted)' }} aria-hidden="true" />
               </button>
@@ -488,13 +495,14 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
                 className="p-2 rounded-lg transition-all duration-200 group"
                 onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--glass-bg)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                title="Keyboard shortcuts (?)"
-                aria-label="Show keyboard shortcuts"
+                title={t("header.show_shortcuts")}
+                aria-label={t("header.show_shortcuts")}
               >
                 <Keyboard className="h-5 w-5 group-hover:text-claude-orange transition-colors duration-200" style={{ color: 'var(--text-muted)' }} aria-hidden="true" />
               </button>
             )}
 
+            <LanguageSwitcher/>
             {/* Export Menu */}
             <ExportMenu teams={teams || []} allInboxes={allInboxes || {}} />
 
@@ -526,7 +534,7 @@ export function Header({ isConnected, error, onMenuToggle, isMenuOpen, notificat
               }}
             >
               <ExternalLink className="h-3.5 w-3.5 group-hover:rotate-12 transition-transform duration-300" aria-hidden="true" />
-              <span>Docs</span>
+              <span>{t("header.docs")}</span>
             </a>
           </div>
         </div>

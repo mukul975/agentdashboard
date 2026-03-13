@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { select, max, scaleSqrt, scaleLinear, zoom, forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide, drag, color } from 'd3';
 import { Network } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const TEAM_COLORS = [
   '#3b82f6', '#22c55e', '#a855f7', '#06b6d4',
@@ -72,6 +73,7 @@ function buildGraph(allInboxes, teams) {
 }
 
 export function AgentNetworkGraph({ allInboxes = {}, teams = [] }) {
+  const { t } = useTranslation();
   const svgRef = useRef(null);
   const containerRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 500 });
@@ -184,7 +186,7 @@ export function AgentNetworkGraph({ allInboxes = {}, teams = [] }) {
       .style('cursor', 'grab');
 
     node.append('title')
-      .text(d => `${d.id}\nTeam: ${d.team}\nMessages: ${d.msgCount}`);
+      .text(d => `${d.id}\n${t('agent_network_graph.tooltip_team')}: ${d.team}\n${t('agent_network_graph.tooltip_messages')}: ${d.msgCount}`);
 
     // Show labels for nodes with enough space
     node.append('text')
@@ -216,7 +218,7 @@ export function AgentNetworkGraph({ allInboxes = {}, teams = [] }) {
     return () => {
       simulation.stop();
     };
-  }, [nodes, edges, dimensions]);
+  }, [nodes, edges, dimensions, t]);
 
   // Collect unique teams for legend
   const teamLegend = useMemo(() => {
@@ -236,11 +238,11 @@ export function AgentNetworkGraph({ allInboxes = {}, teams = [] }) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Network className="h-5 w-5 text-claude-orange" />
-          <h3 className="text-lg font-semibold text-white">Agent Network Graph</h3>
+          <h3 className="text-lg font-semibold text-white">{t('agent_network_graph.title', 'Agent Network Graph')}</h3>
         </div>
         {hasData && (
           <span className="text-xs text-gray-400">
-            {nodes.length} agents, {edges.length} connections
+            {t('agent_network_graph.summary', { agents: nodes.length, connections: edges.length })}
           </span>
         )}
       </div>
@@ -248,8 +250,8 @@ export function AgentNetworkGraph({ allInboxes = {}, teams = [] }) {
       {!hasData ? (
         <div className="flex items-center text-gray-400" style={{ flexDirection: 'column', justifyContent: 'center', paddingTop: '64px', paddingBottom: '64px' }}>
           <Network className="mb-3" style={{ height: '64px', width: '64px', opacity: 0.4 }} />
-          <p className="text-sm">No agent communication data yet</p>
-          <p className="text-xs mt-1 text-gray-500">Connections will appear as agents exchange messages</p>
+          <p className="text-sm">{t('agent_network_graph.no_data', 'No agent communication data yet')}</p>
+          <p className="text-xs mt-1 text-gray-500">{t('agent_network_graph.connections_info', 'Connections will appear as agents exchange messages')}</p>
         </div>
       ) : (
         <>
@@ -271,7 +273,9 @@ export function AgentNetworkGraph({ allInboxes = {}, teams = [] }) {
           {/* Legend */}
           {teamLegend.length > 0 && (
             <div className="flex flex-wrap gap-4 mt-4" style={{ paddingTop: '12px', borderTop: '1px solid rgba(55, 65, 81, 0.6)' }}>
-              <span className="text-xs text-gray-500 font-medium" style={{ marginRight: '4px' }}>Teams:</span>
+              <span className="text-xs text-gray-500 font-medium" style={{ marginRight: '4px' }}>
+                {t('agent_network_graph.legend_label')}
+              </span>
               {teamLegend.map(([teamName, color]) => (
                 <div key={teamName} className="flex items-center" style={{ gap: '6px' }}>
                   <span
@@ -291,7 +295,7 @@ export function AgentNetworkGraph({ allInboxes = {}, teams = [] }) {
           )}
 
           <p className="text-xs text-gray-500 mt-2">
-            Drag nodes to rearrange. Scroll to zoom. Edge width indicates message volume.
+            {t('agent_network_graph.help_text')}
           </p>
         </>
       )}

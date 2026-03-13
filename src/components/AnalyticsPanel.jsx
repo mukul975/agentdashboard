@@ -5,6 +5,7 @@ import {
 } from 'recharts';
 import { BarChart3 } from 'lucide-react';
 import { getInboxMessages } from '../utils/safeKey';
+import { useTranslation } from 'react-i18next';
 
 const COLORS = ['#f97316', '#3b82f6', '#22c55e', '#a855f7', '#ec4899', '#eab308', '#06b6d4', '#ef4444', '#6366f1', '#14b8a6'];
 
@@ -28,10 +29,11 @@ function flattenAllMessages(allInboxes) {
   return messages;
 }
 
-function EmptyState({ label }) {
+function EmptyState({ label}) {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center justify-center h-full text-sm" style={{ color: 'var(--text-secondary)' }}>
-      No data yet
+      {t("analytics.no_data")}
     </div>
   );
 }
@@ -82,6 +84,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export function AnalyticsPanel({ teams = [], allInboxes = {} }) {
+  const { t } = useTranslation();
   const allMessages = useMemo(() => flattenAllMessages(allInboxes), [allInboxes]);
 
   // --- LineChart: message activity over last 24h, bucketed by hour ---
@@ -167,14 +170,14 @@ export function AnalyticsPanel({ teams = [], allInboxes = {} }) {
     <div>
       <div className="flex items-center gap-3 mb-6">
         <BarChart3 className="h-6 w-6 text-claude-orange" />
-        <h2 className="text-xl font-bold" style={{ color: 'var(--text-heading)' }}>Analytics</h2>
+        <h2 className="text-xl font-bold" style={{ color: 'var(--text-heading)' }}>{t("analytics.title")}</h2>
         <span className="text-sm ml-2" style={{ color: 'var(--text-muted)' }}>
-          {allMessages.length} total messages across {Object.keys(allInboxes).length} teams
-        </span>
+  {t('analytics.summary', { messages: allMessages.length, teams: Object.keys(allInboxes).length })}
+</span>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Line Chart - Message Activity */}
-        <ChartCard title="Message Activity (Last 24h)" hasData={messageActivityData.length > 0}>
+        <ChartCard title={t("analytics.message_activity")} hasData={messageActivityData.length > 0}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={messageActivityData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
@@ -194,7 +197,7 @@ export function AnalyticsPanel({ teams = [], allInboxes = {} }) {
         </ChartCard>
 
         {/* Bar Chart - Top Agents */}
-        <ChartCard title="Top 10 Agents by Message Count" hasData={topAgentsData.length > 0}>
+        <ChartCard title={t("analytics.top_agents")} hasData={topAgentsData.length > 0}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={topAgentsData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
@@ -211,7 +214,7 @@ export function AnalyticsPanel({ teams = [], allInboxes = {} }) {
         </ChartCard>
 
         {/* Pie Chart - Task Status */}
-        <ChartCard title="Task Status Distribution" hasData={taskStatusData.length > 0}>
+        <ChartCard title={t("analytics.task_distribution")} hasData={taskStatusData.length > 0}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -238,7 +241,7 @@ export function AnalyticsPanel({ teams = [], allInboxes = {} }) {
         </ChartCard>
 
         {/* Area Chart - Team Comparison */}
-        <ChartCard title="Team Comparison - Messages per Team" hasData={teamComparisonData.length > 0}>
+        <ChartCard title={t("analytics.team_comparison")} hasData={teamComparisonData.length > 0}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={teamComparisonData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />

@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { parseMessageToNatural } from '../utils/messageParser';
 import { getInboxMessages } from '../utils/safeKey';
+import { useTranslation } from 'react-i18next';
 dayjs.extend(relativeTime);
 
 function flattenInboxes(allInboxes) {
@@ -34,6 +35,7 @@ function flattenInboxes(allInboxes) {
 }
 
 export function RealTimeMessages({ allInboxes = {} }) {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState('all');
   const [fetchedInboxes, setFetchedInboxes] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -78,25 +80,25 @@ export function RealTimeMessages({ allInboxes = {} }) {
 
   const getMessageColorStyle = (type) => {
     switch (type) {
-      case 'status':      return { borderColor: 'rgba(59,130,246,0.4)', backgroundColor: 'rgba(59,130,246,0.1)' };
-      case 'completion':  return { borderColor: 'rgba(34,197,94,0.4)', backgroundColor: 'rgba(34,197,94,0.1)' };
-      case 'coordination':return { borderColor: 'rgba(168,85,247,0.4)', backgroundColor: 'rgba(168,85,247,0.1)' };
-      case 'question':    return { borderColor: 'rgba(234,179,8,0.4)', backgroundColor: 'rgba(234,179,8,0.1)' };
-      case 'assignment':  return { borderColor: 'rgba(6,182,212,0.4)', backgroundColor: 'rgba(6,182,212,0.1)' };
-      case 'system':      return { borderColor: 'rgba(107,114,128,0.3)', backgroundColor: 'rgba(107,114,128,0.1)' };
-      default:            return { borderColor: 'rgba(107,114,128,0.3)', backgroundColor: 'rgba(107,114,128,0.1)' };
+      case 'status': return { borderColor: 'rgba(59,130,246,0.4)', backgroundColor: 'rgba(59,130,246,0.1)' };
+      case 'completion': return { borderColor: 'rgba(34,197,94,0.4)', backgroundColor: 'rgba(34,197,94,0.1)' };
+      case 'coordination': return { borderColor: 'rgba(168,85,247,0.4)', backgroundColor: 'rgba(168,85,247,0.1)' };
+      case 'question': return { borderColor: 'rgba(234,179,8,0.4)', backgroundColor: 'rgba(234,179,8,0.1)' };
+      case 'assignment': return { borderColor: 'rgba(6,182,212,0.4)', backgroundColor: 'rgba(6,182,212,0.1)' };
+      case 'system': return { borderColor: 'rgba(107,114,128,0.3)', backgroundColor: 'rgba(107,114,128,0.1)' };
+      default: return { borderColor: 'rgba(107,114,128,0.3)', backgroundColor: 'rgba(107,114,128,0.1)' };
     }
   };
 
   const getTypeIcon = (type) => {
     switch (type) {
-      case 'status':      return '📊';
-      case 'completion':  return '✅';
-      case 'coordination':return '🤝';
-      case 'question':    return '❓';
-      case 'assignment':  return '📋';
-      case 'system':      return '⚙️';
-      default:            return '💬';
+      case 'status': return '📊';
+      case 'completion': return '✅';
+      case 'coordination': return '🤝';
+      case 'question': return '❓';
+      case 'assignment': return '📋';
+      case 'system': return '⚙️';
+      default: return '💬';
     }
   };
 
@@ -106,9 +108,9 @@ export function RealTimeMessages({ allInboxes = {} }) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Radio aria-hidden="true" className="h-5 w-5 text-claude-orange" />
-          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>Agent Inter-Communication</h3>
+          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>{t("real_time_messages.title")}</h3>
           {!hasWsData && fetchedInboxes && (
-            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>(from API)</span>
+            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{t("real_time_messages.from_api")}</span>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -117,7 +119,7 @@ export function RealTimeMessages({ allInboxes = {} }) {
           )}
           <span className="live-stats-indicator">
             <span className={`h-2 w-2 rounded-full ${hasWsData ? 'bg-green-400 animate-pulse' : 'bg-gray-500'}`}></span>
-            {allMessages.length} {allMessages.length === 1 ? 'message' : 'messages'}
+            {allMessages.length} {allMessages.length === 1 ? t("real_time_messages.message_count_single", "message") : t("real_time_messages.message_count", "messages")}
           </span>
         </div>
       </div>
@@ -128,35 +130,34 @@ export function RealTimeMessages({ allInboxes = {} }) {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`filter-button whitespace-nowrap ${
-              filter === f ? 'filter-button-active' : 'filter-button-inactive'
-            }`}
+            className={`filter-button whitespace-nowrap ${filter === f ? 'filter-button-active' : 'filter-button-inactive'
+              }`}
             aria-label={`Filter by ${f}`}
             aria-pressed={filter === f}
           >
-            {f.charAt(0).toUpperCase() + f.slice(1)}
+            {t(`real_time_messages.filter_${f}`, f.charAt(0).toUpperCase() + f.slice(1))}
           </button>
         ))}
       </div>
 
       {/* Messages Stream */}
-      <div className="flex-1 overflow-y-auto space-y-2" style={{ minHeight: 0 }} aria-live="polite" aria-label="Real-time agent messages">
+      <div className="flex-1 overflow-y-auto space-y-2" style={{ minHeight: 0 }} aria-live="polite" aria-label={t('real_time_messages.feed_label')}>
         {fetchError ? (
           <div className="text-center py-12" style={{ color: 'var(--text-muted)' }}>
             <MessageCircle aria-hidden="true" className="h-16 w-16 mx-auto mb-3 opacity-50" />
-            <p className="text-sm text-red-400">Failed to load messages</p>
+            <p className="text-sm text-red-400">{t("real_time_messages.failed_to_load")}</p>
             <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{fetchError}</p>
           </div>
         ) : loading ? (
           <div className="text-center py-12" style={{ color: 'var(--text-muted)' }}>
             <RefreshCw aria-hidden="true" className="h-10 w-10 mx-auto mb-3 opacity-50 animate-spin" />
-            <p className="text-sm">Loading messages...</p>
+            <p className="text-sm">{t("real_time_messages.loading")}</p>
           </div>
         ) : filteredMessages.length === 0 ? (
           <div className="text-center py-12" style={{ color: 'var(--text-muted)' }}>
             <MessageCircle aria-hidden="true" className="h-16 w-16 mx-auto mb-3 opacity-50" />
-            <p className="text-sm">No messages yet</p>
-            <p className="text-xs mt-1">Agent communication will stream here in real-time</p>
+            <p className="text-sm">{t("real_time_messages.no_messages")}</p>
+            <p className="text-xs mt-1">{t("real_time_messages.no_messages_desc")}</p>
           </div>
         ) : (
           filteredMessages.map(msg => (
@@ -180,10 +181,10 @@ export function RealTimeMessages({ allInboxes = {} }) {
                   </div>
                   <p className="text-sm leading-relaxed break-words" style={{ color: 'var(--text-primary)' }}>{msg.message}</p>
                   <div className="mt-1.5 flex items-center gap-2">
-                    <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Team: {msg.team}</span>
+                    <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{t("real_time_messages.team")} {msg.team}</span>
                     {!msg.read && (
                       <span className="text-xs text-blue-300 px-1.5 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(59,130,246,0.3)' }}>
-                        New
+                        {t("live_communication.new_badge", "New")}
                       </span>
                     )}
                   </div>
@@ -201,19 +202,19 @@ export function RealTimeMessages({ allInboxes = {} }) {
             <div className="text-xl font-bold text-blue-400">
               {allMessages.filter(m => m.type === 'status').length}
             </div>
-            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Status</div>
+            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t("real_time_messages.stats_status")}</div>
           </div>
           <div>
             <div className="text-xl font-bold text-green-400">
               {allMessages.filter(m => m.type === 'completion').length}
             </div>
-            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Completions</div>
+            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t("real_time_messages.stats_completions")}</div>
           </div>
           <div>
             <div className="text-xl font-bold text-purple-400">
               {allMessages.filter(m => m.type === 'coordination').length}
             </div>
-            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Coordination</div>
+            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t("real_time_messages.stats_coordination")}</div>
           </div>
         </div>
       </div>

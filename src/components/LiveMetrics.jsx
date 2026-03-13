@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Zap, Clock, CheckCircle, Loader, AlertTriangle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // Tiny SVG sparkline from an array of numbers
 function Sparkline({ data, width = 40, height = 20, color = '#10b981' }) {
@@ -66,6 +67,7 @@ function AnimatedCounter({ value, duration = 400 }) {
 }
 
 export function LiveMetrics({ stats, allInboxes, isConnected, lastRawMessage }) {
+  const { t } = useTranslation();
   const [pulse, setPulse] = useState(false);
 
   // --- Message rate tracking (events per minute) ---
@@ -204,16 +206,16 @@ export function LiveMetrics({ stats, allInboxes, isConnected, lastRawMessage }) 
         <div className={`p-2 rounded-lg ${pulse ? 'animate-pulse' : ''}`} style={{ background: '#f97316' }}>
           <Zap aria-hidden="true" className="h-5 w-5 text-white" />
         </div>
-        <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>Live Metrics</h3>
+        <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>{t("live_metrics.title")}</h3>
         {uptime && (
           <span className="ml-2 text-xs flex items-center gap-1" style={{ color: 'var(--text-muted)' }}>
             <Clock aria-hidden="true" className="h-3 w-3" />
-            Connected for {uptime}
+            {t("live_metrics.connected_for")}  {uptime}
           </span>
         )}
         <span className="ml-auto text-xs flex items-center gap-1" style={{ color: isConnected ? '#4ade80' : '#f87171' }}>
           <span className="h-2 w-2 rounded-full" style={{ background: isConnected ? '#4ade80' : '#f87171', animation: isConnected ? 'pulse 2s infinite' : 'none' }}></span>
-          {isConnected ? 'LIVE' : 'OFFLINE'}
+          {isConnected ? t("live_metrics.live") : t("live_metrics.offline")}
         </span>
       </div>
 
@@ -223,7 +225,7 @@ export function LiveMetrics({ stats, allInboxes, isConnected, lastRawMessage }) 
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
               {taskCompletionRate > 50 ? <CheckCircle aria-hidden="true" className="h-3 w-3" style={{ color: completionColor }} /> : taskCompletionRate >= 20 ? <Loader aria-hidden="true" className="h-3 w-3" style={{ color: completionColor }} /> : <AlertTriangle aria-hidden="true" className="h-3 w-3" style={{ color: completionColor }} />}
-              Task Completion
+              {t("live_metrics.task_completion")}
             </span>
             <div className="flex items-center gap-2">
               <Sparkline data={completionHistory} color={completionColor} />
@@ -242,7 +244,7 @@ export function LiveMetrics({ stats, allInboxes, isConnected, lastRawMessage }) 
 
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Active Tasks</span>
+            <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{t("live_metrics.active_tasks")}</span>
             <span className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>
               <AnimatedCounter value={activeTasksRate} />%
             </span>
@@ -268,7 +270,7 @@ export function LiveMetrics({ stats, allInboxes, isConnected, lastRawMessage }) 
           <div className="text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>
             <AnimatedCounter value={activeAgentCount} />
           </div>
-          <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>Active Agents</div>
+          <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>{t("live_metrics.active_agents")}</div>
         </div>
         <div className="text-center">
           <div className="flex items-center justify-center gap-1 mb-1">
@@ -277,19 +279,19 @@ export function LiveMetrics({ stats, allInboxes, isConnected, lastRawMessage }) 
           <div className="text-2xl font-bold" style={{ color: '#fb923c' }}>
             <AnimatedCounter value={messageRate} />
           </div>
-          <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>Events/min</div>
+          <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>{t("live_metrics.events_per_min")}</div>
         </div>
         <div className="text-center">
           <div className="text-2xl font-bold" style={{ color: '#60a5fa' }}>
             <AnimatedCounter value={stats.inProgressTasks} />
           </div>
-          <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>Working Now</div>
+          <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>{t("live_metrics.working_now")}</div>
         </div>
         <div className="text-center">
           <div className="text-2xl font-bold" style={{ color: completionColor }}>
             <AnimatedCounter value={stats.completedTasks} />
           </div>
-          <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>Completed</div>
+          <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>{t("live_metrics.completed")}</div>
         </div>
       </div>
     </div>

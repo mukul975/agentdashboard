@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Crown, Cpu, Zap } from 'lucide-react';
 import { getAgentInitials, getAgentColor } from "../utils/formatting";
+import { useTranslation } from 'react-i18next';
 
 const TAILWIND_TO_HEX = {
   'bg-blue-600': '#2563eb',
@@ -20,13 +21,17 @@ export function AgentCard({ agent, isLead, agentStatus }) {
 
   const agentColorClass = getAgentColor(agent?.name);
   const avatarHex = TAILWIND_TO_HEX[agentColorClass] ?? '#6b7280';
-
+  const {t} = useTranslation();
   return (
     <div
       className="p-5"
       role="article"
       tabIndex={0}
-      aria-label={`Agent ${agent.name}${isLead ? ', team lead' : ''}`}
+      aria-label={
+  isLead
+    ? t("agent_card.agent_lead_label", { name: agent.name })
+    : t("agent_card.agent_label", { name: agent.name })
+}
       style={{
         position: 'relative',
         borderRadius: '16px',
@@ -172,14 +177,14 @@ export function AgentCard({ agent, isLead, agentStatus }) {
                   }}
                 >
                   <Zap className="h-3 w-3" aria-hidden="true" />
-                  Lead
+                 { t('agent_card.lead')}
                 </span>
               )}
             </div>
 
             {agent.agentType && (
               <div
-                className="flex items-center gap-2 mb-2 py-1 rounded-lg inline-flex"
+                className="flex items-center gap-2 mb-2 py-1 rounded-lg"
                 style={{
                   paddingLeft: '10px',
                   paddingRight: '10px',
@@ -202,7 +207,7 @@ export function AgentCard({ agent, isLead, agentStatus }) {
               }}
               title={agent.agentId}
             >
-              ID: {agent.agentId?.substring(0, 12)}...
+              {t('agent_card.id_prefix')}: {agent.agentId?.substring(0, 12)}...
             </p>
           </div>
         </div>

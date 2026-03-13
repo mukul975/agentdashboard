@@ -5,6 +5,7 @@ import {
   Users, CheckSquare, MessageSquare, Terminal, AlertTriangle, Info,
 } from 'lucide-react';
 import { useFocusTrap } from '../hooks/useFocusTrap';
+import { useTranslation } from 'react-i18next';
 
 const ICON_MAP = {
   team: Users, task: CheckSquare, message: MessageSquare,
@@ -12,23 +13,23 @@ const ICON_MAP = {
 };
 
 const TYPE_COLORS = {
-  team:    { border: '#3b82f6', bg: 'rgba(59,130,246,0.09)',  icon: '#60a5fa' },
-  task:    { border: '#22c55e', bg: 'rgba(34,197,94,0.09)',   icon: '#4ade80' },
-  message: { border: '#f97316', bg: 'rgba(249,115,22,0.09)',  icon: '#fb923c' },
-  output:  { border: '#a855f7', bg: 'rgba(168,85,247,0.09)',  icon: '#c084fc' },
-  system:  { border: '#ef4444', bg: 'rgba(239,68,68,0.09)',   icon: '#f87171' },
-  info:    { border: '#6b7280', bg: 'rgba(107,114,128,0.09)', icon: '#9ca3af' },
+  team: { border: '#3b82f6', bg: 'rgba(59,130,246,0.09)', icon: '#60a5fa' },
+  task: { border: '#22c55e', bg: 'rgba(34,197,94,0.09)', icon: '#4ade80' },
+  message: { border: '#f97316', bg: 'rgba(249,115,22,0.09)', icon: '#fb923c' },
+  output: { border: '#a855f7', bg: 'rgba(168,85,247,0.09)', icon: '#c084fc' },
+  system: { border: '#ef4444', bg: 'rgba(239,68,68,0.09)', icon: '#f87171' },
+  info: { border: '#6b7280', bg: 'rgba(107,114,128,0.09)', icon: '#9ca3af' },
 };
 
-function formatRelativeTime(timestamp) {
+function formatRelativeTime(timestamp, t) {
   const diffSec = Math.floor((Date.now() - new Date(timestamp).getTime()) / 1000);
-  if (diffSec < 10) return 'Just now';
-  if (diffSec < 60) return `${diffSec}s ago`;
+  if (diffSec < 10) return t('notifications.just_now');
+  if (diffSec < 60) return t('notifications.seconds_ago', { count: diffSec });
   const diffMin = Math.floor(diffSec / 60);
-  if (diffMin < 60) return `${diffMin}m ago`;
+  if (diffMin < 60) return t('notifications.minutes_ago', { count: diffMin });
   const diffHr = Math.floor(diffMin / 60);
-  if (diffHr < 24) return `${diffHr}h ago`;
-  return `${Math.floor(diffHr / 24)}d ago`;
+  if (diffHr < 24) return t('notifications.hours_ago', { count: diffHr });
+  return t('notifications.days_ago', { count: Math.floor(diffHr / 24) });
 }
 
 function groupNotifications(notifications) {
@@ -103,7 +104,7 @@ function NotificationItem({ notification, onMarkRead, onNavigate }) {
           {notification.message}
         </p>
         <span className="text-xs block" style={{ color: 'var(--text-muted)', marginTop: 4, fontSize: 11 }}>
-          {formatRelativeTime(notification.timestamp)}
+          {formatRelativeTime(notification.timestamp, t)}
         </span>
       </div>
     </button>
@@ -160,6 +161,7 @@ NotificationGroup.propTypes = {
 };
 
 function EmptyState() {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col items-center justify-center text-center" style={{ padding: '56px 32px' }}>
       <div
@@ -169,10 +171,10 @@ function EmptyState() {
         <BellOff style={{ width: 32, height: 32, color: 'var(--text-muted)' }} />
       </div>
       <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)', marginBottom: 6 }}>
-        All caught up!
+        {t("notifications.empty_title")}
       </h3>
       <p className="text-xs" style={{ color: 'var(--text-muted)', lineHeight: 1.6 }}>
-        No new notifications. We&apos;ll let you know when something happens.
+        {t("notifications.empty_desc")}
       </p>
     </div>
   );
@@ -182,6 +184,7 @@ export function NotificationCenter({
   isOpen, onClose, notifications, unreadCount,
   markAllRead, markAsRead, clearAll, onNavigate,
 }) {
+  const { t } = useTranslation();
   const panelRef = useRef(null);
   const closeRef = useRef(null);
   const trapRef = useFocusTrap(isOpen);
@@ -223,7 +226,7 @@ export function NotificationCenter({
     <div
       ref={mergedRef}
       role="dialog"
-      aria-label="Notification Center"
+      aria-label={t('notifications.center_label')}
       aria-modal="true"
       style={{
         position: 'fixed',
@@ -274,7 +277,7 @@ export function NotificationCenter({
         <div className="flex items-center" style={{ gap: 10 }}>
           <Bell style={{ width: 18, height: 18, color: '#e8750a' }} />
           <h2 className="text-sm font-bold" style={{ color: 'var(--text-heading)', letterSpacing: '-0.01em' }}>
-            Notifications
+            {t("notifications.title")}
           </h2>
           {unreadCount > 0 && (
             <span
@@ -302,7 +305,7 @@ export function NotificationCenter({
           ref={closeRef}
           onClick={onClose}
           className="notif-item"
-          aria-label="Close notifications"
+          aria-label={t('notifications.close_label')}
           style={{
             padding: '6px',
             borderRadius: 8,
@@ -328,31 +331,31 @@ export function NotificationCenter({
           }}
         >
           <span style={{ color: 'var(--text-muted)' }}>
-            {unreadCount > 0 ? `${unreadCount} unread` : 'All read'}
+            {unreadCount > 0 ? `${unreadCount} ${t("notifications.unread", "unread")}` : t("notifications.all_read", "All read")}
           </span>
           <div className="flex items-center" style={{ gap: 12 }}>
             <button
               onClick={markAllRead}
               className="font-medium"
               style={{ color: '#e8750a', transition: 'opacity 0.15s' }}
-              aria-label="Mark all notifications as read"
-              title="Mark all as read"
+              aria-label={t("notifications.mark_all_read")}
+              title={t("notifications.mark_all_read")}
               onMouseEnter={e => e.target.style.opacity = '0.7'}
               onMouseLeave={e => e.target.style.opacity = '1'}
             >
-              Mark all read
+              {t("notifications.mark_all_read")}
             </button>
             <span style={{ color: 'var(--text-muted)' }}>·</span>
             <button
               onClick={clearAll}
               className="font-medium"
               style={{ color: 'var(--text-muted)', transition: 'color 0.15s' }}
-              aria-label="Clear all notifications"
-              title="Clear all notifications"
+              aria-label={t("notifications.clear_all")}
+              title={t("notifications.clear_all")}
               onMouseEnter={e => e.target.style.color = '#ef4444'}
               onMouseLeave={e => e.target.style.color = 'var(--text-muted)'}
             >
-              Clear all
+              {t("notifications.clear_all")}
             </button>
           </div>
         </div>
@@ -363,8 +366,8 @@ export function NotificationCenter({
         {hasNotifications ? (
           <div>
             <NotificationGroup label="Just Now" notifications={groups.justNow} onMarkRead={markAsRead} onNavigate={onNavigate} />
-            <NotificationGroup label="Today"    notifications={groups.today}   onMarkRead={markAsRead} onNavigate={onNavigate} />
-            <NotificationGroup label="Earlier"  notifications={groups.earlier} onMarkRead={markAsRead} onNavigate={onNavigate} />
+            <NotificationGroup label="Today" notifications={groups.today} onMarkRead={markAsRead} onNavigate={onNavigate} />
+            <NotificationGroup label="Earlier" notifications={groups.earlier} onMarkRead={markAsRead} onNavigate={onNavigate} />
           </div>
         ) : (
           <EmptyState />

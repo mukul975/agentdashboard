@@ -34,7 +34,8 @@ const TaskDependencyGraph = lazy(() => import('./components/TaskDependencyGraph'
 import { TeamComparison } from './components/TeamComparison';
 import { LoginScreen } from './components/LoginScreen';
 import { SetupScreen } from './components/SetupScreen';
-
+import { useTranslation } from 'react-i18next';
+import { SUPPORTED_LANGUAGES } from './i18n/config';
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -48,6 +49,14 @@ function App() {
   // Auth state — always required
   const [authToken, setAuthToken] = useState(() => sessionStorage.getItem('dashboard-token'));
   const [authStatus, setAuthStatus] = useState(null); // null=loading, {setup:bool}=known
+  const { i18n, t } = useTranslation();
+  useEffect(() => {
+    const lang = SUPPORTED_LANGUAGES.find(
+      (l) => l.code === i18n.resolvedLanguage
+    );
+    document.documentElement.dir = lang?.rtl ? 'rtl' : 'ltr';
+    document.documentElement.lang = i18n.resolvedLanguage;
+}, [i18n.resolvedLanguage]);
 
   // On mount, check if password has been set up yet
   useEffect(() => {
@@ -152,7 +161,7 @@ function App() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg-primary)' }}>
         <div style={{ textAlign: 'center' }}>
           <Activity style={{ width: '32px', height: '32px', color: '#f97316', margin: '0 auto 12px', display: 'block' }} />
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Loading...</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{t('connection.loading')}</p>
         </div>
       </div>
     );
@@ -167,7 +176,7 @@ function App() {
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-claude-orange focus:text-white focus:rounded-lg"
       >
-        Skip to main content
+        {t('app.skip_to_main')}
       </a>
 
       {/* Header - New Glassmorphism Design */}
@@ -179,7 +188,7 @@ function App() {
           className="fixed inset-0 z-40 flex items-center justify-center"
           style={{ background: 'rgba(0, 0, 0, 0.75)', backdropFilter: 'blur(8px)' }}
           role="status"
-          aria-label="Connecting to dashboard"
+          aria-label={t('connection.connecting_to_dashboard')}
           aria-live="polite"
         >
           <div
@@ -219,7 +228,7 @@ function App() {
         </div>
 
         {/* Navigation Tabs */}
-        <nav className="mb-6" role="tablist" aria-label="Dashboard sections">
+        <nav className="mb-6" role="tablist" aria-label={t('connection.dashboard_sections')}>
           <div className="flex gap-2 overflow-x-auto pb-2">
             <button
               id="tab-overview"
@@ -228,7 +237,7 @@ function App() {
               role="tab"
               aria-selected={activeTab === 'overview'}
               aria-controls="tab-panel-overview"
-              aria-label="Live Metrics tab"
+              aria-label={t('tabs.overview')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                 activeTab === 'overview'
                   ? 'bg-claude-orange text-white shadow-lg'
@@ -236,7 +245,7 @@ function App() {
               }`}
             >
               <BarChart3 className="h-4 w-4" aria-hidden="true" />
-              Live Metrics<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘1</span>
+              {t("live_metrics.title")}<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘1</span>
             </button>
             <button
               id="tab-teams"
@@ -245,7 +254,7 @@ function App() {
               role="tab"
               aria-selected={activeTab === 'teams'}
               aria-controls="tab-panel-teams"
-              aria-label="Teams and Tasks tab"
+              aria-label={t('tabs.teams')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                 activeTab === 'teams'
                   ? 'bg-claude-orange text-white shadow-lg'
@@ -253,7 +262,7 @@ function App() {
               }`}
             >
               <Users className="h-4 w-4" aria-hidden="true" />
-              Teams & Tasks<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘2</span>
+              {t("tabs.teams")}<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘2</span>
             </button>
             <button
               id="tab-communication"
@@ -262,7 +271,7 @@ function App() {
               role="tab"
               aria-selected={activeTab === 'communication'}
               aria-controls="tab-panel-communication"
-              aria-label="Communication tab"
+              aria-label={t('tabs.communication')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                 activeTab === 'communication'
                   ? 'bg-claude-orange text-white shadow-lg'
@@ -270,7 +279,7 @@ function App() {
               }`}
             >
               <MessageSquare className="h-4 w-4" aria-hidden="true" />
-              Communication<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘3</span>
+              {t("tabs.communication")}<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘3</span>
             </button>
             <button
               id="tab-monitoring"
@@ -279,7 +288,7 @@ function App() {
               role="tab"
               aria-selected={activeTab === 'monitoring'}
               aria-controls="tab-panel-monitoring"
-              aria-label="Monitoring tab"
+              aria-label={t('tabs.monitoring')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                 activeTab === 'monitoring'
                   ? 'bg-claude-orange text-white shadow-lg'
@@ -287,7 +296,7 @@ function App() {
               }`}
             >
               <Settings className="h-4 w-4" aria-hidden="true" />
-              Monitoring<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘4</span>
+              {t("tabs.monitoring")}<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘4</span>
             </button>
             <button
               id="tab-history"
@@ -296,7 +305,7 @@ function App() {
               role="tab"
               aria-selected={activeTab === 'history'}
               aria-controls="tab-panel-history"
-              aria-label="History and Outputs tab"
+              aria-label={t('tabs.history')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                 activeTab === 'history'
                   ? 'bg-claude-orange text-white shadow-lg'
@@ -304,7 +313,7 @@ function App() {
               }`}
             >
               <HistoryIcon className="h-4 w-4" aria-hidden="true" />
-              History & Outputs<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘5</span>
+              {t("tabs.history")}<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘5</span>
             </button>
             <button
               id="tab-archive"
@@ -313,7 +322,7 @@ function App() {
               role="tab"
               aria-selected={activeTab === 'archive'}
               aria-controls="tab-panel-archive"
-              aria-label="Archive tab"
+              aria-label={t('tabs.archive')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                 activeTab === 'archive'
                   ? 'bg-claude-orange text-white shadow-lg'
@@ -321,7 +330,7 @@ function App() {
               }`}
             >
               <Archive className="h-4 w-4" aria-hidden="true" />
-              Archive<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘6</span>
+              {t("tabs.archive")}<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘6</span>
             </button>
             <button
               id="tab-inboxes"
@@ -330,7 +339,7 @@ function App() {
               role="tab"
               aria-selected={activeTab === 'inboxes'}
               aria-controls="tab-panel-inboxes"
-              aria-label="Inboxes tab"
+              aria-label={t('tabs.inboxes')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                 activeTab === 'inboxes'
                   ? 'bg-claude-orange text-white shadow-lg'
@@ -338,7 +347,7 @@ function App() {
               }`}
             >
               <Inbox className="h-4 w-4" aria-hidden="true" />
-              Inboxes<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘7</span>
+              {t("tabs.inboxes")}<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘7</span>
               {unreadCount > 0 && (
                 <span className="bg-red-500 text-white text-xs font-bold rounded-full h-5 flex items-center justify-center px-1.5" style={{ minWidth: '20px' }}>
                   {unreadCount}
@@ -352,7 +361,7 @@ function App() {
               role="tab"
               aria-selected={activeTab === 'analytics'}
               aria-controls="tab-panel-analytics"
-              aria-label="Analytics tab"
+              aria-label={t('tabs.analytics')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                 activeTab === 'analytics'
                   ? 'bg-claude-orange text-white shadow-lg'
@@ -360,7 +369,7 @@ function App() {
               }`}
             >
               <TrendingUp className="h-4 w-4" aria-hidden="true" />
-              Analytics<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘8</span>
+              {t("tabs.analytics")}<span className="ml-1.5 opacity-40 font-mono hidden lg:inline" style={{ fontSize: '10px' }} aria-hidden="true">⌘8</span>
             </button>
           </div>
         </nav>
@@ -413,7 +422,7 @@ function App() {
               <div className="flex items-center gap-1 mb-6 rounded-lg p-1 w-fit" style={{ background: 'var(--bg-secondary)' }}>
                 <button
                   onClick={() => setTeamsView('list')}
-                  aria-label="Switch to team list view"
+                  aria-label={t('teams.switch_to_list')}
                   aria-pressed={teamsView === 'list'}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                     teamsView === 'list'
@@ -421,11 +430,11 @@ function App() {
                       : 'toggle-btn-inactive'
                   }`}
                 >
-                  Team List
+                  {t("teams.title")}
                 </button>
                 <button
                   onClick={() => setTeamsView('compare')}
-                  aria-label="Switch to team comparison view"
+                  aria-label={t('teams.switch_to_compare')}
                   aria-pressed={teamsView === 'compare'}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                     teamsView === 'compare'
@@ -433,7 +442,7 @@ function App() {
                       : 'toggle-btn-inactive'
                   }`}
                 >
-                  Compare Teams
+                  {t("teams.compare")}
                 </button>
               </div>
 
@@ -446,7 +455,7 @@ function App() {
                   {/* Teams Section */}
                   <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h2 className="text-xl font-bold" style={{ color: 'var(--text-heading)' }}>Active Teams</h2>
+                      <h2 className="text-xl font-bold" style={{ color: 'var(--text-heading)' }}>{t("teams.active_teams")}</h2>
                       {teams.length > 0 && (
                         <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                           {teams.length} team{teams.length !== 1 ? 's' : ''}
@@ -458,10 +467,10 @@ function App() {
                       <div className="card text-center py-12">
                         <Activity className="h-16 w-16 text-gray-600 mx-auto mb-4" aria-hidden="true" />
                         <h3 className="text-xl font-semibold text-white mb-2">
-                          No Active Teams
+                          {t("teams.no_active_teams")}
                         </h3>
                         <p className="text-gray-400 mb-4">
-                          Start a Claude Code agent team to see it appear here
+                          {t("teams.message")}
                         </p>
                         <a
                           href="https://code.claude.com/docs/en/agent-teams#start-your-first-agent-team"
@@ -470,7 +479,7 @@ function App() {
                           className="inline-flex items-center gap-2 bg-claude-orange hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors"
                         >
                           <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                          Learn How to Start a Team
+                          {t("teams.learn")}
                         </a>
                       </div>
                     ) : (
@@ -596,14 +605,24 @@ function App() {
           <div className="flex items-center justify-between text-sm" style={{ color: 'var(--text-secondary)' }}>
             <div className="flex items-center gap-2">
               <Activity className="h-4 w-4 text-claude-orange" aria-hidden="true" />
-              <span>Claude Code Agent Dashboard</span>
+              <span>{t('footer.dashboard_title')}</span>
               <span className="text-gray-600">•</span>
-              <span className="text-gray-500">Built by <a href="https://mahipal.engineer" target="_blank" rel="noopener noreferrer" className="text-claude-orange hover:text-orange-400 transition-colors">mahipal.engineer</a></span>
+              <span className="text-gray-500">
+                {t('footer.built_by_prefix')}{' '}
+                <a
+                  href="https://mahipal.engineer"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-claude-orange hover:text-orange-400 transition-colors"
+                >
+                  mahipal.engineer
+                </a>
+              </span>
             </div>
             <div className="flex items-center gap-4">
-              <button onClick={() => setShortcutsOpen(true)} className="flex items-center gap-1.5 hover:text-white transition-colors" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">
+              <button onClick={() => setShortcutsOpen(true)} className="flex items-center gap-1.5 hover:text-white transition-colors" aria-label={t('keyboard_shortcuts.modal_label')} title={t('keyboard_shortcuts.modal_label')}>
                 <kbd className="inline-flex items-center justify-center w-6 h-6 text-xs font-semibold bg-gray-700 border border-gray-600 rounded">?</kbd>
-                <span className="hidden sm:inline">Shortcuts</span>
+                <span className="hidden sm:inline">{t('footer.shortcuts')}</span>
               </button>
               <a
                 href="https://github.com/anthropics/claude-code"
@@ -612,7 +631,7 @@ function App() {
                 className="flex items-center gap-2 hover:text-white transition-colors"
               >
                 <Github className="h-4 w-4" aria-hidden="true" />
-                <span>GitHub</span>
+                <span>{t('footer.github')}</span>
               </a>
               <a
                 href="https://code.claude.com"
@@ -620,7 +639,7 @@ function App() {
                 rel="noopener noreferrer"
                 className="hover:text-white transition-colors"
               >
-                Documentation
+                {t('footer.documentation')}
               </a>
             </div>
           </div>

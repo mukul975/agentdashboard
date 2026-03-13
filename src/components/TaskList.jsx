@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Circle, Clock, CheckCircle, AlertCircle, User, ChevronDown, ChevronUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function TaskList({ tasks }) {
+  const { t } = useTranslation();
   const [expandedTasks, setExpandedTasks] = useState(new Set());
 
   if (!tasks || tasks.length === 0) {
@@ -15,7 +17,7 @@ export function TaskList({ tasks }) {
         }}
       >
         <Circle className="h-12 w-12 text-gray-600 mx-auto mb-3 opacity-50" />
-        <p className="text-gray-400 text-sm">No tasks yet</p>
+        <p className="text-gray-400 text-sm">{t("task.no_tasks")}</p>
       </div>
     );
   }
@@ -73,7 +75,7 @@ export function TaskList({ tasks }) {
   const getStatusConfig = (status, blockedBy) => {
     if (blockedBy && blockedBy.length > 0) {
       return {
-        label: 'Blocked',
+        label: t("status.blocked", "Blocked"),
         bgGradient: 'linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.15) 100%)',
         textColor: '#f87171',
         borderColor: 'rgba(239, 68, 68, 0.4)',
@@ -84,7 +86,7 @@ export function TaskList({ tasks }) {
     switch (status) {
       case 'pending':
         return {
-          label: 'Pending',
+          label: t("status.pending", "Pending"),
           bgGradient: 'linear-gradient(135deg, rgba(234, 179, 8, 0.2) 0%, rgba(202, 138, 4, 0.12) 100%)',
           textColor: '#facc15',
           borderColor: 'rgba(234, 179, 8, 0.4)',
@@ -92,7 +94,7 @@ export function TaskList({ tasks }) {
         };
       case 'in_progress':
         return {
-          label: 'In Progress',
+          label: t("status.in_progress", "In Progress"),
           bgGradient: 'linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(37, 99, 235, 0.15) 100%)',
           textColor: '#60a5fa',
           borderColor: 'rgba(59, 130, 246, 0.5)',
@@ -100,7 +102,7 @@ export function TaskList({ tasks }) {
         };
       case 'completed':
         return {
-          label: 'Completed',
+          label: t("status.completed", "Completed"),
           bgGradient: 'linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(21, 128, 61, 0.15) 100%)',
           textColor: '#4ade80',
           borderColor: 'rgba(34, 197, 94, 0.5)',
@@ -108,7 +110,7 @@ export function TaskList({ tasks }) {
         };
       default:
         return {
-          label: 'Unknown',
+          label: t('status.unknown'),
           bgGradient: 'rgba(55, 65, 81, 0.3)',
           textColor: '#9ca3af',
           borderColor: 'rgba(75, 85, 99, 0.4)',
@@ -209,18 +211,18 @@ export function TaskList({ tasks }) {
                         style={{
                           color: statusConfig.textColor
                         }}
-                        aria-label={isExpanded ? "Show less description" : "Show full description"}
+                        aria-label={isExpanded ? t('task.show_less') : t('task.show_full')}
                         aria-expanded={isExpanded}
                       >
                         {isExpanded ? (
                           <>
                             <ChevronUp className="h-3 w-3" />
-                            Show less
+                            {t('task.show_less')}
                           </>
                         ) : (
                           <>
                             <ChevronDown className="h-3 w-3" />
-                            Read more
+                            {t('task.read_more')}
                           </>
                         )}
                       </button>
@@ -257,7 +259,7 @@ export function TaskList({ tasks }) {
                       }}
                     >
                       <AlertCircle className="h-3.5 w-3.5" />
-                      <span>Blocked by {task.blockedBy.length}</span>
+                      {t('task.blocked_by', { count: task.blockedBy.length })}
                     </div>
                   )}
 
@@ -272,7 +274,7 @@ export function TaskList({ tasks }) {
                       }}
                     >
                       <AlertCircle className="h-3.5 w-3.5" />
-                      <span>Blocks {task.blocks.length}</span>
+                      {t('task.blocks', { count: task.blocks.length })}
                     </div>
                   )}
                 </div>

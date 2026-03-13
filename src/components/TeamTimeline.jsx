@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Clock, ChevronDown, Filter } from 'lucide-react';
 import { formatRelativeTime, getAgentColor, getAgentInitials, formatMessageText } from '../utils/formatting';
 import { getInboxMessages } from '../utils/safeKey';
+import { useTranslation } from 'react-i18next';
 
 const AGENT_BG_COLORS = {
   'bg-blue-600': '#2563eb',
@@ -37,6 +38,7 @@ function getSummaryText(msg) {
 }
 
 export const TeamTimeline = React.memo(function TeamTimeline({ allInboxes = {}, teams = [] }) {
+  const { t } = useTranslation();
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [selectedTeam, setSelectedTeam] = useState('all');
 
@@ -97,7 +99,7 @@ export const TeamTimeline = React.memo(function TeamTimeline({ allInboxes = {}, 
               letterSpacing: '-0.01em',
             }}
           >
-            Team Activity Timeline
+            {t('team_timeline.title')}
           </h3>
         </div>
 
@@ -114,9 +116,9 @@ export const TeamTimeline = React.memo(function TeamTimeline({ allInboxes = {}, 
                 }}
                 className="appearance-none text-xs font-medium pl-2 pr-7 py-1.5 rounded-lg focus:border-claude-orange focus:outline-none cursor-pointer"
                 style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)', border: '1px solid var(--border-color)', backgroundImage: 'none' }}
-                aria-label="Filter by team"
+                aria-label={t('team_timeline.filter_aria', 'Filter by team')}
               >
-                <option value="all">All Teams</option>
+                <option value="all">{t('team_timeline.all_teams', 'All Teams')}</option>
                 {teamNames.map(name => (
                   <option key={name} value={name}>{name}</option>
                 ))}
@@ -134,7 +136,7 @@ export const TeamTimeline = React.memo(function TeamTimeline({ allInboxes = {}, 
               border: '1px solid rgba(59, 130, 246, 0.3)'
             }}
           >
-            {filteredMessages.length} messages
+            {t('team_timeline.messages_count', { count: filteredMessages.length })}
           </span>
         </div>
       </div>
@@ -153,8 +155,8 @@ export const TeamTimeline = React.memo(function TeamTimeline({ allInboxes = {}, 
             }}
           >
             <Clock className="h-12 w-12 mx-auto mb-3 opacity-50" style={{ color: 'var(--text-muted)' }} />
-            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No team activity yet</p>
-            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Messages from agent inboxes will appear here</p>
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{t('team_timeline.no_activity', 'No team activity yet')}</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{t('team_timeline.messages_info')}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -192,7 +194,7 @@ export const TeamTimeline = React.memo(function TeamTimeline({ allInboxes = {}, 
                   >
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <span className="font-medium text-sm" style={{ color: 'var(--text-heading)' }}>{msg.agentName}</span>
-                      <span className="text-xs" style={{ color: 'var(--text-muted)' }}>in</span>
+                      <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('team_timeline.in', 'in')}</span>
                       <span className="text-xs" style={{ color: '#fb923c' }}>{msg.teamName}</span>
                       <span
                         className="text-xs ml-auto"
@@ -213,7 +215,9 @@ export const TeamTimeline = React.memo(function TeamTimeline({ allInboxes = {}, 
               <div className="pt-2 text-center">
                 <button
                   onClick={() => setVisibleCount(prev => prev + PAGE_SIZE)}
-                  aria-label={`Show more messages, ${filteredMessages.length - visibleCount} remaining`}
+                  aria-label={t('team_timeline.show_more_aria', {
+                        count: filteredMessages.length - visibleCount
+                      })}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all"
                   style={{
                     background: 'rgba(249, 115, 22, 0.15)',
@@ -228,7 +232,7 @@ export const TeamTimeline = React.memo(function TeamTimeline({ allInboxes = {}, 
                   }}
                 >
                   <ChevronDown className="h-4 w-4" />
-                  Show more ({filteredMessages.length - visibleCount} remaining)
+                  {t('team_timeline.show_more', 'Show more ({{count}} remaining)', { count: filteredMessages.length - visibleCount, defaultValue: `Show more (${filteredMessages.length - visibleCount} remaining)` })}
                 </button>
               </div>
             )}
