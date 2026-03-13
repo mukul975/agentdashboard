@@ -5,6 +5,7 @@ import { SkeletonArchiveCard } from './SkeletonLoader';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import duration from 'dayjs/plugin/duration';
+import { useTranslation } from 'react-i18next';
 
 dayjs.extend(relativeTime);
 dayjs.extend(duration);
@@ -12,6 +13,7 @@ dayjs.extend(duration);
 const ARCHIVE_POLL_MS = 30_000; // re-check every 30 s
 
 export function ArchiveViewer() {
+  const { t } = useTranslation();
   const [archives, setArchives] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -87,7 +89,7 @@ export function ArchiveViewer() {
         <div className="flex items-center gap-3 text-red-400">
           <Archive className="h-6 w-6" />
           <div>
-            <h3 className="font-semibold">Error Loading Archives</h3>
+            <h3 className="font-semibold">{t("archive.error_loading")}</h3>
             <p className="text-sm text-gray-400 mt-1">{error}</p>
           </div>
         </div>
@@ -101,10 +103,10 @@ export function ArchiveViewer() {
         <div className="text-center py-12">
           <Archive className="h-16 w-16 text-gray-600 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-white mb-2">
-            No Archived Teams Yet
+            {t("archive.empty_title")}
           </h3>
           <p className="text-gray-400">
-            No archived teams yet. Teams are archived when they complete.
+            {t("archive.empty_description")}
           </p>
         </div>
       </div>
@@ -121,7 +123,7 @@ export function ArchiveViewer() {
               <Archive className="h-6 w-6 text-purple-400" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white">Team Archive</h2>
+              <h2 className="text-2xl font-bold text-white">{t("archive.title")}</h2>
               <p className="text-gray-400 text-sm mt-1">
                 History of completed agent teams and their accomplishments
               </p>
@@ -131,7 +133,7 @@ export function ArchiveViewer() {
             <div style={{ textAlign: 'right' }}>
               <div className="px-4 py-2 rounded-lg" style={{ backgroundColor: 'rgba(168,85,247,0.2)' }}>
                 <span className="text-2xl font-bold text-purple-400">{archives.length}</span>
-                <span className="text-sm text-gray-400 ml-2">archived</span>
+                <span className="text-sm text-gray-400 ml-2">{t('archive_viewer.archived', 'archived')}</span>
               </div>
               {lastRefreshed && (
                 <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
@@ -141,8 +143,8 @@ export function ArchiveViewer() {
             </div>
             <button
               onClick={fetchArchives}
-              title="Refresh archives"
-              aria-label="Refresh archives"
+              title={t("archive.refresh")}
+              aria-label={t("archive.refresh")}
               style={{
                 padding: '8px',
                 borderRadius: '8px',
@@ -295,7 +297,7 @@ export function ArchiveViewer() {
                 <div className="rounded-lg p-4" style={{ backgroundColor: 'rgba(88,28,135,0.2)', border: '1px solid rgba(168,85,247,0.3)' }}>
                   <div className="flex items-center gap-2 mb-2">
                     <FileText className="h-4 w-4 text-purple-400" />
-                    <h4 className="text-sm font-semibold text-purple-400">Full Archive Data</h4>
+                    <h4 className="text-sm font-semibold text-purple-400">{t("archive.full_data")}</h4>
                   </div>
                   <p className="text-xs text-gray-400 mb-2">
                     Team: {selectedArchiveDetails.teamName}

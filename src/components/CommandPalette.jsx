@@ -1,16 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { BarChart3, Users, MessageSquare, Settings, History, Archive, Inbox, Search } from 'lucide-react';
 import { useFocusTrap } from '../hooks/useFocusTrap';
-
-const commands = [
-  { id: 'overview', label: 'Navigate to Overview', shortcut: 'Ctrl+1', icon: BarChart3, tab: 'overview' },
-  { id: 'teams', label: 'Navigate to Teams & Tasks', shortcut: 'Ctrl+2', icon: Users, tab: 'teams' },
-  { id: 'communication', label: 'Navigate to Communication', shortcut: 'Ctrl+3', icon: MessageSquare, tab: 'communication' },
-  { id: 'monitoring', label: 'Navigate to Monitoring', shortcut: 'Ctrl+4', icon: Settings, tab: 'monitoring' },
-  { id: 'history', label: 'Navigate to History & Outputs', shortcut: 'Ctrl+5', icon: History, tab: 'history' },
-  { id: 'archive', label: 'Navigate to Archive', shortcut: 'Ctrl+6', icon: Archive, tab: 'archive' },
-  { id: 'inboxes', label: 'Navigate to Inboxes', shortcut: 'Ctrl+7', icon: Inbox, tab: 'inboxes' },
-];
+import { useTranslation } from 'react-i18next';
 
 const kbdStyle = {
   display: 'inline-flex',
@@ -26,18 +17,27 @@ const kbdStyle = {
 };
 
 export function CommandPalette({ isOpen, onClose, onNavigate }) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef(null);
   const listRef = useRef(null);
   const trapRef = useFocusTrap(isOpen);
-
+const commands = [
+  { id: 'overview', label: t('command_palette.nav_overview'), shortcut: 'Ctrl+1', icon: BarChart3, tab: 'overview' },
+  { id: 'teams', label: t('command_palette.nav_teams'), shortcut: 'Ctrl+2', icon: Users, tab: 'teams' },
+  { id: 'communication', label: t('command_palette.nav_communication'), shortcut: 'Ctrl+3', icon: MessageSquare, tab: 'communication' },
+  { id: 'monitoring', label: t('command_palette.nav_monitoring'), shortcut: 'Ctrl+4', icon: Settings, tab: 'monitoring' },
+  { id: 'history', label: t('command_palette.nav_history'), shortcut: 'Ctrl+5', icon: History, tab: 'history' },
+  { id: 'archive', label: t('command_palette.nav_archive'), shortcut: 'Ctrl+6', icon: Archive, tab: 'archive' },
+  { id: 'inboxes', label: t('command_palette.nav_inboxes'), shortcut: 'Ctrl+7', icon: Inbox, tab: 'inboxes' },
+];
   const filtered = query.trim() === ''
     ? commands
     : commands.filter(cmd =>
-        cmd.label.toLowerCase().includes(query.toLowerCase()) ||
-        cmd.tab.toLowerCase().includes(query.toLowerCase())
-      );
+      cmd.label.toLowerCase().includes(query.toLowerCase()) ||
+      cmd.tab.toLowerCase().includes(query.toLowerCase())
+    );
 
   useEffect(() => {
     if (isOpen) {
@@ -103,7 +103,7 @@ export function CommandPalette({ isOpen, onClose, onNavigate }) {
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label="Command palette"
+      aria-label={t('command_palette.cmd_label')}
     >
       <div style={{
         position: 'absolute',
@@ -135,7 +135,7 @@ export function CommandPalette({ isOpen, onClose, onNavigate }) {
             value={query}
             onChange={e => { setQuery(e.target.value); setSelectedIndex(0); }}
             onKeyDown={handleKeyDown}
-            placeholder="Type a command or search..."
+            placeholder={t("command_palette.placeholder")}
             className="flex-1 text-sm"
             style={{
               background: 'transparent',
@@ -143,7 +143,7 @@ export function CommandPalette({ isOpen, onClose, onNavigate }) {
               outline: 'none',
               border: 'none'
             }}
-            aria-label="Search commands"
+            aria-label={t('command_palette.search_label')}
             aria-activedescendant={filtered[selectedIndex] ? `cmd-${filtered[selectedIndex].id}` : undefined}
             role="combobox"
             aria-expanded="true"
@@ -162,7 +162,7 @@ export function CommandPalette({ isOpen, onClose, onNavigate }) {
         >
           {filtered.length === 0 ? (
             <li className="px-4 text-center text-sm" style={{ padding: '32px 16px', color: 'var(--text-muted)' }}>
-              No matching commands
+              {t('search.no_results')}
             </li>
           ) : (
             filtered.map((cmd, i) => {
@@ -201,15 +201,15 @@ export function CommandPalette({ isOpen, onClose, onNavigate }) {
         <div className="flex items-center gap-4 px-4 text-xs" style={{ padding: '10px 16px', borderTop: '1px solid var(--border-color)', color: 'var(--text-muted)' }}>
           <span className="flex items-center gap-1">
             <kbd style={kbdStyle}>{'\u2191\u2193'}</kbd>
-            navigate
+            {t('command_palette.legend_navigate')}
           </span>
           <span className="flex items-center gap-1">
             <kbd style={kbdStyle}>{'\u21B5'}</kbd>
-            select
+            {t('command_palette.legend_select')}
           </span>
           <span className="flex items-center gap-1">
             <kbd style={kbdStyle}>esc</kbd>
-            close
+            {t('command_palette.legend_close')}
           </span>
         </div>
       </div>

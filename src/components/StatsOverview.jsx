@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Users, ListTodo, Clock, CheckCircle, AlertCircle, MessageSquare, Bell } from 'lucide-react';
 import { useCounterAnimation } from '../hooks/useCounterAnimation';
+import { useTranslation } from 'react-i18next';
 
 const HISTORY_KEY = 'dashboard-stats-history';
 const MAX_HISTORY = 10;
@@ -41,7 +42,7 @@ export function StatsOverview({ stats, allInboxes = {} }) {
   const [isVisible, setIsVisible] = useState(false);
   const [statsHistory, setStatsHistory] = useState(() => getStatsHistory());
   const lastSnapshotRef = useRef(null);
-
+  const { t } = useTranslation();
   useEffect(() => {
     setIsVisible(true);
   }, []);
@@ -111,7 +112,7 @@ export function StatsOverview({ stats, allInboxes = {} }) {
 
   const statCards = [
     {
-      label: 'Active Teams',
+      label: t('stats.active_teams'),
       key: 'totalTeams',
       icon: Users,
       gradient: 'linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(37, 99, 235, 0.15) 100%)',
@@ -120,7 +121,7 @@ export function StatsOverview({ stats, allInboxes = {} }) {
       borderColor: 'rgba(59, 130, 246, 0.3)'
     },
     {
-      label: 'Total Agents',
+      label: t('stats.total_agents'),
       key: 'totalAgents',
       icon: Users,
       gradient: 'linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(147, 51, 234, 0.15) 100%)',
@@ -129,7 +130,7 @@ export function StatsOverview({ stats, allInboxes = {} }) {
       borderColor: 'rgba(168, 85, 247, 0.3)'
     },
     {
-      label: 'Total Tasks',
+      label: t('stats.total_tasks'),
       key: 'totalTasks',
       icon: ListTodo,
       gradient: 'linear-gradient(135deg, rgba(6, 182, 212, 0.25) 0%, rgba(14, 165, 233, 0.15) 100%)',
@@ -138,7 +139,7 @@ export function StatsOverview({ stats, allInboxes = {} }) {
       borderColor: 'rgba(6, 182, 212, 0.3)'
     },
     {
-      label: 'In Progress',
+      label: t('stats.in_progress'),
       key: 'inProgressTasks',
       icon: Clock,
       gradient: 'linear-gradient(135deg, rgba(249, 115, 22, 0.25) 0%, rgba(251, 146, 60, 0.15) 100%)',
@@ -147,7 +148,7 @@ export function StatsOverview({ stats, allInboxes = {} }) {
       borderColor: 'rgba(249, 115, 22, 0.3)'
     },
     {
-      label: 'Completed',
+      label: t('stats.completed'),
       key: 'completedTasks',
       icon: CheckCircle,
       gradient: 'linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(21, 128, 61, 0.15) 100%)',
@@ -156,7 +157,7 @@ export function StatsOverview({ stats, allInboxes = {} }) {
       borderColor: 'rgba(34, 197, 94, 0.3)'
     },
     {
-      label: 'Blocked',
+      label: t('stats.blocked'),
       key: 'blockedTasks',
       icon: AlertCircle,
       gradient: 'linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.15) 100%)',
@@ -165,7 +166,7 @@ export function StatsOverview({ stats, allInboxes = {} }) {
       borderColor: 'rgba(239, 68, 68, 0.3)'
     },
     {
-      label: 'Messages',
+      label: t('stats.messages'),
       key: 'totalMessages',
       icon: MessageSquare,
       gradient: 'linear-gradient(135deg, rgba(14, 165, 233, 0.25) 0%, rgba(56, 189, 248, 0.15) 100%)',
@@ -174,7 +175,7 @@ export function StatsOverview({ stats, allInboxes = {} }) {
       borderColor: 'rgba(14, 165, 233, 0.3)'
     },
     {
-      label: 'Unread',
+      label: t('stats.unread'),
       key: 'unreadMessages',
       icon: Bell,
       gradient: 'linear-gradient(135deg, rgba(244, 114, 182, 0.25) 0%, rgba(236, 72, 153, 0.15) 100%)',

@@ -2,8 +2,10 @@ import { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Download, FileJson, FileSpreadsheet, FileText } from 'lucide-react';
 import { exportToCSV, exportToJSON } from '../utils/exportUtils';
+import { useTranslation } from 'react-i18next';
 
 export function ExportMenu({ teams, allInboxes }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -76,10 +78,10 @@ export function ExportMenu({ teams, allInboxes }) {
   };
 
   const menuItems = [
-    { label: 'Export Teams (JSON)', icon: FileJson, handler: handleExportTeamsJSON },
-    { label: 'Export Tasks (CSV)', icon: FileSpreadsheet, handler: handleExportTasksCSV },
-    { label: 'Export Messages (CSV)', icon: FileText, handler: handleExportMessagesCSV },
-    { label: 'Export Full Report (JSON)', icon: FileJson, handler: handleExportFullReport }
+    { label: t('export.teams_json'), icon: FileJson, handler: handleExportTeamsJSON },
+    { label: t('export.tasks_csv'), icon: FileSpreadsheet, handler: handleExportTasksCSV },
+    { label: t('export.messages_csv'), icon: FileText, handler: handleExportMessagesCSV },
+    { label: t('export.full_report'), icon: FileJson, handler: handleExportFullReport }
   ];
 
   return (
@@ -97,10 +99,10 @@ export function ExportMenu({ teams, allInboxes }) {
         }}
         aria-haspopup="true"
         aria-expanded={open}
-        aria-label="Export data"
+        aria-label={t('export.button_aria')}
       >
         <Download className="h-4 w-4" aria-hidden="true" />
-        <span>Export</span>
+        <span>{t('export.label')}</span>
         <span className="text-xs" aria-hidden="true">&#9662;</span>
       </button>
 

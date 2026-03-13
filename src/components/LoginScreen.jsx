@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import { Activity, Eye, EyeOff, Lock, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function LoginScreen({ onLogin }) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!password.trim()) {
-      setError('Please enter a password');
+      setError(t("login.error_empty"));
       return;
     }
 
@@ -27,14 +29,14 @@ export function LoginScreen({ onLogin }) {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Invalid password');
+        setError(data.error || t("login.error_invalid"));
         setLoading(false);
         return;
       }
 
       onLogin(data.token);
     } catch (err) {
-      setError('Failed to connect to server');
+      setError(t("login.error_connection"));
       setLoading(false);
     }
   };
@@ -89,7 +91,7 @@ export function LoginScreen({ onLogin }) {
             margin: '0 0 8px 0',
           }}
         >
-          Agent Dashboard
+          {t('login.title')}
         </h1>
         <p
           style={{
@@ -99,7 +101,7 @@ export function LoginScreen({ onLogin }) {
             margin: '0 0 32px 0',
           }}
         >
-          Enter the dashboard password to continue
+          {t('login.subtitle')}
         </p>
 
         {/* Form */}
@@ -136,7 +138,7 @@ export function LoginScreen({ onLogin }) {
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); setError(''); }}
-                placeholder="Enter password"
+                placeholder={t("login.password_placeholder")}
                 autoFocus
                 autoComplete="current-password"
                 style={{
@@ -174,7 +176,7 @@ export function LoginScreen({ onLogin }) {
                   display: 'flex',
                   alignItems: 'center',
                 }}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={showPassword ? t("login.hide_password") : t("login.show_password")}
               >
                 {showPassword
                   ? <EyeOff style={{ width: '16px', height: '16px' }} />
@@ -239,10 +241,10 @@ export function LoginScreen({ onLogin }) {
                     animation: 'spin 0.8s linear infinite',
                   }}
                 />
-                Authenticating...
+                {t("login.submitting")}
               </>
             ) : (
-              'Unlock Dashboard'
+              t("login.submit")
             )}
           </button>
         </form>

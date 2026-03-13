@@ -5,15 +5,16 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { parseMessageToNatural } from '../utils/messageParser';
 import { getInboxMessages } from '../utils/safeKey';
+import { useTranslation } from 'react-i18next';
 dayjs.extend(relativeTime);
 
 const getIconComponent = (type) => {
   switch (type) {
-    case 'completion':   return CheckCircle;
-    case 'system':       return AlertCircle;
-    case 'assignment':   return Zap;
-    case 'status':       return Bot;
-    default:             return MessageSquare;
+    case 'completion': return CheckCircle;
+    case 'system': return AlertCircle;
+    case 'assignment': return Zap;
+    case 'status': return Bot;
+    default: return MessageSquare;
   }
 };
 
@@ -67,6 +68,7 @@ function buildThreads(messages) {
 }
 
 export function LiveCommunication({ teams, allInboxes = {} }) {
+  const { t } = useTranslation();
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [autoScroll, setAutoScroll] = useState(true);
   const [fetchedInboxes, setFetchedInboxes] = useState(null);
@@ -88,7 +90,7 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
       .catch(err => {
         if (!cancelled) {
           console.error('LiveCommunication fetch error:', err);
-          setFetchError(err.message || 'Failed to load communications');
+          setFetchError(err.message || t('live_communication.failed_to_load'));
         }
       });
     return () => { cancelled = true; };
@@ -126,16 +128,16 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
       {messages.length === 0 ? (
         <div className="text-center py-8" style={{ color: 'var(--text-muted)' }}>
           <MessageSquare aria-hidden="true" className="h-12 w-12 mx-auto mb-2 opacity-50" />
-          <p className="text-sm">No messages yet</p>
-          <p className="text-xs mt-1">Agent communication will appear here</p>
+          <p className="text-sm">{t("live_communication.no_messages")}</p>
+          <p className="text-xs mt-1">{t("live_communication.no_messages_description")}</p>
         </div>
       ) : (
         messages.map(msg => {
           const Icon = getIconComponent(msg.type); // lgtm[js/call-to-non-callable]
           const typeColorStyles = {
-            idle:    { background: 'rgba(107,114,128,0.1)', borderColor: 'rgba(107,114,128,0.3)' },
+            idle: { background: 'rgba(107,114,128,0.1)', borderColor: 'rgba(107,114,128,0.3)' },
             success: { background: 'rgba(34,197,94,0.1)', borderColor: 'rgba(34,197,94,0.3)' },
-            system:  { background: 'rgba(234,179,8,0.1)', borderColor: 'rgba(234,179,8,0.3)' },
+            system: { background: 'rgba(234,179,8,0.1)', borderColor: 'rgba(234,179,8,0.3)' },
             working: { background: 'rgba(59,130,246,0.1)', borderColor: 'rgba(59,130,246,0.3)' },
             message: { background: 'rgba(107,114,128,0.1)', borderColor: 'rgba(107,114,128,0.3)' },
           };
@@ -146,13 +148,12 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
               style={typeColorStyles[msg.type] || typeColorStyles.message}
             >
               <div className="flex items-start gap-3">
-                <div className={`mt-0.5 flex-shrink-0 ${
-                  msg.type === 'success' ? 'text-green-400' :
-                  msg.type === 'system'  ? 'text-yellow-400' :
-                  msg.type === 'working' ? 'text-blue-400' :
-                  msg.type === 'idle'    ? 'text-gray-400' :
-                  'text-claude-orange'
-                }`}>
+                <div className={`mt-0.5 flex-shrink-0 ${msg.type === 'success' ? 'text-green-400' :
+                    msg.type === 'system' ? 'text-yellow-400' :
+                      msg.type === 'working' ? 'text-blue-400' :
+                        msg.type === 'idle' ? 'text-gray-400' :
+                          'text-claude-orange'
+                  }`}>
                   <Icon aria-hidden="true" className="h-4 w-4" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -166,7 +167,7 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
                         </>
                       )}
                       {!msg.read && (
-                        <span className="text-xs text-blue-300 px-2 py-0.5 rounded-full" style={{ background: 'rgba(59,130,246,0.3)' }}>New</span>
+                        <span className="text-xs text-blue-300 px-2 py-0.5 rounded-full" style={{ background: 'rgba(59,130,246,0.3)' }}>{t("live_communication.new_badge")}</span>
                       )}
                     </div>
                     <span className="text-xs whitespace-nowrap ml-2" style={{ color: 'var(--text-muted)' }}>
@@ -189,8 +190,8 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
       {threads.length === 0 ? (
         <div className="text-center py-8" style={{ color: 'var(--text-muted)' }}>
           <Layers aria-hidden="true" className="h-12 w-12 mx-auto mb-2 opacity-50" />
-          <p className="text-sm">No conversation threads</p>
-          <p className="text-xs mt-1">Agent conversations will be grouped here</p>
+          <p className="text-sm">{t("live_communication.no_threads")}</p>
+          <p className="text-xs mt-1">{t("live_communication.no_threads_description")}</p>
         </div>
       ) : (
         threads.map(thread => (
@@ -208,7 +209,7 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
                 </span>
                 {thread.unreadCount > 0 && (
                   <span className="text-xs text-blue-300 px-2 py-0.5 rounded-full" style={{ background: 'rgba(59,130,246,0.3)' }}>
-                    {thread.unreadCount} new
+                    {thread.unreadCount} {t("live_communication.new_badge").toLowerCase()}
                   </span>
                 )}
               </div>
@@ -246,7 +247,7 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
             onClick={() => setExpandedThread(null)}
             className="p-1 rounded transition-colors"
             style={{ color: 'var(--text-muted)' }}
-            aria-label="Back to thread list"
+            aria-label={t('live_communication.back_label')}
           >
             <ChevronLeft aria-hidden="true" className="h-4 w-4" />
           </button>
@@ -300,7 +301,7 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <MessageSquare aria-hidden="true" className="h-5 w-5 text-claude-orange" />
-          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>Live Communication</h3>
+          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>{t("live_communication.title")}</h3>
         </div>
         <div className="flex items-center gap-3">
           {/* View Toggle */}
@@ -312,11 +313,11 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
                 ? { background: 'rgba(232,117,10,0.2)', color: 'var(--claude-orange)' }
                 : { color: 'var(--text-muted)' }
               }
-              title="Flat view"
+              title={t("live_communication.flat_view")}
               aria-pressed={viewMode === 'flat'}
             >
               <List aria-hidden="true" className="h-3 w-3" />
-              Flat
+              {t("live_communication.flat_view")}
             </button>
             <button
               onClick={() => setViewMode('threads')}
@@ -325,11 +326,11 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
                 ? { background: 'rgba(232,117,10,0.2)', color: 'var(--claude-orange)' }
                 : { color: 'var(--text-muted)' }
               }
-              title="Threads view"
+              title={t("live_communication.threads_view")}
               aria-pressed={viewMode === 'threads'}
             >
               <Layers aria-hidden="true" className="h-3 w-3" />
-              Threads
+              {t("live_communication.threads_view")}
             </button>
           </div>
           <button
@@ -340,13 +341,13 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
               : { background: 'var(--bg-secondary)', color: 'var(--text-muted)' }
             }
             aria-pressed={autoScroll}
-            aria-label={autoScroll ? 'Disable auto-scroll' : 'Enable auto-scroll'}
+            aria-label={autoScroll ? t('live_communication.disable_scroll') : t('live_communication.enable_scroll')}
           >
-            {autoScroll ? 'Auto-scroll' : 'Scroll locked'}
+            {autoScroll ? t('live_communication.auto_scroll') : t('live_communication.scroll_locked')}
           </button>
           <span className="text-xs text-green-400 flex items-center gap-1">
             <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse"></span>
-            LIVE
+            {t("live_metrics.live")}
           </span>
         </div>
       </div>
@@ -354,7 +355,7 @@ export function LiveCommunication({ teams, allInboxes = {} }) {
       {/* Team Selector */}
       {teamNames.length > 0 && (
         <div className="mb-4">
-          <label htmlFor="live-comm-team-select" className="sr-only">Select team</label>
+          <label htmlFor="live-comm-team-select" className="sr-only">{t("live_communication.select_team")}</label>
           <select
             id="live-comm-team-select"
             value={selectedTeam || ''}

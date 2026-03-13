@@ -1,7 +1,9 @@
 import React from 'react';
 import { CheckCircle, Clock, AlertCircle, TrendingUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function DetailedTaskProgress({ tasks }) {
+  const { t } = useTranslation();
   if (!tasks || tasks.length === 0) return null;
 
   const pendingTasks = tasks.filter(t => t.status === 'pending');
@@ -18,7 +20,7 @@ export function DetailedTaskProgress({ tasks }) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-claude-orange" />
-          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>Task Progress Details</h3>
+          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>{t('detailed_task_progress.title', 'Task Progress Details')}</h3>
         </div>
         <span className="text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>{completionPercentage}%</span>
       </div>
@@ -26,9 +28,9 @@ export function DetailedTaskProgress({ tasks }) {
       {/* Overall Progress Bar */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Overall Completion</span>
+          <span className="text-sm" style={{ color: 'var(--text-muted)' }}>{t('detailed_task_progress.overall', 'Overall Completion')}</span>
           <span className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>
-            {completedTasks.length} / {tasks.length} tasks
+            {completedTasks.length} / {tasks.length} {t("agent_activity.tasks")}
           </span>
         </div>
         <div className="w-full rounded-full h-3 overflow-hidden" style={{ background: 'var(--bg-secondary)' }}>
@@ -52,8 +54,8 @@ export function DetailedTaskProgress({ tasks }) {
               <Clock className="h-4 w-4 text-yellow-400" />
             </div>
             <div>
-              <div className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>Pending Tasks</div>
-              <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Waiting to start</div>
+              <div className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>{t('detailed_task_progress.pending', 'Pending Tasks')}</div>
+              <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('detailed_task_progress.waiting_start', 'Waiting to start')}</div>
             </div>
           </div>
           <div className="text-right">
@@ -71,8 +73,8 @@ export function DetailedTaskProgress({ tasks }) {
               <div className="h-4 w-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
             </div>
             <div>
-              <div className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>In Progress</div>
-              <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Currently working</div>
+              <div className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>{t("status.in_progress")}</div>
+              <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('detailed_task_progress.currently_working', 'Currently working')}</div>
             </div>
           </div>
           <div className="text-right">
@@ -90,8 +92,8 @@ export function DetailedTaskProgress({ tasks }) {
               <CheckCircle className="h-4 w-4 text-green-400" />
             </div>
             <div>
-              <div className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>Completed</div>
-              <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Successfully finished</div>
+              <div className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>{t("status.completed")}</div>
+              <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('detailed_task_progress.successfully_finished', 'Successfully finished')}</div>
             </div>
           </div>
           <div className="text-right">
@@ -108,8 +110,8 @@ export function DetailedTaskProgress({ tasks }) {
                 <AlertCircle className="h-4 w-4 text-red-400" />
               </div>
               <div>
-                <div className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>Blocked</div>
-                <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Waiting on dependencies</div>
+                <div className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>{t("status.blocked")}</div>
+                <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('detailed_task_progress.waiting_deps', 'Waiting on dependencies')}</div>
               </div>
             </div>
             <div className="text-right">

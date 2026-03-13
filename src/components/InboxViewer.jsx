@@ -8,6 +8,7 @@ import { parseMessageToNatural } from '../utils/messageParser';
 import { exportToCSV } from '../utils/exportUtils';
 import { safePropKey } from '../utils/safeKey';
 import { getAgentColor, getAgentInitials } from '../utils/formatting';
+import { useTranslation } from 'react-i18next';
 
 dayjs.extend(relativeTime);
 
@@ -62,10 +63,11 @@ function renderBoldMarkdown(text) {
 }
 
 function MessageContent({ text }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
 
   if (!text || text.trim() === '') {
-    return <p className="text-sm" style={{ fontStyle: 'italic', marginBottom: 0, color: 'var(--text-muted)' }}>Empty message</p>;
+    return <p className="text-sm" style={{ fontStyle: 'italic', marginBottom: 0, color: 'var(--text-muted)' }}>{t("inbox.empty_message")}</p>;
   }
 
   let parsed = null;
@@ -108,7 +110,7 @@ function MessageContent({ text }) {
         )}
         <button
           onClick={() => setExpanded(!expanded)}
-          aria-label={expanded ? 'Hide raw JSON data' : 'Show raw JSON data'}
+          aria-label={expanded ? t('inbox.hide_raw_data') : t('inbox.show_raw_data')}
           aria-expanded={expanded}
           className="text-xs"
           style={{
@@ -122,7 +124,7 @@ function MessageContent({ text }) {
           onMouseEnter={e => { e.target.style.color = 'var(--text-primary)'; }}
           onMouseLeave={e => { e.target.style.color = 'var(--text-muted)'; }}
         >
-          {expanded ? 'Hide raw data' : 'Show raw data'}
+          {expanded ? t('inbox.hide_raw_data') : t('inbox.show_raw_data')}
         </button>
         {expanded && (
           <pre
@@ -179,6 +181,7 @@ function getTeamUnreadCount(teamData) {
 }
 
 export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
+  const { t } = useTranslation();
   const [selectedTeam, setSelectedTeam] = useState(initialTeam);
   const [expandedTeams, setExpandedTeams] = useState(() => {
     const key = safePropKey(initialTeam);
@@ -430,10 +433,10 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
             <Inbox style={{ height: '48px', width: '48px', color: '#6b7280' }} aria-hidden="true" />
           </div>
           <h3 className="text-lg font-semibold" style={{ marginBottom: '0.5rem', color: 'var(--text-heading)' }}>
-            No Inbox Messages Yet
+            {t('inbox.empty_title')}
           </h3>
           <p className="text-sm" style={{ textAlign: 'center', maxWidth: '300px', marginBottom: 0, color: 'var(--text-secondary)' }}>
-            No inbox messages yet. Messages will appear here when agents communicate.
+            {t('inbox.empty_description')}
           </p>
         </div>
       </div>
@@ -464,7 +467,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
           }}>
             <div className="flex items-center gap-2" style={{ marginBottom: '0.25rem' }}>
               <Inbox style={{ height: '18px', width: '18px', color: '#ff8a3d' }} aria-hidden="true" />
-              <span className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>Inboxes</span>
+              <span className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>{t("inbox.title")}</span>
             </div>
             <p className="text-xs" style={{ marginBottom: 0, color: 'var(--text-muted)' }}>
               {teamNames.length} team{teamNames.length !== 1 ? 's' : ''}
@@ -508,7 +511,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                       color: 'inherit',
                     }}
                     aria-expanded={isExpanded}
-                    aria-label={`${isExpanded ? 'Collapse' : 'Expand'} team ${teamName}`}
+                    aria-label={isExpanded ? t('inbox.collapse_team', { name: teamName }) : t('inbox.expand_team', { name: teamName })}
                   >
                     {isExpanded ? (
                       <ChevronDown style={{ height: '14px', width: '14px', color: '#9ca3af', flexShrink: 0 }} aria-hidden="true" />
@@ -628,7 +631,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
 
                   {isExpanded && agentNames.length === 0 && (
                     <div style={{ padding: '0.5rem 0.5rem 0.5rem 2rem' }}>
-                      <p className="text-xs" style={{ fontStyle: 'italic', marginBottom: 0, color: 'var(--text-muted)' }}>No inboxes yet</p>
+                      <p className="text-xs" style={{ fontStyle: 'italic', marginBottom: 0, color: 'var(--text-muted)' }}>{t("inbox.no_inboxes")}</p>
                     </div>
                   )}
                 </div>
@@ -704,8 +707,8 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                       }));
                       exportToCSV(data, `inbox-${selectedTeam}-${selectedAgent}`); // lgtm[js/call-to-non-callable]
                     }}
-                    aria-label="Export messages as CSV"
-                    title="Export messages as CSV"
+                    aria-label={t("inbox.export_csv")}
+                    title={t("inbox.export_csv")}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -750,13 +753,13 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                       width: '14px',
                       color: 'var(--text-muted)',
                     }} aria-hidden="true" />
-                    <label htmlFor="inbox-search" className="sr-only">Search messages</label>
+                    <label htmlFor="inbox-search" className="sr-only">{t("inbox.search_label")}</label>
                     <input
                       id="inbox-search"
                       type="text"
                       value={searchQuery}
                       onChange={e => setSearchQuery(e.target.value)}
-                      placeholder="Search messages..."
+                      placeholder={t("inbox.search_placeholder")}
                       style={{
                         width: '100%',
                         padding: '0.375rem 0.625rem 0.375rem 2rem',
@@ -794,7 +797,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                     }}
                   >
                     <Filter style={{ height: '13px', width: '13px' }} aria-hidden="true" />
-                    Filters
+                    {t('inbox.filters_button')}
                     {activeFilterCount > 0 && (
                       <span style={{
                         background: 'linear-gradient(135deg, #f97316, #fb923c)',
@@ -831,7 +834,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                       {/* Date Range */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', minWidth: '120px' }}>
                         <label htmlFor="inbox-date-range" className="text-xs" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--text-muted)' }}>
-                          <Calendar style={{ height: '10px', width: '10px' }} aria-hidden="true" /> Date Range
+                          <Calendar style={{ height: '10px', width: '10px' }} aria-hidden="true" /> {t('inbox.filters_date_range')}
                         </label>
                         <select
                           id="inbox-date-range"
@@ -848,17 +851,17 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                             cursor: 'pointer',
                           }}
                         >
-                          <option value="all">All time</option>
-                          <option value="today">Today</option>
-                          <option value="7days">Last 7 days</option>
-                          <option value="30days">Last 30 days</option>
+                          <option value="all">{t("inbox.filter_time_all")}</option>
+                          <option value="today">{t("inbox.filter_time_today")}</option>
+                          <option value="7days">{t("inbox.filter_time_7days")}</option>
+                          <option value="30days">{t("inbox.filter_time_30days")}</option>
                         </select>
                       </div>
 
                       {/* Sender */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', minWidth: '130px' }}>
                         <label htmlFor="inbox-sender-filter" className="text-xs" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--text-muted)' }}>
-                          <User style={{ height: '10px', width: '10px' }} aria-hidden="true" /> Sender
+                          <User style={{ height: '10px', width: '10px' }} aria-hidden="true" /> {t('inbox.filters_sender')}
                         </label>
                         <select
                           id="inbox-sender-filter"
@@ -876,7 +879,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                             maxWidth: '160px',
                           }}
                         >
-                          <option value="all">All senders</option>
+                          <option value="all">{t("inbox.filter_sender_all")}</option>
                           {uniqueSenders.map(s => (
                             <option key={s} value={s}>{s}</option>
                           ))}
@@ -886,7 +889,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                       {/* Message Type */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', minWidth: '120px' }}>
                         <label htmlFor="inbox-type-filter" className="text-xs" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--text-muted)' }}>
-                          <MessageSquare style={{ height: '10px', width: '10px' }} aria-hidden="true" /> Type
+                          <MessageSquare style={{ height: '10px', width: '10px' }} aria-hidden="true" /> {t('inbox.filters_type')}
                         </label>
                         <select
                           id="inbox-type-filter"
@@ -903,11 +906,11 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                             cursor: 'pointer',
                           }}
                         >
-                          <option value="all">All types</option>
-                          <option value="message">Messages</option>
-                          <option value="idle">Idle</option>
-                          <option value="task_update">Task Updates</option>
-                          <option value="system">System</option>
+                          <option value="all">{t("inbox.filter_type_all")}</option>
+                          <option value="message">{t("inbox.filter_type_message")}</option>
+                          <option value="idle">{t("inbox.filter_type_idle")}</option>
+                          <option value="task_update">{t("inbox.filter_type_task_update")}</option>
+                          <option value="system">{t("inbox.filter_type_system")}</option>
                         </select>
                       </div>
 
@@ -917,7 +920,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                           {sortOrder === 'newest'
                             ? <SortDesc style={{ height: '10px', width: '10px' }} aria-hidden="true" />
                             : <SortAsc style={{ height: '10px', width: '10px' }} aria-hidden="true" />
-                          } Sort
+                          } {t('inbox.filters_sort')}
                         </label>
                         <select
                           id="inbox-sort-order"
@@ -934,8 +937,8 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                             cursor: 'pointer',
                           }}
                         >
-                          <option value="newest">Newest first</option>
-                          <option value="oldest">Oldest first</option>
+                          <option value="newest">{t("inbox.sort_newest")}</option>
+                          <option value="oldest">{t("inbox.sort_oldest")}</option>
                         </select>
                       </div>
                     </div>
@@ -944,15 +947,20 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       {activeFilterCount > 0 ? (
                         <span className="text-xs" style={{ color: '#fb923c' }}>
-                          {activeFilterCount} filter{activeFilterCount !== 1 ? 's' : ''} active
+                          {t(
+                            activeFilterCount === 1
+                              ? 'inbox.filters_active_single'
+                              : 'inbox.filters_active',
+                            { count: activeFilterCount }
+                          )}
                         </span>
                       ) : (
-                        <span className="text-xs" style={{ color: 'var(--text-muted)' }}>No filters active</span>
+                        <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('inbox_viewer.no_filters_active', 'No filters active')}</span>
                       )}
                       {activeFilterCount > 0 && (
                         <button
                           onClick={clearAllFilters}
-                          aria-label="Clear all filters"
+                          aria-label={t('inbox.clear_filters')}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -967,7 +975,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                             transition: 'all 0.15s ease',
                           }}
                         >
-                          <X style={{ height: '10px', width: '10px' }} aria-hidden="true" /> Clear filters
+                          <X style={{ height: '10px', width: '10px' }} aria-hidden="true" /> {t('inbox.clear_filters')}
                         </button>
                       )}
                     </div>
@@ -978,7 +986,12 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                 {filtersAreActive && (
                   <div style={{ marginTop: '0.375rem' }}>
                     <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                      {filteredMessages.length} message{filteredMessages.length !== 1 ? 's' : ''} found
+                      {t(
+                        filteredMessages.length === 1
+                          ? 'inbox.filtered_results_single'
+                          : 'inbox.filtered_results',
+                        { count: filteredMessages.length }
+                      )}
                     </span>
                   </div>
                 )}
@@ -1004,11 +1017,11 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                   }}>
                     <MessageSquare style={{ height: '40px', width: '40px', color: '#4b5563', marginBottom: '0.75rem' }} aria-hidden="true" />
                     <p className="text-sm" style={{ marginBottom: 0, color: 'var(--text-secondary)' }}>
-                      {filtersAreActive ? 'No messages match your filters' : 'No messages yet'}
+                      {filtersAreActive ? t('inbox.no_messages_filtered') : t('inbox.no_messages')}
                     </p>
                     {!filtersAreActive && (
                       <p className="text-xs" style={{ marginTop: '0.25rem', marginBottom: 0, color: 'var(--text-muted)' }}>
-                        Messages to this agent will appear here
+                        {t('inbox.empty_hint_agent')}
                       </p>
                     )}
                   </div>
@@ -1068,7 +1081,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                             <div style={{ flex: 1, minWidth: 0 }}>
                               <div className="flex items-center justify-between" style={{ marginBottom: '0.25rem' }}>
                                 <span className="text-xs font-semibold" style={{ color: 'var(--text-heading)' }}>
-                                  {msg.from || 'Unknown'}
+                                  {msg.from || t('inbox.unknown_sender')}
                                 </span>
                                 {timestamp && (
                                   <span
@@ -1101,7 +1114,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                 }}>
                   <button
                     onClick={scrollToBottom}
-                    aria-label="Scroll to new messages"
+                    aria-label={t('inbox.scroll_to_new')}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -1118,7 +1131,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                     }}
                   >
                     <ArrowDown style={{ height: '12px', width: '12px' }} aria-hidden="true" />
-                    New messages
+                    {t('inbox.new_messages')}
                   </button>
                 </div>
               )}
@@ -1140,7 +1153,7 @@ export function InboxViewer({ allInboxes, initialTeam = null, loading }) {
                 <User style={{ height: '36px', width: '36px', color: '#6b7280' }} aria-hidden="true" />
               </div>
               <p className="text-sm" style={{ marginBottom: 0, color: 'var(--text-secondary)' }}>
-                {selectedTeam ? 'Select an agent to view messages' : 'Select a team to get started'}
+                {selectedTeam ? t('inbox.select_agent_prompt') : t('inbox.select_team_prompt')}
               </p>
             </div>
           )}

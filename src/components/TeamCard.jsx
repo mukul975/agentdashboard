@@ -6,6 +6,7 @@ import { TaskList } from './TaskList';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { safePropKey, getInboxMessages } from '../utils/safeKey';
+import { useTranslation } from 'react-i18next';
 
 dayjs.extend(relativeTime);
 
@@ -55,31 +56,31 @@ function getLatestTimestamp(allInboxes, teamName, agentName) {
   return latest;
 }
 
-function getAgentStatus(latestTimestamp) {
-  if (!latestTimestamp) return { status: 'idle', color: '#6b7280', label: 'Idle', dot: 'bg-gray-500' };
+function getAgentStatus(latestTimestamp,t) {
+  if (!latestTimestamp) return { status: 'idle', color: '#6b7280', label: t('status.idle'), dot: 'bg-gray-500' };
 
   const now = new Date();
   const diffMs = now - latestTimestamp;
   const diffMin = diffMs / 60000;
 
   if (diffMin <= 5) {
-    return { status: 'active', color: '#22c55e', label: 'Active', dot: 'bg-green-500', pulse: true };
+    return { status: 'active', color: '#22c55e', label: t('status.active'), dot: 'bg-green-500', pulse: true };
   } else if (diffMin <= 30) {
-    return { status: 'recent', color: '#eab308', label: 'Recent', dot: 'bg-yellow-500', pulse: false };
+    return { status: 'recent', color: '#eab308', label: t('status.recent'), dot: 'bg-yellow-500', pulse: false };
   }
-  return { status: 'idle', color: '#6b7280', label: 'Idle', dot: 'bg-gray-500', pulse: false };
+  return { status: 'idle', color: '#6b7280', label: t('status.idle'), dot: 'bg-gray-500', pulse: false };
 }
 
-function formatLastActive(latestTimestamp) {
-  if (!latestTimestamp) return 'No activity recorded';
+function formatLastActive(latestTimestamp, t) {
+  if (!latestTimestamp) return t('agent_activity.no_activity_recorded');
   const now = new Date();
   const diffMs = now - latestTimestamp;
   const diffMin = Math.floor(diffMs / 60000);
-  if (diffMin < 1) return 'Active just now';
-  if (diffMin < 60) return `Last active: ${diffMin} min ago`;
+  if (diffMin < 1) return t('agent_activity.last_active_just_now');
+  if (diffMin < 60) return t('agent_activity.last_active_minutes', { count: diffMin });
   const diffHours = Math.floor(diffMin / 60);
-  if (diffHours < 24) return `Last active: ${diffHours}h ago`;
-  return `Last active: ${Math.floor(diffHours / 24)}d ago`;
+  if (diffHours < 24) return t('agent_activity.last_active_hours', { count: diffHours });
+  return t('agent_activity.last_active_days', { count: Math.floor(diffHours / 24) });
 }
 
 function TaskCompletionRing({ completed, total, size = 36 }) {
@@ -121,6 +122,7 @@ function TaskCompletionRing({ completed, total, size = 36 }) {
 }
 
 export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInboxes }) {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(true);
 
   const { name, config = {}, tasks = [], lastUpdated } = team;
@@ -155,9 +157,9 @@ export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInbo
       const mk = safePropKey(member.name);
       if (mk !== null) {
         statuses[mk] = {
-          ...getAgentStatus(latestTs),
+          ...getAgentStatus(latestTs, t),
           latestTimestamp: latestTs,
-          tooltipText: formatLastActive(latestTs)
+          tooltipText: formatLastActive(latestTs, t)
         };
       }
     }
@@ -183,7 +185,7 @@ export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInbo
       <div className="flex items-center gap-3 mb-4 p-3 rounded-lg" style={{ background: 'rgba(31, 41, 55, 0.6)' }}>
         <div className="flex items-center gap-2 shrink-0">
           <Activity className="h-4 w-4" style={{ color: healthBarColor }} aria-hidden="true" />
-          <span className="text-sm font-semibold text-white">Team Health:</span>
+          <span className="text-sm font-semibold text-white">{t("team_card.team_health")}:</span>
           <span className="text-sm font-bold" style={{ color: healthBarColor }}>{teamHealth}%</span>
         </div>
         <div className="flex-1 h-2.5 rounded-full overflow-hidden" style={{ background: 'rgba(55,65,81,0.7)' }}>
@@ -221,7 +223,7 @@ export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInbo
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
-          aria-label={isExpanded ? "Collapse team details" : "Expand team details"}
+          aria-label={isExpanded ? t("team_card.collapse") : t("team_card.expand")}
           aria-expanded={isExpanded}
         >
           {isExpanded ? (
@@ -235,11 +237,13 @@ export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInbo
       <div className="flex flex-wrap gap-2 mb-4">
         <div className="flex items-center gap-2 px-3 py-1 rounded-full" style={{ background: 'rgba(55,65,81,0.5)' }}>
           <Users className="h-4 w-4 text-gray-400" aria-hidden="true" />
-          <span className="text-sm text-gray-300">{members.length} agents</span>
+          <span className="text-sm text-gray-300">{t("team_card.agents_" + (members.length === 1 ? "one" : "other"), { count: members.length }, "{{count}} agents")}</span>
         </div>
         <div className="flex items-center gap-2 px-3 py-1 rounded-full" style={{ background: 'rgba(55,65,81,0.5)' }}>
           <Activity className="h-4 w-4 text-gray-400" aria-hidden="true" />
-          <span className="text-sm text-gray-300">{tasks.length} tasks</span>
+         <span className="text-sm text-gray-300">
+  {t("team_card.tasks", { count: tasks.length })}
+</span>
         </div>
         <div className="flex items-center gap-2 px-3 py-1 rounded-full" style={{ background: 'rgba(55,65,81,0.5)' }}>
           <Clock className="h-4 w-4 text-gray-400" aria-hidden="true" />
@@ -251,7 +255,7 @@ export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInbo
           <div className="flex items-center gap-2 px-3 py-1 rounded-full" style={{ background: 'rgba(55,65,81,0.5)' }}>
             <Mail className="h-4 w-4 text-gray-400" aria-hidden="true" />
             <span className="text-sm text-gray-300">
-              {totalMessages} messages{unreadCount > 0 ? `, ${unreadCount} unread` : ''}
+              {t("team_card.messages_" + (totalMessages === 1 ? "one" : "other"), { count: totalMessages }, "{{count}} messages")}{unreadCount > 0 ? `, ${t("team_card.unread_" + (unreadCount === 1 ? "one" : "other"), { count: unreadCount }, "{{count}} unread")}` : ''}
             </span>
           </div>
         )}
@@ -262,10 +266,10 @@ export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInbo
             style={{ background: 'rgba(232,117,10,0.2)' }}
             onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,117,10,0.3)'}
             onMouseLeave={e => e.currentTarget.style.background = 'rgba(232,117,10,0.2)'}
-            aria-label={`View inboxes for team ${name}`}
+            aria-label={t("team_card.view_inboxes_for", { name })}
           >
             <Inbox className="h-4 w-4" aria-hidden="true" />
-            View Inboxes
+            {t("team_card.view_inboxes")}
           </button>
         )}
       </div>
@@ -273,15 +277,15 @@ export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInbo
       <div className="flex gap-2 mb-4">
         <span className="badge badge-pending">
           <Clock className="h-3 w-3 inline-block mr-1" aria-hidden="true" />
-          {taskStats.pending} pending
+          {t("task.pending_" + (taskStats.pending === 1 ? "one" : "other"), { count: taskStats.pending }, "{{count}} pending")}
         </span>
         <span className="badge badge-in-progress">
           <Loader className="h-3 w-3 inline-block mr-1 animate-spin" aria-hidden="true" />
-          {taskStats.inProgress} in progress
+          {t("task.in_progress_" + (taskStats.inProgress === 1 ? "one" : "other"), { count: taskStats.inProgress }, "{{count}} in progress")}
         </span>
         <span className="badge badge-completed">
           <CheckCircle className="h-3 w-3 inline-block mr-1" aria-hidden="true" />
-          {taskStats.completed} completed
+          {t("task.completed_" + (taskStats.completed === 1 ? "one" : "other"), { count: taskStats.completed }, "{{count}} completed")}
         </span>
       </div>
 
@@ -290,7 +294,7 @@ export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInbo
           <div>
             <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
               <Users className="h-5 w-5" aria-hidden="true" />
-              Team Members
+              {t("team_card.team_members")}
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {lead && (
@@ -307,7 +311,7 @@ export function TeamCard({ team, inboxes = {}, allInboxes = {}, onNavigateToInbo
           <div>
             <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
               <Activity className="h-5 w-5" aria-hidden="true" />
-              Tasks
+              {t("search.group_tasks", "Tasks")}
             </h4>
             <TaskList tasks={tasks} />
           </div>

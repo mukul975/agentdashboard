@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useFocusTrap } from '../hooks/useFocusTrap';
+import { useTranslation } from 'react-i18next';
 
 const STATUS_COLORS = {
   pending: {
@@ -11,7 +12,7 @@ const STATUS_COLORS = {
     fill: '#eab308',
     columnBg: 'rgba(234, 179, 8, 0.06)',
     columnBorder: 'rgba(234, 179, 8, 0.2)',
-    label: 'Pending',
+    label: 'pending',
     barFill: 'rgba(234, 179, 8, 0.6)',
   },
   in_progress: {
@@ -22,7 +23,7 @@ const STATUS_COLORS = {
     fill: '#3b82f6',
     columnBg: 'rgba(59, 130, 246, 0.06)',
     columnBorder: 'rgba(59, 130, 246, 0.2)',
-    label: 'In Progress',
+    label:  'In progress',
     barFill: 'rgba(59, 130, 246, 0.6)',
   },
   completed: {
@@ -62,6 +63,7 @@ function truncate(str, max) {
 // Floating detail card shown when a task is clicked
 function TaskInfoCard({ task, onClose }) {
   const trapRef = useFocusTrap(!!task);
+  const { t } = useTranslation();
   if (!task) return null;
   const status = getEffectiveStatus(task);
   const color = STATUS_COLORS[status] || STATUS_COLORS.pending;
@@ -74,7 +76,7 @@ function TaskInfoCard({ task, onClose }) {
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label="Task details"
+      aria-label={t('task_dependency_graph.task_details')}
     >
       <div
         className="rounded-xl p-5 max-w-md w-full mx-4 shadow-2xl"
@@ -97,7 +99,7 @@ function TaskInfoCard({ task, onClose }) {
                 border: `1px solid ${color.border}`,
               }}
             >
-              {color.label}
+              {t('status.' + status, color.label)}
             </span>
             <h4 className="text-white font-bold text-base leading-tight">{task.subject}</h4>
           </div>
@@ -107,7 +109,7 @@ function TaskInfoCard({ task, onClose }) {
             style={{ backgroundColor: 'transparent' }}
             onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(55,65,81,0.5)'; }}
             onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-            aria-label="Close task details"
+            aria-label={t('task_dependency_graph.close_task_details')}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
@@ -126,25 +128,25 @@ function TaskInfoCard({ task, onClose }) {
         <div className="space-y-2">
           {task._teamName && (
             <div className="flex items-center gap-2">
-              <span className="text-gray-500 text-xs w-20 flex-shrink-0">Team</span>
+              <span className="text-gray-500 text-xs w-20 flex-shrink-0">{t("activity.filter_team")}</span>
               <span className="text-gray-300 text-xs font-medium">{task._teamName}</span>
             </div>
           )}
           {task.owner && (
             <div className="flex items-center gap-2">
-              <span className="text-gray-500 text-xs w-20 flex-shrink-0">Owner</span>
+              <span className="text-gray-500 text-xs w-20 flex-shrink-0">{t("task_dependency_graph.")}</span>
               <span className="text-gray-300 text-xs font-medium">{task.owner}</span>
             </div>
           )}
           {task.id && (
             <div className="flex items-center gap-2">
-              <span className="text-gray-500 text-xs w-20 flex-shrink-0">Task ID</span>
+              <span className="text-gray-500 text-xs w-20 flex-shrink-0">{t("task_dependency_graph.task_id")}</span>
               <span className="text-gray-400 text-xs font-mono">{task.id}</span>
             </div>
           )}
           {task.blockedBy && task.blockedBy.length > 0 && (
             <div className="flex items-center gap-2">
-              <span className="text-gray-500 text-xs w-20 flex-shrink-0">Blocked by</span>
+              <span className="text-gray-500 text-xs w-20 flex-shrink-0">{t("task_dependency_graph.blocked_by")}</span>
               <div className="flex flex-wrap gap-1">
                 {task.blockedBy.map((bid) => (
                   <span key={bid} className="text-xs font-mono px-1.5 py-0.5 rounded" style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#fca5a5', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
@@ -156,7 +158,7 @@ function TaskInfoCard({ task, onClose }) {
           )}
           {task.blocks && task.blocks.length > 0 && (
             <div className="flex items-center gap-2">
-              <span className="text-gray-500 text-xs w-20 flex-shrink-0">Blocks</span>
+              <span className="text-gray-500 text-xs w-20 flex-shrink-0">{t("task_dependency_graph.blocks")}</span>
               <div className="flex flex-wrap gap-1">
                 {task.blocks.map((bid) => (
                   <span key={bid} className="text-xs font-mono px-1.5 py-0.5 rounded" style={{ background: 'rgba(249, 115, 22, 0.15)', color: '#fdba74', border: '1px solid rgba(249, 115, 22, 0.3)' }}>
@@ -174,6 +176,7 @@ function TaskInfoCard({ task, onClose }) {
 
 // Hover tooltip for SVG graph nodes
 function SvgTooltip({ task, x, y, svgRect }) {
+  const { t } = useTranslation();
   if (!task || !svgRect) return null;
   const status = getEffectiveStatus(task);
   const color = STATUS_COLORS[status] || STATUS_COLORS.pending;
@@ -209,13 +212,14 @@ function SvgTooltip({ task, x, y, svgRect }) {
       <div className="flex items-center" style={{ gap: 12, fontSize: 10 }}>
         {task._teamName && <span className="text-gray-500">{task._teamName}</span>}
         {task.owner && <span style={{ color: color.text }}>{task.owner}</span>}
-        <span className="font-semibold uppercase" style={{ color: color.text }}>{color.label}</span>
+        <span className="font-semibold uppercase" style={{ color: color.text }}>{t('status.' + status, color.label)}</span>
       </div>
     </div>
   );
 }
 
 const StatusBoard = React.memo(function StatusBoard({ allTasks, onTaskClick }) {
+  const { t } = useTranslation();
   const columns = useMemo(() => {
     const cols = { pending: [], in_progress: [], completed: [], blocked: [] };
     allTasks.forEach((task) => {
@@ -259,7 +263,7 @@ const StatusBoard = React.memo(function StatusBoard({ allTasks, onTaskClick }) {
                   style={{ background: color.fill, boxShadow: `0 0 8px ${color.glow}` }}
                 />
                 <span className="text-sm font-semibold" style={{ color: color.text }}>
-                  {color.label}
+                  {t('status.' + statusKey, color.label)}
                 </span>
               </div>
               <span
@@ -278,7 +282,7 @@ const StatusBoard = React.memo(function StatusBoard({ allTasks, onTaskClick }) {
             <div className="p-3 space-y-2 overflow-y-auto custom-scrollbar" style={{ maxHeight: 420 }}>
               {tasks.length === 0 ? (
                 <div className="text-center py-6">
-                  <p className="text-gray-500 text-xs">No tasks</p>
+                  <p className="text-gray-500 text-xs">{t('task.no_tasks', 'No tasks')}</p>
                 </div>
               ) : (
                 tasks.map((task, idx) => (
@@ -293,7 +297,7 @@ const StatusBoard = React.memo(function StatusBoard({ allTasks, onTaskClick }) {
                     tabIndex={0}
                     onClick={() => onTaskClick(task)}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onTaskClick(task); } }}
-                    aria-label={`View details for task: ${truncate(task.subject, 40)}`}
+                    aria-label={`${t("task_dependency_graph.view_details")}: ${truncate(task.subject, 40)}`}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = color.border;
                       e.currentTarget.style.boxShadow = `0 2px 12px ${color.glow}`;
@@ -335,7 +339,7 @@ const StatusBoard = React.memo(function StatusBoard({ allTasks, onTaskClick }) {
                           <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
                         </svg>
                         <span className="text-xs" style={{ color: '#fca5a5' }}>
-                          Blocked by {task.blockedBy.length} task{task.blockedBy.length !== 1 ? 's' : ''}
+                          {t("task_dependency_graph.blocked_by")} {task.blockedBy.length} task{task.blockedBy.length !== 1 ? 's' : ''}
                         </span>
                       </div>
                     )}
@@ -351,6 +355,7 @@ const StatusBoard = React.memo(function StatusBoard({ allTasks, onTaskClick }) {
 });
 
 const DependencyGraph = React.memo(function DependencyGraph({ allTasks, onTaskClick }) {
+  const { t } = useTranslation();
   const [hoveredTask, setHoveredTask] = useState(null);
   const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 });
   const [containerRect, setContainerRect] = useState(null);
@@ -505,8 +510,8 @@ const DependencyGraph = React.memo(function DependencyGraph({ allTasks, onTaskCl
           <circle cx="12" cy="12" r="10" />
           <path d="M8 12h8" />
         </svg>
-        <p className="text-gray-400 text-base font-medium">No task dependencies found</p>
-        <p className="text-gray-500 text-sm mt-1">Dependencies will appear here when tasks have blockedBy relationships</p>
+        <p className="text-gray-400 text-base font-medium">{t("task_dependency_graph.no_deps")}</p>
+        <p className="text-gray-500 text-sm mt-1">{t("task_dependency_graph.deps_info")}</p>
       </div>
     );
   }
@@ -596,7 +601,7 @@ const DependencyGraph = React.memo(function DependencyGraph({ allTasks, onTaskCl
               role="button"
               tabIndex={0}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onTaskClick(task); } }}
-              aria-label={`Task: ${truncate(task.subject, 40)}`}
+              aria-label={`${t("activity.filter_task")}: ${truncate(task.subject, 40)}`}
             >
               <rect
                 width={nodeW}
@@ -658,7 +663,7 @@ const DependencyGraph = React.memo(function DependencyGraph({ allTasks, onTaskCl
                 textAnchor="middle"
                 fontFamily="system-ui, -apple-system, sans-serif"
               >
-                {color.label.toUpperCase()}
+                {t('status.' + status, color.label).toUpperCase()}
               </text>
             </g>
           );
@@ -670,6 +675,7 @@ const DependencyGraph = React.memo(function DependencyGraph({ allTasks, onTaskCl
 
 // Gantt-style horizontal bar chart showing all tasks grouped by status
 const GanttView = React.memo(function GanttView({ allTasks, onTaskClick }) {
+  const { t } = useTranslation();
   const statusOrder = ['in_progress', 'pending', 'blocked', 'completed'];
   const grouped = useMemo(() => {
     const groups = {};
@@ -842,7 +848,7 @@ const GanttView = React.memo(function GanttView({ allTasks, onTaskClick }) {
                 fontWeight="700"
                 fontFamily="system-ui, -apple-system, sans-serif"
               >
-                {color.label} ({tasks.length})
+                {t('status.' + statusGroup, color.label)} ({tasks.length})
               </text>
               {taskRows}
             </g>
@@ -865,14 +871,15 @@ const GanttView = React.memo(function GanttView({ allTasks, onTaskClick }) {
 });
 
 export const TaskDependencyGraph = React.memo(function TaskDependencyGraph({ teams }) {
+  const { t } = useTranslation();
   const [view, setView] = useState('board');
   const [selectedTask, setSelectedTask] = useState(null);
 
   const allTasks = useMemo(() => {
-    return teams.flatMap((t) =>
-      (t.tasks || []).map((task) => ({
+    return teams.flatMap((team) =>
+      (team.tasks || []).map((task) => ({
         ...task,
-        _teamName: t.name,
+        _teamName: team.name,
       }))
     );
   }, [teams]);
@@ -896,7 +903,7 @@ export const TaskDependencyGraph = React.memo(function TaskDependencyGraph({ tea
           <rect x="3" y="14" width="7" height="7" rx="1" />
           <rect x="14" y="14" width="7" height="7" rx="1" />
         </svg>
-        <p className="text-gray-400 text-sm">No tasks to display</p>
+        <p className="text-gray-400 text-sm">{t('task.no_tasks', 'No tasks to display')}</p>
       </div>
     );
   }
@@ -921,18 +928,21 @@ export const TaskDependencyGraph = React.memo(function TaskDependencyGraph({ tea
             <path d="M6.5 10v4" />
             <path d="M17.5 10v4" />
           </svg>
-          <h3 className="text-lg font-bold text-white">Task Dependency Graph</h3>
-          <span className="text-xs text-gray-400 font-medium px-2 py-0.5 rounded-full" style={{ background: 'rgba(75, 85, 99, 0.3)' }}>
-            {allTasks.length} task{allTasks.length !== 1 ? 's' : ''}
-          </span>
+          <h3 className="text-lg font-bold text-white">{t("task_dependency_graph.title")}</h3>
+          <span
+  className="text-xs text-gray-400 font-medium px-2 py-0.5 rounded-full"
+  style={{ background: 'rgba(75, 85, 99, 0.3)' }}
+>
+  {t("team_card.tasks", { count: allTasks.length })}
+</span>
         </div>
 
         {/* Toggle Buttons */}
         <div className="flex gap-1 p-1 rounded-lg" style={{ background: 'rgba(17, 24, 39, 0.5)' }}>
           {[
-            { key: 'board', label: 'Status Board' },
-            { key: 'graph', label: 'Dependency Graph' },
-            { key: 'gantt', label: 'Gantt View' },
+            { key: 'board', label: t('task_dependency_graph.status_board') },
+            { key: 'graph', label: t('task_dependency_graph.dependency_graph') },
+            { key: 'gantt', label: t('task_dependency_graph.gantt_view') },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -943,7 +953,7 @@ export const TaskDependencyGraph = React.memo(function TaskDependencyGraph({ tea
                 color: view === tab.key ? '#fb923c' : '#9ca3af',
                 border: view === tab.key ? '1px solid rgba(249, 115, 22, 0.4)' : '1px solid transparent',
               }}
-              aria-label={`Switch to ${tab.label} view`}
+              aria-label={t('task_dependency_graph.switch_view', { view: tab.label })}
               aria-pressed={view === tab.key}
             >
               {tab.label}

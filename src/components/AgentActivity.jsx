@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Users, Zap, Brain, CheckSquare, Grid3X3 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { getAgentColor } from '../utils/formatting';
 import { getInboxMessages } from '../utils/safeKey';
 
@@ -60,6 +61,7 @@ function buildHeatmapData(allInboxes) {
 }
 
 export function AgentActivity({ teams, allInboxes = {} }) {
+  const { t } = useTranslation();
   const [activeAgents, setActiveAgents] = useState([]);
   const [hoveredCell, setHoveredCell] = useState(null);
 
@@ -96,16 +98,16 @@ export function AgentActivity({ teams, allInboxes = {} }) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Users className="h-5 w-5 text-claude-orange" />
-          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>Agent Activity</h3>
+          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>{t('agent_activity.title', 'Agent Activity')}</h3>
         </div>
-        <span className="text-sm" style={{ color: 'var(--text-muted)' }}>{activeAgents.length} agents</span>
+        <span className="text-sm" style={{ color: 'var(--text-muted)' }}>{activeAgents.length} {t("agent_activity.agents")}</span>
       </div>
 
       <div className="space-y-2 max-h-96 overflow-y-auto">
         {activeAgents.length === 0 ? (
           <div className="text-center py-8" style={{ color: 'var(--text-muted)' }}>
             <Users className="mx-auto mb-2" style={{ height: '48px', width: '48px', opacity: 0.5 }} />
-            <p className="text-sm">No active agents</p>
+            <p className="text-sm">{t('agent_activity.no_active_agents', 'No active agents')}</p>
           </div>
         ) : (
           activeAgents.map((agent, index) => (
@@ -146,7 +148,7 @@ export function AgentActivity({ teams, allInboxes = {} }) {
                   >
                     {agent.activeTasks}
                   </div>
-                  <div className="text-xs" style={{ color: 'var(--text-muted)' }}>tasks</div>
+                  <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('agent_activity.tasks', 'tasks')}</div>
                 </div>
               </div>
             </div>
@@ -158,13 +160,13 @@ export function AgentActivity({ teams, allInboxes = {} }) {
       <div className="mt-6" style={{ paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
         <div className="flex items-center gap-2 mb-3">
           <Grid3X3 className="h-4 w-4 text-claude-orange" />
-          <h4 className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>Activity Heatmap</h4>
-          <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Last 30 days</span>
+          <h4 className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>{t('agent_activity.heatmap', 'Activity Heatmap')}</h4>
+          <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('agent_activity.last_30_days', 'Last 30 days')}</span>
         </div>
 
         {!hasHeatmapData ? (
           <div className="text-center py-4 text-xs" style={{ color: 'var(--text-muted)' }}>
-            No message activity to display
+            {t("agent_activity.empty_message")}
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
@@ -245,7 +247,7 @@ export function AgentActivity({ teams, allInboxes = {} }) {
 
             {/* Legend */}
             <div className="flex items-center gap-2 mt-3" style={{ justifyContent: 'flex-end' }}>
-              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Less</span>
+              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('agent_activity.less', 'Less')}</span>
               {[0, 2, 5, 10, 20].map((val) => (
                 <div
                   key={val}
@@ -257,7 +259,7 @@ export function AgentActivity({ teams, allInboxes = {} }) {
                   }}
                 />
               ))}
-              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>More</span>
+              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('agent_activity.more', 'More')}</span>
             </div>
           </div>
         )}

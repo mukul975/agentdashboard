@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Crown, GitCompare } from 'lucide-react';
 import { safePropKey, getInboxMessages } from '../utils/safeKey';
+import { useTranslation } from 'react-i18next';
 
 function getTeamMessageCount(teamInbox) {
   let count = 0;
@@ -165,6 +166,7 @@ function StringMetricRow({ label, valueA, valueB }) {
 }
 
 export function TeamComparison({ teams, allInboxes }) {
+  const { t } = useTranslation();
   const [teamAName, setTeamAName] = useState('');
   const [teamBName, setTeamBName] = useState('');
 
@@ -208,8 +210,8 @@ export function TeamComparison({ teams, allInboxes }) {
     return (
       <div className="card text-center py-12">
         <GitCompare className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-white mb-2">Not Enough Teams</h3>
-        <p className="text-gray-400">You need at least two active teams to use the comparison view.</p>
+        <h3 className="text-xl font-semibold text-white mb-2">{t('team_comparison.not_enough_teams', 'Not Enough Teams')}</h3>
+        <p className="text-gray-400">{t('team_comparison.need_two_teams', 'You need at least two active teams to use the comparison view.')}</p>
       </div>
     );
   }
@@ -221,13 +223,13 @@ export function TeamComparison({ teams, allInboxes }) {
       {/* Team Selectors */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-400 mb-2">Team A</label>
+          <label className="block text-sm font-medium text-gray-400 mb-2">{t('team_comparison.team_a', 'Team A')}</label>
           <select
             value={teamAName}
             onChange={e => setTeamAName(e.target.value)}
             className="w-full bg-gray-800 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-claude-orange focus:border-transparent"
           >
-            <option value="">Select Team A</option>
+            <option value="">{t('team_comparison.select_team_a', 'Select Team A')}</option>
             {teams.map(t => (
               <option key={t.name} value={t.name} disabled={t.name === teamBName}>
                 {t.name}
@@ -236,13 +238,13 @@ export function TeamComparison({ teams, allInboxes }) {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-400 mb-2">Team B</label>
+          <label className="block text-sm font-medium text-gray-400 mb-2">{t('team_comparison.team_b', 'Team B')}</label>
           <select
             value={teamBName}
             onChange={e => setTeamBName(e.target.value)}
             className="w-full bg-gray-800 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-claude-orange focus:border-transparent"
           >
-            <option value="">Select Team B</option>
+            <option value="">{t('team_comparison.select_team_b', 'Select Team B')}</option>
             {teams.map(t => (
               <option key={t.name} value={t.name} disabled={t.name === teamAName}>
                 {t.name}
@@ -255,7 +257,7 @@ export function TeamComparison({ teams, allInboxes }) {
       {!bothSelected ? (
         <div className="card text-center py-12">
           <GitCompare className="h-12 w-12 text-gray-600 mx-auto mb-3" />
-          <p className="text-gray-400 text-lg">Select two teams to compare</p>
+          <p className="text-gray-400 text-lg">{t('team_comparison.select_two_teams', 'Select two teams to compare')}</p>
         </div>
       ) : (
         <div className="card">
@@ -268,7 +270,7 @@ export function TeamComparison({ teams, allInboxes }) {
               </div>
             </div>
             <div className="text-center px-3" style={{ minWidth: 140 }}>
-              <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">VS</span>
+              <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">{t('team_comparison.vs', 'VS')}</span>
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -280,59 +282,59 @@ export function TeamComparison({ teams, allInboxes }) {
 
           {/* Metric Rows */}
           <MetricRow
-            label="Members"
+            label={t("history.team_members", "Members").replace("Team ", "")}
             valueA={metricsA.members}
             valueB={metricsB.members}
           />
           <MetricRow
-            label="Total Tasks"
+            label={t("stats.total_tasks", "Total Tasks")}
             valueA={metricsA.totalTasks}
             valueB={metricsB.totalTasks}
           />
           <MetricRow
-            label="Completed"
+            label={t("stats.completed", "Completed")}
             valueA={metricsA.completed}
             valueB={metricsB.completed}
           />
           <MetricRow
-            label="Completion Rate"
+            label={t('team_comparison.completion_rate', 'Completion Rate')}
             valueA={metricsA.completionRate}
             valueB={metricsB.completionRate}
             unitSuffix="%"
           />
           <MetricRow
-            label="In Progress"
+            label={t("stats.in_progress", "In Progress")}
             valueA={metricsA.inProgress}
             valueB={metricsB.inProgress}
           />
           <MetricRow
-            label="Blocked"
+            label={t("stats.blocked", "Blocked")}
             valueA={metricsA.blocked}
             valueB={metricsB.blocked}
             higherIsBetter={false}
           />
           <MetricRow
-            label="Total Messages"
+            label={t("stats.messages", "Total Messages").replace("Total ", "") === "Total Messages" ? "Total Messages" : t("stats.messages")}
             valueA={metricsA.totalMessages}
             valueB={metricsB.totalMessages}
           />
           <MetricRow
-            label="Avg Msgs / Agent"
+            label={t('team_comparison.avg_msgs_per_agent', 'Avg Msgs / Agent')}
             valueA={metricsA.avgMsgsPerAgent}
             valueB={metricsB.avgMsgsPerAgent}
           />
           <MetricRow
-            label="Task Velocity (/hr)"
+            label={t('team_comparison.task_velocity', 'Task Velocity (/hr)')}
             valueA={metricsA.velocity}
             valueB={metricsB.velocity}
           />
           <MetricRow
-            label="Oldest Pending"
+            label={t('team_comparison.oldest_pending', 'Oldest Pending')}
             valueA={metricsA.oldestPending ? metricsA.oldestPending.minutes : 0}
             valueB={metricsB.oldestPending ? metricsB.oldestPending.minutes : 0}
             higherIsBetter={false}
             formatFn={(v) => {
-              if (v === 0) return 'None';
+              if (v === 0) return t('team_comparison.none', 'None');
               const mins = typeof v === 'number' ? v : 0;
               if (mins < 60) return `${mins}m`;
               const hrs = Math.floor(mins / 60);
@@ -342,9 +344,9 @@ export function TeamComparison({ teams, allInboxes }) {
             }}
           />
           <StringMetricRow
-            label="Most Active Agent"
-            valueA={metricsA.mostActive ? `${metricsA.mostActive.name} (${metricsA.mostActive.count})` : 'None'}
-            valueB={metricsB.mostActive ? `${metricsB.mostActive.name} (${metricsB.mostActive.count})` : 'None'}
+            label={t('team_comparison.most_active_agent', 'Most Active Agent')}
+            valueA={metricsA.mostActive ? `${metricsA.mostActive.name} (${metricsA.mostActive.count})` : t('team_comparison.none', 'None')}
+            valueB={metricsB.mostActive ? `${metricsB.mostActive.name} (${metricsB.mostActive.count})` : t('team_comparison.none', 'None')}
           />
         </div>
       )}

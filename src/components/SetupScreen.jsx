@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Activity, Eye, EyeOff, Lock, CheckCircle, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function SetupScreen({ onSetup }) {
   const [password, setPassword] = useState('');
@@ -8,12 +9,13 @@ export function SetupScreen({ onSetup }) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!password.trim()) { setError('Please enter a password'); return; }
-    if (password.length < 8) { setError('Password must be at least 8 characters'); return; }
-    if (password !== confirm) { setError('Passwords do not match'); return; }
+    if (!password.trim()) { setError(t('setup.error_empty')); return; }
+    if (password.length < 8) { setError(t('setup.error_too_short')); return; }
+    if (password !== confirm) { setError(t('setup.error_mismatch')); return; }
 
     setLoading(true);
     setError('');
@@ -28,7 +30,7 @@ export function SetupScreen({ onSetup }) {
       if (!res.ok) { setError(data.error || 'Setup failed'); setLoading(false); return; }
       onSetup(data.token);
     } catch {
-      setError('Failed to connect to server');
+      setError(t('setup.error_connection'));
       setLoading(false);
     }
   };
@@ -58,17 +60,17 @@ export function SetupScreen({ onSetup }) {
         </div>
 
         <h1 style={{ textAlign: 'center', fontSize: '22px', fontWeight: '700', color: 'var(--text-heading)', margin: '0 0 8px 0' }}>
-          Set Up Dashboard
+          {t("setup.title")}
         </h1>
         <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--text-secondary)', margin: '0 0 32px 0' }}>
-          Create a password to protect your dashboard. You'll use it every time you log in.
+          {t("setup.subtitle")}
         </p>
 
         <form onSubmit={handleSubmit}>
           {/* Password */}
           <div style={{ marginBottom: '14px' }}>
             <label htmlFor="setup-password" style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '6px' }}>
-              Password
+              {t("setup.password_label")}
             </label>
             <div style={{ position: 'relative' }}>
               <div style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }}>
@@ -79,7 +81,7 @@ export function SetupScreen({ onSetup }) {
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); setError(''); }}
-                placeholder="At least 8 characters"
+                placeholder={t("setup.password_placeholder")}
                 autoFocus
                 autoComplete="new-password"
                 style={inputStyle(!!error)}
@@ -100,7 +102,7 @@ export function SetupScreen({ onSetup }) {
           {/* Confirm Password */}
           <div style={{ marginBottom: '16px' }}>
             <label htmlFor="setup-confirm" style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '6px' }}>
-              Confirm Password
+              {t("setup.confirm_password_label")}
             </label>
             <div style={{ position: 'relative' }}>
               <div style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: confirm && confirm === password ? '#4ade80' : 'var(--text-muted)', pointerEvents: 'none' }}>
@@ -113,7 +115,7 @@ export function SetupScreen({ onSetup }) {
                 type={showConfirm ? 'text' : 'password'}
                 value={confirm}
                 onChange={(e) => { setConfirm(e.target.value); setError(''); }}
-                placeholder="Re-enter password"
+                placeholder={t("setup.confirm_password_placeholder")}
                 autoComplete="new-password"
                 style={inputStyle(!!error && password !== confirm)}
                 onFocus={(e) => { if (!error) e.target.style.borderColor = '#f97316'; }}
@@ -149,9 +151,9 @@ export function SetupScreen({ onSetup }) {
             {loading ? (
               <>
                 <div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTop: '2px solid #ffffff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-                Saving...
+                {t("setup.saving")}
               </>
-            ) : 'Set Password & Continue'}
+            ) : t("setup.submit")}
           </button>
         </form>
       </div>

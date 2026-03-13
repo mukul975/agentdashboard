@@ -4,9 +4,12 @@ import { SkeletonTeamHistoryRow } from './SkeletonLoader';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { exportToJSON } from '../utils/exportUtils';
+import { useTranslation } from 'react-i18next';
+
 dayjs.extend(relativeTime);
 
 export function TeamHistory({ teamHistory, loading }) {
+  const { t } = useTranslation();
   const [expandedTeam, setExpandedTeam] = useState(null);
 
   if (loading) {
@@ -14,7 +17,7 @@ export function TeamHistory({ teamHistory, loading }) {
       <div className="card">
         <div className="flex items-center gap-2 mb-4">
           <History className="h-5 w-5 text-claude-orange" />
-          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>Team History</h3>
+          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>{t("history.title")}</h3>
         </div>
         <div className="space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
@@ -30,11 +33,11 @@ export function TeamHistory({ teamHistory, loading }) {
       <div className="card">
         <div className="flex items-center gap-2 mb-4">
           <History className="h-5 w-5 text-claude-orange" />
-          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>Team History</h3>
+          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>{t("history.title")}</h3>
         </div>
         <div className="text-center py-12" style={{ color: 'var(--text-muted)' }}>
           <History className="h-16 w-16 mx-auto mb-3 opacity-50" />
-          <p className="text-sm">No team history yet.</p>
+          <p className="text-sm">{t("history.no_history")}</p>
         </div>
       </div>
     );
@@ -58,11 +61,11 @@ export function TeamHistory({ teamHistory, loading }) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <History className="h-5 w-5 text-claude-orange" />
-          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>Team History</h3>
+          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>{t("history.title")}</h3>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            {teamHistory.length} team{teamHistory.length !== 1 ? 's' : ''}
+            {t(teamHistory.length !== 1 ? 'history.team_count_plural' : 'history.team_count', { count: teamHistory.length })}
           </span>
           <button
             onClick={() => {
@@ -82,11 +85,11 @@ export function TeamHistory({ teamHistory, loading }) {
               background: 'var(--bg-secondary)',
               color: 'var(--text-muted)',
             }}
-            aria-label="Export team history as JSON"
-            title="Export team history as JSON"
+            aria-label={t("history.export_json")}
+            title={t("history.export_json")}
           >
             <Download className="h-3 w-3" />
-            Export
+            {t("export.label", "Export")}
           </button>
         </div>
       </div>
@@ -136,7 +139,7 @@ export function TeamHistory({ teamHistory, loading }) {
                       <h4 className="font-semibold" style={{ color: 'var(--text-heading)' }}>{team.name}</h4>
                       {team.isActive && (
                         <span className="px-2 py-0.5 text-xs rounded-full" style={{ color: '#4ade80', background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.3)' }}>
-                          Active
+                          {t("status.active", "Active")}
                         </span>
                       )}
                     </div>
@@ -175,7 +178,7 @@ export function TeamHistory({ teamHistory, loading }) {
                 <div className="p-4 space-y-4" style={{ background: 'var(--bg-card)', borderTop: '1px solid var(--border-color)' }}>
                   {/* Members */}
                   <div>
-                    <h5 className="text-sm font-semibold mb-2" style={{ color: 'var(--text-heading)' }}>Team Members</h5>
+                    <h5 className="text-sm font-semibold mb-2" style={{ color: 'var(--text-heading)' }}>{t("history.team_members")}</h5>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       {team.config.members?.map((member, idx) => (
                         <div
@@ -192,23 +195,23 @@ export function TeamHistory({ teamHistory, loading }) {
 
                   {/* Task Stats */}
                   <div>
-                    <h5 className="text-sm font-semibold mb-2" style={{ color: 'var(--text-heading)' }}>Task Summary</h5>
+                    <h5 className="text-sm font-semibold mb-2" style={{ color: 'var(--text-heading)' }}>{t("history.task_summary")}</h5>
                     <div className="grid grid-cols-4 gap-2">
                       <div className="p-2 rounded-lg text-center" style={{ background: 'var(--bg-secondary)' }}>
                         <div className="text-lg font-bold" style={{ color: 'var(--text-heading)' }}>{stats.total}</div>
-                        <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Total</div>
+                        <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t("history.total")}</div>
                       </div>
                       <div className="p-2 rounded-lg text-center" style={{ background: 'rgba(34,197,94,0.1)' }}>
                         <div className="text-lg font-bold" style={{ color: '#4ade80' }}>{stats.completed}</div>
-                        <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Done</div>
+                        <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t("history.done")}</div>
                       </div>
                       <div className="p-2 rounded-lg text-center" style={{ background: 'rgba(59,130,246,0.1)' }}>
                         <div className="text-lg font-bold" style={{ color: '#60a5fa' }}>{stats.inProgress}</div>
-                        <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Active</div>
+                        <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t("history.active")}</div>
                       </div>
                       <div className="p-2 rounded-lg text-center" style={{ background: 'rgba(234,179,8,0.1)' }}>
                         <div className="text-lg font-bold" style={{ color: '#facc15' }}>{stats.pending}</div>
-                        <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Pending</div>
+                        <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t("history.pending")}</div>
                       </div>
                     </div>
                   </div>
@@ -216,7 +219,7 @@ export function TeamHistory({ teamHistory, loading }) {
                   {/* Recent Tasks */}
                   {team.tasks.slice(0, 5).length > 0 && (
                     <div>
-                      <h5 className="text-sm font-semibold mb-2" style={{ color: 'var(--text-heading)' }}>Recent Tasks</h5>
+                      <h5 className="text-sm font-semibold mb-2" style={{ color: 'var(--text-heading)' }}>{t("history.recent_tasks")}</h5>
                       <div className="space-y-1">
                         {team.tasks.slice(0, 5).map((task, idx) => (
                           <div
@@ -228,8 +231,8 @@ export function TeamHistory({ teamHistory, loading }) {
                               <span className="rounded-full" style={{
                                 width: 8, height: 8, flexShrink: 0,
                                 backgroundColor: task.status === 'completed' ? '#4ade80' :
-                                task.status === 'in_progress' ? '#60a5fa' :
-                                '#facc15'
+                                  task.status === 'in_progress' ? '#60a5fa' :
+                                    '#facc15'
                               }}></span>
                               <span className="truncate" style={{ color: 'var(--text-primary)' }}>{task.subject}</span>
                               {task.owner && (

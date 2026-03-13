@@ -1,7 +1,8 @@
 import React from 'react';
 import { Activity, AlertCircle, RefreshCw } from 'lucide-react';
+import { withTranslation } from 'react-i18next';
 
-export class ErrorBoundary extends React.Component {
+class ErrorBoundaryComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,6 +37,7 @@ export class ErrorBoundary extends React.Component {
   };
 
   render() {
+    const { t } = this.props;
     if (this.state.hasError) {
       // Panel-level fallback when a name prop is provided
       if (this.props.name) {
@@ -45,7 +47,7 @@ export class ErrorBoundary extends React.Component {
               <AlertCircle className="h-6 w-6 text-red-400 flex-shrink-0 mt-0.5" />
               <div>
                 <h3 className="text-lg font-semibold text-white">
-                  {this.props.name} encountered an error
+                  {t('error_boundary.component_error', '{{name}} encountered an error', { name: this.props.name, defaultValue: `${this.props.name} encountered an error` })}
                 </h3>
                 {this.state.error && (
                   <p className="text-sm text-gray-400 mt-1 break-words">
@@ -57,7 +59,7 @@ export class ErrorBoundary extends React.Component {
             {this.state.errorInfo && (
               <details className="mb-4">
                 <summary className="text-xs text-gray-500 cursor-pointer hover:text-gray-300">
-                  Component Stack
+                  {t('error_boundary.component_stack', 'Component Stack')}
                 </summary>
                 <pre className="text-xs text-gray-400 mt-2 overflow-x-auto bg-gray-800 rounded p-2">
                   {this.state.errorInfo.componentStack}
@@ -66,11 +68,11 @@ export class ErrorBoundary extends React.Component {
             )}
             <button
               onClick={this.handleReset}
-              aria-label="Try again"
+              aria-label={t('error_boundary.try_again_aria', 'Try again')}
               className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors"
             >
               <RefreshCw className="h-3.5 w-3.5" />
-              Try Again
+              {t('error_boundary.try_again', 'Try Again')}
             </button>
           </div>
         );
@@ -92,25 +94,25 @@ export class ErrorBoundary extends React.Component {
 
               {/* Title */}
               <h1 className="text-3xl font-bold text-white mb-3">
-                Oops! Something went wrong
+                {t('error_boundary.title', 'Oops! Something went wrong')}
               </h1>
 
               {/* Description */}
               <p className="text-gray-400 mb-6">
-                The dashboard encountered an unexpected error. Don't worry, your data is safe.
+                {t('error_boundary.description', "The dashboard encountered an unexpected error. Don't worry, your data is safe.")}
               </p>
 
               {/* Error Details (Development) */}
               {process.env.NODE_ENV === 'development' && this.state.error && (
                 <div className="mb-6 text-left bg-gray-800 rounded-lg p-4" style={{ border: '1px solid rgba(239,68,68,0.3)' }}>
-                  <h3 className="text-sm font-semibold text-red-400 mb-2">Error Details:</h3>
+                  <h3 className="text-sm font-semibold text-red-400 mb-2">{t('error_boundary.error_details', 'Error Details:')}</h3>
                   <pre className="text-xs text-gray-300 overflow-x-auto">
                     {this.state.error.toString()}
                   </pre>
                   {this.state.errorInfo && (
                     <details className="mt-3">
                       <summary className="text-xs text-gray-400 cursor-pointer hover:text-white">
-                        Component Stack
+                        {t('error_boundary.component_stack', 'Component Stack')}
                       </summary>
                       <pre className="text-xs text-gray-300 mt-2 overflow-x-auto">
                         {this.state.errorInfo.componentStack}
@@ -124,44 +126,44 @@ export class ErrorBoundary extends React.Component {
               <div className="flex gap-4 justify-center">
                 <button
                   onClick={this.handleReset}
-                  aria-label="Try again"
+                  aria-label={t('error_boundary.try_again_aria', 'Try again')}
                   className="flex items-center gap-2 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors"
                 >
                   <RefreshCw className="h-4 w-4" />
-                  Try Again
+                  {t('error_boundary.try_again', 'Try Again')}
                 </button>
                 <button
                   onClick={this.handleReload}
-                  aria-label="Reload dashboard"
+                  aria-label={t('error_boundary.reload_dashboard_aria', 'Reload dashboard')}
                   className="flex items-center gap-2 px-6 py-3 bg-claude-orange hover:bg-orange-600 text-white rounded-lg font-medium transition-colors"
                 >
                   <RefreshCw className="h-4 w-4" />
-                  Reload Dashboard
+                  {t('error_boundary.reload_dashboard', 'Reload Dashboard')}
                 </button>
               </div>
 
               {/* Help Text */}
               <p className="text-sm text-gray-500 mt-6">
-                If this error persists, please{' '}
+                {t('error_boundary.help_text', 'If this error persists, please')}{' '}
                 <a
                   href="https://github.com/mukul975/agentdashboard/issues"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-claude-orange hover:text-orange-400 underline"
                 >
-                  report it on GitHub
+                  {t('error_boundary.report_github', 'report it on GitHub')}
                 </a>
               </p>
             </div>
 
             {/* Tips Card */}
             <div className="mt-6 card p-6">
-              <h3 className="text-lg font-semibold text-white mb-3">Troubleshooting Tips:</h3>
+              <h3 className="text-lg font-semibold text-white mb-3">{t('error_boundary.tips_title', 'Troubleshooting Tips:')}</h3>
               <ul className="text-sm text-gray-400" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <li>• Check if the backend server is running on port 3001</li>
-                <li>• Verify that Claude Code agent teams are active</li>
-                <li>• Try clearing your browser cache and reloading</li>
-                <li>• Check the browser console for additional error details</li>
+                <li>• {t('error_boundary.tip_1', 'Check if the backend server is running on port 3001')}</li>
+                <li>• {t('error_boundary.tip_2', 'Verify that Claude Code agent teams are active')}</li>
+                <li>• {t('error_boundary.tip_3', 'Try clearing your browser cache and reloading')}</li>
+                <li>• {t('error_boundary.tip_4', 'Check the browser console for additional error details')}</li>
               </ul>
             </div>
           </div>
@@ -172,3 +174,6 @@ export class ErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
+
+export const ErrorBoundary = withTranslation()(ErrorBoundaryComponent);
+

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { X, Keyboard } from 'lucide-react';
 import { useFocusTrap } from '../hooks/useFocusTrap';
+import { useTranslation } from 'react-i18next';
 
 const ShortcutKey = ({ keys }) => (
   <div className="flex items-center gap-1">
@@ -57,6 +58,7 @@ const ShortcutSection = ({ title, shortcuts }) => (
 );
 
 export function KeyboardShortcutsModal({ isOpen, onClose }) {
+  const { t } = useTranslation();
   const modalRef = useRef(null);
   const trapRef = useFocusTrap(isOpen);
 
@@ -78,25 +80,25 @@ export function KeyboardShortcutsModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   const navigationShortcuts = [
-    { keys: ['Ctrl', '1'], description: 'Go to Live Metrics' },
-    { keys: ['Ctrl', '2'], description: 'Go to Teams & Tasks' },
-    { keys: ['Ctrl', '3'], description: 'Go to Communication' },
-    { keys: ['Ctrl', '4'], description: 'Go to Monitoring' },
-    { keys: ['Ctrl', '5'], description: 'Go to History & Outputs' },
-    { keys: ['Ctrl', '6'], description: 'Go to Archive' },
-    { keys: ['Ctrl', '7'], description: 'Go to Inboxes' },
-    { keys: ['Ctrl', '8'], description: 'Go to Analytics' },
-    { keys: ['←'], description: 'Previous tab (when tab focused)' },
-    { keys: ['→'], description: 'Next tab (when tab focused)' },
+    { keys: ['Ctrl', '1'], description: t('keyboard_shortcuts.nav_live_metrics') },
+    { keys: ['Ctrl', '2'], description: t('keyboard_shortcuts.nav_teams') },
+    { keys: ['Ctrl', '3'], description: t('keyboard_shortcuts.nav_communication') },
+    { keys: ['Ctrl', '4'], description: t('keyboard_shortcuts.nav_monitoring') },
+    { keys: ['Ctrl', '5'], description: t('keyboard_shortcuts.nav_history') },
+    { keys: ['Ctrl', '6'], description: t('keyboard_shortcuts.nav_archive') },
+    { keys: ['Ctrl', '7'], description: t('keyboard_shortcuts.nav_inboxes') },
+    { keys: ['Ctrl', '8'], description: t('keyboard_shortcuts.nav_analytics') },
+    { keys: ['←'], description: t('keyboard_shortcuts.nav_prev_tab') },
+    { keys: ['→'], description: t('keyboard_shortcuts.nav_next_tab') },
   ];
 
   const searchCommandShortcuts = [
-    { keys: ['Ctrl', 'K'], description: 'Open command palette' },
-    { keys: ['/'], description: 'Open command palette' },
-    { keys: ['Ctrl', 'F'], description: 'Focus search' },
-    { keys: ['Ctrl', 'Shift', 'S'], description: 'Toggle auto-scroll (communication)' },
-    { keys: ['?'], description: 'Show keyboard shortcuts' },
-    { keys: ['Esc'], description: 'Close modal / dialog' },
+    { keys: ['Ctrl', 'K'], description: t('keyboard_shortcuts.cmd_palette') },
+    { keys: ['/'], description: t('keyboard_shortcuts.cmd_palette') },
+    { keys: ['Ctrl', 'F'], description: t('keyboard_shortcuts.focus_search') },
+    { keys: ['Ctrl', 'Shift', 'S'], description: t('keyboard_shortcuts.toggle_autoscroll') },
+    { keys: ['?'], description: t('keyboard_shortcuts.show_shortcuts') },
+    { keys: ['Esc'], description: t('keyboard_shortcuts.close_modal') },
   ];
 
   return (
@@ -113,7 +115,7 @@ export function KeyboardShortcutsModal({ isOpen, onClose }) {
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label="Keyboard shortcuts"
+      aria-label={t('keyboard_shortcuts.modal_label')}
     >
       {/* Backdrop */}
       <div style={{
@@ -165,12 +167,12 @@ export function KeyboardShortcutsModal({ isOpen, onClose }) {
             }}>
               <Keyboard style={{ width: 20, height: 20, color: '#e8750a' }} />
             </div>
-            <h2 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>Keyboard Shortcuts</h2>
+            <h2 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>{t('keyboard_shortcuts.title')}</h2>
           </div>
           <button
             onClick={onClose}
             className="transition-colors"
-            aria-label="Close shortcuts modal"
+            aria-label={t('keyboard_shortcuts.close_label')}
             style={{
               padding: '6px',
               color: 'var(--text-secondary)',
@@ -188,8 +190,8 @@ export function KeyboardShortcutsModal({ isOpen, onClose }) {
 
         {/* Content */}
         <div style={{ padding: '16px 24px', overflowY: 'auto', flex: 1 }}>
-          <ShortcutSection title="Navigation" shortcuts={navigationShortcuts} />
-          <ShortcutSection title="Search & Commands" shortcuts={searchCommandShortcuts} />
+          <ShortcutSection title={t("keyboard_shortcuts.navigation")} shortcuts={navigationShortcuts} />
+          <ShortcutSection title={t("keyboard_shortcuts.search_commands")} shortcuts={searchCommandShortcuts} />
         </div>
 
         {/* Footer */}
@@ -201,7 +203,7 @@ export function KeyboardShortcutsModal({ isOpen, onClose }) {
           textAlign: 'center',
         }}>
           <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-            Press{' '}
+            {t('shortcuts.press')}{' '}
             <kbd style={{
               padding: '2px 6px',
               fontSize: 11,
@@ -210,7 +212,7 @@ export function KeyboardShortcutsModal({ isOpen, onClose }) {
               borderRadius: 4,
               color: 'var(--text-primary)',
             }}>?</kbd>
-            {' '}anytime to show this dialog
+            {' '}{t('shortcuts.anytime_to_show')}
           </p>
         </div>
       </div>

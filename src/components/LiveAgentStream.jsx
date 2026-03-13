@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Activity, Cpu, Zap } from 'lucide-react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { useTranslation } from 'react-i18next';
 dayjs.extend(relativeTime);
 
 export function LiveAgentStream({ teams }) {
+  const { t } = useTranslation();
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
@@ -74,12 +76,12 @@ export function LiveAgentStream({ teams }) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Activity aria-hidden="true" className="h-5 w-5 text-claude-orange animate-pulse" />
-          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>Live Agent Activity Stream</h3>
+          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>{t('live_agent_stream.title', 'Live Agent Activity Stream')}</h3>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-green-400 flex items-center gap-1">
             <Zap aria-hidden="true" className="h-3 w-3 animate-pulse" />
-            LIVE
+            {t('live_agent_stream.active')}
           </span>
         </div>
       </div>
@@ -89,8 +91,8 @@ export function LiveAgentStream({ teams }) {
         {activities.length === 0 ? (
           <div className="text-center py-12" style={{ color: 'var(--text-muted)' }}>
             <Activity aria-hidden="true" className="h-16 w-16 mx-auto mb-3 opacity-50 animate-pulse" />
-            <p className="text-sm">Waiting for agent activity...</p>
-            <p className="text-xs mt-1">Live stream will appear here</p>
+            <p className="text-sm">{t('live_agent_stream.waiting')}</p>
+            <p className="text-xs mt-1">{t('live_agent_stream.no_stream')}</p>
           </div>
         ) : (
           activities.map(activity => (
@@ -160,19 +162,19 @@ export function LiveAgentStream({ teams }) {
         <div className="grid grid-cols-3 gap-2 text-center">
           <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(59,130,246,0.1)' }}>
             <div className="text-lg font-bold" style={{ color: '#60a5fa' }}>{activities.length}</div>
-            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Events</div>
+            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('live_agent_stream.events', 'Events')}</div>
           </div>
           <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(34,197,94,0.1)' }}>
             <div className="text-lg font-bold" style={{ color: '#4ade80' }}>
               {new Set(activities.map(a => a.agent)).size}
             </div>
-            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Active</div>
+            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('live_agent_stream.active', 'Active')}</div>
           </div>
           <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(168,85,247,0.1)' }}>
             <div className="text-lg font-bold" style={{ color: '#c084fc' }}>
               {activities.filter(a => Date.now() - a.timestamp < 10000).length}
             </div>
-            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Last 10s</div>
+            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('live_agent_stream.last_10s', 'Last 10s')}</div>
           </div>
         </div>
       </div>

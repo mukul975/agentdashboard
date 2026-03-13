@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Trophy, Users, AlertTriangle, Crown, TrendingDown, ShieldAlert, CheckCircle } from 'lucide-react';
 import { safePropKey, getInboxMessages } from '../utils/safeKey';
+import { useTranslation } from 'react-i18next';
 
 function getMessageCount(teamInbox) {
   let count = 0;
@@ -88,24 +89,24 @@ function PercentageRing({ value, size = 56, strokeWidth = 5, color, label }) {
   );
 }
 
-function StatusBadge({ rate }) {
+function StatusBadge({ rate, t }) {
   if (rate > 50) {
     return (
       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium text-green-400" style={{ background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.3)' }}>
-        Active
+        {t("status.active", "Active")}
       </span>
     );
   }
   if (rate > 0) {
     return (
       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium text-yellow-400" style={{ background: 'rgba(234,179,8,0.2)', border: '1px solid rgba(234,179,8,0.3)' }}>
-        In Progress
+        {t("status.in_progress", "In Progress")}
       </span>
     );
   }
   return (
     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium text-gray-400" style={{ background: 'rgba(107,114,128,0.2)', border: '1px solid rgba(107,114,128,0.3)' }}>
-      Just Started
+      {t('team_performance.just_started', 'Just Started')}
     </span>
   );
 }
@@ -129,6 +130,7 @@ const cardStyle = {
 };
 
 export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
+  const { t } = useTranslation();
   const allTasks = useMemo(() => teams.flatMap(t => t.tasks || []), [teams]);
 
   // Per-team leaderboard with extended metrics
@@ -260,11 +262,11 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
       <div className="rounded-2xl p-6" style={cardStyle}>
         <div className="flex items-center gap-3 mb-4">
           <Trophy className="h-6 w-6 text-claude-orange" />
-          <h2 className="text-xl font-bold" style={{ color: 'var(--text-heading)' }}>Team Performance</h2>
+          <h2 className="text-xl font-bold" style={{ color: 'var(--text-heading)' }}>{t("team_performance_panel.title")}</h2>
         </div>
         <div className="text-center py-8" style={{ color: 'var(--text-muted)' }}>
           <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
-          <p className="text-sm">No teams active yet</p>
+          <p className="text-sm">{t('team_performance.no_teams', 'No teams active yet')}</p>
         </div>
       </div>
     );
@@ -274,9 +276,9 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
     <div className="rounded-2xl p-6" style={cardStyle}>
       <div className="flex items-center gap-3 mb-5">
         <Trophy className="h-6 w-6 text-claude-orange" />
-        <h2 className="text-xl font-bold" style={{ color: 'var(--text-heading)' }}>Team Performance</h2>
+        <h2 className="text-xl font-bold" style={{ color: 'var(--text-heading)' }}>{t('team_performance_panel.title')}</h2>
         <span className="text-sm ml-2" style={{ color: 'var(--text-muted)' }}>
-          {teams.length} team{teams.length !== 1 ? 's' : ''} ranked by completion
+          {t('team_performance_panel.teams_ranked_by_completion', { count: teams.length })}
         </span>
       </div>
 
@@ -285,29 +287,29 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
         <PercentageRing
           value={aggregateMetrics.completionRate}
           color={aggregateMetrics.completionRate > 75 ? '#22c55e' : aggregateMetrics.completionRate > 40 ? '#eab308' : '#f97316'}
-          label="Completion"
+          label={t('team_performance.completion', 'Completion')}
         />
         <PercentageRing
           value={aggregateMetrics.utilization}
           color={aggregateMetrics.utilization > 60 ? '#3b82f6' : '#a855f7'}
-          label="Utilization"
+          label={t('team_performance.utilization', 'Utilization')}
         />
         <PercentageRing
           value={aggregateMetrics.blockerRatio}
           color={aggregateMetrics.blockerRatio > 30 ? '#ef4444' : aggregateMetrics.blockerRatio > 10 ? '#eab308' : '#22c55e'}
-          label="Blocked"
+          label={t("stats.blocked", "Blocked")}
         />
         <div className="flex flex-col items-center gap-1">
           <div className="text-xl font-bold" style={{ color: 'var(--text-heading)' }}>{aggregateMetrics.totalCompleted}</div>
-          <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Done</div>
+          <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{t('team_performance.done', 'Done')}</div>
         </div>
         <div className="flex flex-col items-center gap-1">
           <div className="text-xl font-bold text-blue-400">{aggregateMetrics.totalInProgress}</div>
-          <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Active</div>
+          <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{t('team_performance.active_tasks', 'Active')}</div>
         </div>
         <div className="flex flex-col items-center gap-1">
           <div className="text-xl font-bold" style={{ color: 'var(--text-secondary)' }}>{aggregateMetrics.totalMembers}</div>
-          <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Agents</div>
+          <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{t("search.group_agents", "Agents")}</div>
         </div>
       </div>
 
@@ -317,14 +319,14 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
           <thead>
             <tr style={{ color: 'var(--text-muted)', borderBottom: '1px solid var(--border-color)' }}>
               <th className="text-left py-2 pr-4 font-medium">#</th>
-              <th className="text-left py-2 pr-4 font-medium">Team</th>
-              <th className="text-center py-2 px-2 font-medium">Members</th>
-              <th className="text-center py-2 px-2 font-medium">Tasks</th>
-              <th className="text-center py-2 px-2 font-medium">Completion</th>
-              <th className="text-center py-2 px-2 font-medium">Utilization</th>
-              <th className="text-center py-2 px-2 font-medium">Velocity</th>
-              <th className="text-center py-2 px-2 font-medium">Messages</th>
-              <th className="text-center py-2 px-2 font-medium">Status</th>
+              <th className="text-left py-2 pr-4 font-medium">{t('team_performance.table_team', 'Team')}</th>
+              <th className="text-center py-2 px-2 font-medium">{t('team_performance.table_members', 'Members')}</th>
+              <th className="text-center py-2 px-2 font-medium">{t('team_performance.table_tasks', 'Tasks')}</th>
+              <th className="text-center py-2 px-2 font-medium">{t('team_performance.table_completion', 'Completion')}</th>
+              <th className="text-center py-2 px-2 font-medium">{t('team_performance.table_utilization', 'Utilization')}</th>
+              <th className="text-center py-2 px-2 font-medium">{t('team_performance.table_velocity', 'Velocity')}</th>
+              <th className="text-center py-2 px-2 font-medium">{t("stats.messages", "Messages")}</th>
+              <th className="text-center py-2 px-2 font-medium">{t('team_performance.table_status', 'Status')}</th>
             </tr>
           </thead>
           <tbody>
@@ -394,7 +396,7 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
                 </td>
                 <td className="py-3 px-2 text-center" style={{ color: 'var(--text-secondary)' }}>{team.messageCount}</td>
                 <td className="py-3 px-2 text-center">
-                  <StatusBadge rate={team.completionRate} />
+                  <StatusBadge rate={team.completionRate} t={t} />
                 </td>
               </tr>
             ))}
@@ -410,9 +412,9 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
             <div className="flex items-center gap-3 p-3 rounded-lg" style={{ background: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.2)' }}>
               <Crown className="h-5 w-5 text-yellow-400 flex-shrink-0" />
               <div>
-                <div className="text-xs font-medium" style={{ color: 'rgba(250,204,21,0.7)' }}>Most Active Agent</div>
+                <div className="text-xs font-medium" style={{ color: 'rgba(250,204,21,0.7)' }}>{t('team_performance.most_active_agent', 'Most Active Agent')}</div>
                 <div className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>{topAgent.name}</div>
-                <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{topAgent.count} messages</div>
+                <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t('team_performance.messages_count', '{{count}} messages', { count: topAgent.count, defaultValue: `${topAgent.count} messages` })}</div>
               </div>
             </div>
           )}
@@ -420,7 +422,7 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
             <div className="flex items-center gap-3 p-3 rounded-lg" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
               <TrendingDown className="h-5 w-5 text-red-400 flex-shrink-0" />
               <div>
-                <div className="text-xs font-medium" style={{ color: 'rgba(248,113,113,0.7)' }}>Needs Attention</div>
+                <div className="text-xs font-medium" style={{ color: 'rgba(248,113,113,0.7)' }}>{t('team_performance.needs_attention', 'Needs Attention')}</div>
                 <div className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>{slowestTeam.name}</div>
                 <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{slowestTeam.completionRate.toFixed(0)}% ({slowestTeam.completedTasks}/{slowestTeam.totalTasks})</div>
               </div>
@@ -432,10 +434,10 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
         <div className="p-3 rounded-lg" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
           <div className="flex items-center gap-2 mb-2">
             <CheckCircle className="h-4 w-4 text-green-400" />
-            <span className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>Top Performers</span>
+            <span className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>{t('team_performance.top_performers', 'Top Performers')}</span>
           </div>
           {topPerformers.length === 0 ? (
-            <div className="text-xs py-2" style={{ color: 'var(--text-muted)' }}>No completed tasks yet</div>
+            <div className="text-xs py-2" style={{ color: 'var(--text-muted)' }}>{t('team_performance.no_completed_tasks', 'No completed tasks yet')}</div>
           ) : (
             <div className="space-y-1.5">
               {topPerformers.map((agent, i) => (
@@ -461,10 +463,10 @@ export function TeamPerformancePanel({ teams = [], allInboxes = {} }) {
         <div className="p-3 rounded-lg" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
           <div className="flex items-center gap-2 mb-2">
             <ShieldAlert className="h-4 w-4 text-orange-400" />
-            <span className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>Bottleneck Tasks</span>
+            <span className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>{t('team_performance.bottleneck_tasks', 'Bottleneck Tasks')}</span>
           </div>
           {bottleneckTasks.length === 0 ? (
-            <div className="text-xs py-2" style={{ color: 'var(--text-muted)' }}>No in-progress tasks</div>
+            <div className="text-xs py-2" style={{ color: 'var(--text-muted)' }}>{t('team_performance.no_in_progress', 'No in-progress tasks')}</div>
           ) : (
             <div className="space-y-1.5">
               {bottleneckTasks.map((task) => (

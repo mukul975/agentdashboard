@@ -1,15 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { WifiOff, RefreshCw, Zap } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function ConnectionStatus({ isConnected, error }) {
+  const {t} = useTranslation();
   if (isConnected) {
     return (
       <div
         className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300 group"
         role="status"
         aria-live="polite"
-        aria-label="Connection status: Connected"
+        aria-label={t('connection.status_connected')}
         style={{
           background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(21, 128, 61, 0.15) 100%)',
           color: '#4ade80',
@@ -34,7 +36,7 @@ export function ConnectionStatus({ isConnected, error }) {
           />
         </div>
 
-        <span className="tracking-wide">Connected</span>
+        <span className="tracking-wide">{t('connection.connected')}</span>
 
         {/* Live Indicator Dot */}
         <div
@@ -80,7 +82,7 @@ export function ConnectionStatus({ isConnected, error }) {
       className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300"
       role="status"
       aria-live="polite"
-      aria-label="Connection status: Connecting"
+      aria-label={t('connection.status_connecting')}
       aria-busy="true"
       style={{
         background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.25) 0%, rgba(202, 138, 4, 0.15) 100%)',
@@ -97,7 +99,7 @@ export function ConnectionStatus({ isConnected, error }) {
           animationDuration: '2s'
         }}
       />
-      <span className="tracking-wide">Connecting...</span>
+      <span className="tracking-wide">{t('connection.connecting')}</span>
 
       {/* Pulsing Dots */}
       <div className="flex gap-1">
